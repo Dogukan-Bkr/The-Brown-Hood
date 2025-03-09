@@ -15,7 +15,6 @@ public class PlayerMovementController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-
     }
 
     void Update()
@@ -63,8 +62,7 @@ public class PlayerMovementController : MonoBehaviour
 
     void fall()
     {
-        bool isFalling = !isGrounded && rb.linearVelocity.y < 0;
-        animator.SetBool("isFalling", isFalling);
+        animator.SetFloat("firstJumpForce", (rb.linearVelocity.y));
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
