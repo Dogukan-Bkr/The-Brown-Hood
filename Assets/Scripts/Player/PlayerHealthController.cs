@@ -11,17 +11,14 @@ public class PlayerHealthController : MonoBehaviour
     private void Start()
     {
         currentHP = maxHP;
-    }
-
-    
-    void Update()
-    {
-        
+        UIController.instance.SetHealthSlider(maxHP, currentHP);
     }
 
     public void TakeDamage(int damage)
     {
         currentHP -= damage;
+
+        UIController.instance.SetHealthSlider(maxHP, currentHP);
         if (currentHP <= 0)
         {
             gameObject.SetActive(false);

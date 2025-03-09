@@ -20,6 +20,10 @@ public class PlayerMovementController : MonoBehaviour
     {
         instance = this;
         rb = GetComponent<Rigidbody2D>();
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
     }
 
     void Update()
