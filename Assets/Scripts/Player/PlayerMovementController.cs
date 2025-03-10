@@ -4,29 +4,44 @@ using UnityEngine;
 public class PlayerMovementController : MonoBehaviour
 {
     public static PlayerMovementController instance;
+
+    // Hareket ayarlarý
     public float speed = 8f;
     public float firstJumpForce = 9f;
     public float doubleJumpForce = 12f;
-    public float fallMultiplier = 3f; 
+    public float fallMultiplier = 3f;
     public float lowJumpMultiplier = 2f;
-    public float backLeashTime, backLeashForce,backLeashCounter;
+
+    // Geri itilme (Back Leash) deðiþkenleri
+    public float backLeashTime, backLeashForce, backLeashCounter;
+
+    // Animator ve Sprite Renderer bileþenleri
     public Animator animator;
     public SpriteRenderer spriteRenderer;
+
+    // Zýplama deðiþkenleri
     public int maxJumps = 2;
     private int jumpCount = 0;
-    private Rigidbody2D rb;
-    private bool isGrounded;
-    private bool direction;
 
-    // Dash için yeni deðiþkenler
-    public float dashSpeed = 15f; // Dash hýzýný belirleyin
+    // Fizik bileþeni
+    private Rigidbody2D rb;
+
+    // Zemin kontrolü
+    private bool isGrounded;
+    private bool direction; // Oyuncunun baktýðý yön (true: sað, false: sol)
+
+    // Dash (Atýlma) deðiþkenleri
+    public float dashSpeed = 15f; // Dash hýzý
     public float dashDuration = 0.3f; // Dash süresi
-    private bool isDashing = false; // Dash olup olmadýðýný kontrol eder
-    private float dashTime = 0f; // Dash süresinin zamanlayýcýsý
+    private bool isDashing = false; // Þu an dash yapýlýyor mu?
+    private float dashTime = 0f; // Dash zamanlayýcýsý
+
     private void Awake()
     {
         instance = this;
         rb = GetComponent<Rigidbody2D>();
+
+        // Sprite Renderer bileþeni atanmýþ mý kontrol et, eðer yoksa al
         if (spriteRenderer == null)
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
@@ -35,99 +50,113 @@ public class PlayerMovementController : MonoBehaviour
 
     void Update()
     {
-       if(backLeashCounter <= 0)
-       {
+        if (backLeashCounter <= 0) // Geri itilme süresi dolduysa normal hareketi çalýþtýr
+        {
             Move();
             Jump();
             CheckMoveDirection();
             Dash();
-            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
 
-        
-       }
-       else
-       {
+            // Geri itilme (back leash) sonrasý saydamlýk sýfýrlanýyor
+            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
+        }
+        else
+        {
+            // Geri itilme süresi devam ederken karakterin geriye gitmesini saðla
             backLeashCounter -= Time.deltaTime;
             if (direction)
-            {rb.linearVelocity = new Vector2(-backLeashForce, rb.linearVelocity.y);}else 
-            { rb.linearVelocity = new Vector2(backLeashForce, rb.linearVelocity.y); }
-       }
+                rb.linearVelocity = new Vector2(-backLeashForce, rb.linearVelocity.y);
+            else
+                rb.linearVelocity = new Vector2(backLeashForce, rb.linearVelocity.y);
+        }
     }
 
+    // Oyuncunun yatay hareketini yönetir
     void Move()
     {
-        if (!isDashing)
+        if (!isDashing) // Dash sýrasýnda hareket etme
         {
-            float move = Input.GetAxisRaw("Horizontal");
-            rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y);
+            float move = Input.GetAxisRaw("Horizontal"); // Klavyeden sað/sol tuþlarý alýnýr
+            rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y); // Karakter hareket ettirilir
+
+            // Animator’a hýz bilgisini göndererek animasyonlarý tetikle
             animator.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
         }
     }
 
+    // Karakterin yönünü deðiþtirir
     void CheckMoveDirection()
     {
-        if (rb.linearVelocity.x < 0)
+        if (rb.linearVelocity.x < 0) // Sol tarafa bakýyor
         {
             transform.localScale = new Vector3(-1, 1, 1);
             direction = false;
         }
-        else if (rb.linearVelocity.x > 0)
+        else if (rb.linearVelocity.x > 0) // Sað tarafa bakýyor
         {
             transform.localScale = Vector3.one;
             direction = true;
         }
     }
 
+    // Zýplama fonksiyonu
     void Jump()
     {
-        if (Input.GetButtonDown("Jump") && jumpCount<maxJumps)
+        if (Input.GetButtonDown("Jump") && jumpCount < maxJumps) // Eðer zýplama tuþuna basýldýysa ve zýplama hakký varsa
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0); // Önceki düþüþ hýzýný sýfýrla
 
+            // Ýlk zýplama mý yoksa çift zýplama mý olduðunu kontrol et
             float jumpPower = (jumpCount == 0) ? firstJumpForce : doubleJumpForce;
-            rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse); // Zýplama kuvveti uygula
 
-            jumpCount++;
+            jumpCount++; // Zýplama sayýsýný artýr
         }
-        if (rb.linearVelocity.y < 0) 
+
+        // Daha gerçekçi bir zýplama eðrisi için ekstra fiziksel kuvvet uygula
+        if (rb.linearVelocity.y < 0)
         {
             rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
         }
-        else if (rb.linearVelocity.y > 0 && !Input.GetButton("Jump")) 
+        else if (rb.linearVelocity.y > 0 && !Input.GetButton("Jump"))
         {
             rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
         }
+
+        // Animator’a zemin durumu ve zýplama kuvveti bilgisini gönder
         animator.SetBool("isGrounded", isGrounded);
-        animator.SetFloat("firstJumpForce", (rb.linearVelocity.y));
+        animator.SetFloat("firstJumpForce", rb.linearVelocity.y);
     }
+
+    // Dash (Atýlma) fonksiyonu
     void Dash()
     {
-        // Dash fonksiyonu
-        if (Input.GetKeyDown(KeyCode.E) && !isDashing)
+        if (Input.GetKeyDown(KeyCode.E) && !isDashing) // Eðer E tuþuna basýldýysa ve þu an Dash yapýlmýyorsa
         {
-            DashCheck();
+            DashCheck(); // Dash fonksiyonunu çaðýr
         }
 
-        // Dash süresi bitene kadar devam et
-        if (isDashing)
+        if (isDashing) // Eðer þu an Dash yapýlýyorsa
         {
-            dashTime -= Time.deltaTime;
-            if (dashTime <= 0)
+            dashTime -= Time.deltaTime; // Dash süresini azalt
+            if (dashTime <= 0) // Dash süresi dolduðunda
             {
-                isDashing = false;
+                isDashing = false; // Dash’i bitir
             }
         }
     }
 
-   
+    // Yere deðdiðinde zýplama hakkýný sýfýrla
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground")) // Eðer yere temas ettiyse
         {
             isGrounded = true;
-            jumpCount = 0;
+            jumpCount = 0; // Zýplama hakkýný sýfýrla
         }
     }
+
+    // Zeminden ayrýldýðýnda isGrounded deðiþkenini false yap
     void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -135,29 +164,32 @@ public class PlayerMovementController : MonoBehaviour
             isGrounded = false;
         }
     }
+
+    // Karakter geri itilme durumuna geçtiðinde çalýþýr
     public void BackLeash()
     {
-        backLeashCounter = backLeashTime;
-        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0.5f); 
-        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+        backLeashCounter = backLeashTime; // Geri itilme zamanýný baþlat
+        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0.5f); // Karakteri yarý saydam yap
+        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); // Karakterin hýzýný sýfýrla
     }
+
+    // Dash kontrolü ve uygulanmasý
     void DashCheck()
     {
-        isDashing = true;
-        dashTime = dashDuration;
+        isDashing = true; // Dash aktif hale getirildi
+        dashTime = dashDuration; // Dash süresi baþlatýldý
 
         // Dash animasyonunu tetikle
         animator.SetTrigger("dash");
 
-        // Dash yönünü belirle (saða mý sola mý?)
+        // Dash yönünü belirle (karakterin baktýðý yöne göre)
         if (direction)
         {
-            rb.linearVelocity = new Vector2(dashSpeed, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(dashSpeed, rb.linearVelocity.y); // Saða Dash
         }
         else
         {
-            rb.linearVelocity = new Vector2(-dashSpeed, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(-dashSpeed, rb.linearVelocity.y); // Sola Dash
         }
     }
-
 }
