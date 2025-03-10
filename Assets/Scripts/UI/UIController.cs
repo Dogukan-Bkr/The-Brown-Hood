@@ -13,10 +13,10 @@ public class UIController : MonoBehaviour
      instance = this;
     }
 
-    public void SetHealthSlider(float maxValue, float currentValue)
+    public void SetHealthSlider(int currentHP, int maxHP)
     {
-        healthSlider.maxValue = maxValue;
-        healthSlider.value = currentValue;
+        healthSlider.maxValue = maxHP;  // Maksimum saðlýk
+        healthSlider.value = currentHP; // Mevcut saðlýk
     }
 
     public void SetCoinCount()
