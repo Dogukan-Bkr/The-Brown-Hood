@@ -17,7 +17,7 @@ public class CheckPointController : MonoBehaviour
         {
             // Checkpoint'i aktif et
             GameManager.instance.lastCheckPointPos = transform.position;
-
+            Debug.Log("Checkpoint activated!");
             // Canýn yarýsýný kaydet
             int halfHP = Mathf.Max(1, PlayerHealthController.instance.currentHP / 2);
             GameManager.instance.lastCheckPointHP = halfHP;

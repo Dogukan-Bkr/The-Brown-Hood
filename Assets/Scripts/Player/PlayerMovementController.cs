@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerMovementController : MonoBehaviour
@@ -16,6 +17,12 @@ public class PlayerMovementController : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded;
     private bool direction;
+
+    // Dash için yeni deðiþkenler
+    public float dashSpeed = 15f; // Dash hýzýný belirleyin
+    public float dashDuration = 0.3f; // Dash süresi
+    private bool isDashing = false; // Dash olup olmadýðýný kontrol eder
+    private float dashTime = 0f; // Dash süresinin zamanlayýcýsý
     private void Awake()
     {
         instance = this;
@@ -29,14 +36,16 @@ public class PlayerMovementController : MonoBehaviour
     void Update()
     {
        if(backLeashCounter <= 0)
-        {
+       {
             Move();
             Jump();
             CheckMoveDirection();
+            Dash();
             spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
 
-        }
-        else
+        
+       }
+       else
        {
             backLeashCounter -= Time.deltaTime;
             if (direction)
@@ -47,10 +56,12 @@ public class PlayerMovementController : MonoBehaviour
 
     void Move()
     {
-        float move = Input.GetAxisRaw("Horizontal");
-        rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y);
-        
+        if (!isDashing)
+        {
+            float move = Input.GetAxisRaw("Horizontal");
+            rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y);
             animator.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
+        }
     }
 
     void CheckMoveDirection()
@@ -89,6 +100,24 @@ public class PlayerMovementController : MonoBehaviour
         animator.SetBool("isGrounded", isGrounded);
         animator.SetFloat("firstJumpForce", (rb.linearVelocity.y));
     }
+    void Dash()
+    {
+        // Dash fonksiyonu
+        if (Input.GetKeyDown(KeyCode.E) && !isDashing)
+        {
+            DashCheck();
+        }
+
+        // Dash süresi bitene kadar devam et
+        if (isDashing)
+        {
+            dashTime -= Time.deltaTime;
+            if (dashTime <= 0)
+            {
+                isDashing = false;
+            }
+        }
+    }
 
    
     void OnCollisionEnter2D(Collision2D collision)
@@ -112,6 +141,23 @@ public class PlayerMovementController : MonoBehaviour
         spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0.5f); 
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
+    void DashCheck()
+    {
+        isDashing = true;
+        dashTime = dashDuration;
 
+        // Dash animasyonunu tetikle
+        animator.SetTrigger("dash");
+
+        // Dash yönünü belirle (saða mý sola mý?)
+        if (direction)
+        {
+            rb.linearVelocity = new Vector2(dashSpeed, rb.linearVelocity.y);
+        }
+        else
+        {
+            rb.linearVelocity = new Vector2(-dashSpeed, rb.linearVelocity.y);
+        }
+    }
 
 }
