@@ -37,6 +37,7 @@ public class PlayerMovementController : MonoBehaviour
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
     private float dashTime = 0f; // Dash zamanlayýcýsý
     // Sword Attack deðiþkenleri
+    public GameObject swordDamageBoxObj;
     private int comboCounter = 0;
     private float lastClickTime;
     private float comboDelay = 0.3f; // Maksimum 1 saniye içinde kombo devam edebilir
@@ -46,6 +47,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         instance = this;
         rb = GetComponent<Rigidbody2D>();
+        swordDamageBoxObj.SetActive(false);
         isDead = false;
         // Sprite Renderer bileþeni atanmýþ mý kontrol et, eðer yoksa al
         if (normalSpriteRenderer == null)
@@ -264,6 +266,7 @@ public class PlayerMovementController : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && swordPlayer.activeSelf)
         {
             float currentTime = Time.time;
+            swordDamageBoxObj.SetActive(true);
 
             // Eðer zaman farký belirlenen süreden büyükse, komboyu sýfýrla
             if (currentTime - lastClickTime > comboDelay)
