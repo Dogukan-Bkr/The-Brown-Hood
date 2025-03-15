@@ -5,7 +5,7 @@ public class PlayerMovementController : MonoBehaviour
 {
     public static PlayerMovementController instance;
     bool isDead;
-
+    public GameObject normalPlayer, swordPlayer;
     // Hareket ayarlarý
     public float speed = 8f;
     public float firstJumpForce = 9f;
@@ -17,8 +17,8 @@ public class PlayerMovementController : MonoBehaviour
     public float backLeashTime, backLeashForce, backLeashCounter;
 
     // Animator ve Sprite Renderer bileþenleri
-    public Animator animator;
-    public SpriteRenderer spriteRenderer;
+    public Animator normalAnim , swordAnim;
+    public SpriteRenderer normalSpriteRenderer , swordSpirte;
 
     // Zýplama deðiþkenleri
     public int maxJumps = 2;
@@ -43,9 +43,13 @@ public class PlayerMovementController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         isDead = false;
         // Sprite Renderer bileþeni atanmýþ mý kontrol et, eðer yoksa al
-        if (spriteRenderer == null)
+        if (normalSpriteRenderer == null)
         {
-            spriteRenderer = GetComponent<SpriteRenderer>();
+            normalSpriteRenderer = GetComponent<SpriteRenderer>();
+        }
+        else if (swordSpirte == null)
+        {
+            swordSpirte = GetComponent<SpriteRenderer>();
         }
     }
 
@@ -59,8 +63,16 @@ public class PlayerMovementController : MonoBehaviour
             Dash();
 
             // Geri itilme (back leash) sonrasý saydamlýk sýfýrlanýyor
-            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
+            if (normalPlayer.activeSelf)
+            {
+                normalSpriteRenderer.color = new Color(normalSpriteRenderer.color.r, normalSpriteRenderer.color.g, normalSpriteRenderer.color.b, 1f);
+            }
+            else
+            {
+                swordSpirte.color = new Color(normalSpriteRenderer.color.r, normalSpriteRenderer.color.g, normalSpriteRenderer.color.b, 1f);
+            }
         }
+
         else
         {
             // Geri itilme süresi devam ederken karakterin geriye gitmesini saðla
@@ -81,7 +93,14 @@ public class PlayerMovementController : MonoBehaviour
             rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y); // Karakter hareket ettirilir
 
             // Animator’a hýz bilgisini göndererek animasyonlarý tetikle
-            animator.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
+            if (normalPlayer.activeSelf)
+            {
+                normalAnim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
+            }
+            else
+            {
+                swordAnim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
+            }
         }
     }
 
@@ -125,8 +144,17 @@ public class PlayerMovementController : MonoBehaviour
         }
 
         // Animator’a zemin durumu ve zýplama kuvveti bilgisini gönder
-        animator.SetBool("isGrounded", isGrounded);
-        animator.SetFloat("firstJumpForce", rb.linearVelocity.y);
+        if (normalPlayer.activeSelf)
+        {
+            normalAnim.SetBool("isGrounded", isGrounded);
+            normalAnim.SetFloat("firstJumpForce", rb.linearVelocity.y);
+        }
+        else
+        {
+            swordAnim.SetBool("isGrounded", isGrounded);
+            swordAnim.SetFloat("firstJumpForce", rb.linearVelocity.y);
+        }
+        
     }
 
     // Dash (Atýlma) fonksiyonu
@@ -170,7 +198,14 @@ public class PlayerMovementController : MonoBehaviour
     public void BackLeash()
     {
         backLeashCounter = backLeashTime; // Geri itilme zamanýný baþlat
-        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0.5f); // Karakteri yarý saydam yap
+        if (normalPlayer.activeSelf)
+        {
+            normalSpriteRenderer.color = new Color(normalSpriteRenderer.color.r, normalSpriteRenderer.color.g, normalSpriteRenderer.color.b, 0.5f); // Karakteri yarý saydam yap
+        }
+        else
+        {
+            swordSpirte.color = new Color(normalSpriteRenderer.color.r, normalSpriteRenderer.color.g, normalSpriteRenderer.color.b, 0.5f); // Karakteri yarý saydam yap
+        }
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); // Karakterin hýzýný sýfýrla
     }
 
@@ -181,7 +216,15 @@ public class PlayerMovementController : MonoBehaviour
         dashTime = dashDuration; // Dash süresi baþlatýldý
 
         // Dash animasyonunu tetikle
-        animator.SetTrigger("dash");
+        if (normalPlayer.activeSelf)
+        {
+            normalAnim.SetTrigger("dash");
+        }
+        else
+        {
+            swordAnim.SetTrigger("dash");
+        }
+        
 
         // Dash yönünü belirle (karakterin baktýðý yöne göre)
         if (direction)
@@ -197,6 +240,15 @@ public class PlayerMovementController : MonoBehaviour
     public void PlayerDead()
     {
         isDead = true;
-        animator.SetTrigger("isDead");
+        // Oyuncu öldüðünde animasyonlarý tetikle
+        if (normalPlayer.activeSelf)
+        {
+            normalAnim.SetTrigger("isDead");
+        }
+        else
+        {
+            swordAnim.SetTrigger("isDead");
+        }
+        
     }
 }
