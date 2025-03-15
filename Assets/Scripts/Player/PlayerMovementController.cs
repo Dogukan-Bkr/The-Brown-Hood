@@ -69,7 +69,7 @@ public class PlayerMovementController : MonoBehaviour
             }
             else
             {
-                swordSpirte.color = new Color(normalSpriteRenderer.color.r, normalSpriteRenderer.color.g, normalSpriteRenderer.color.b, 1f);
+                swordSpirte.color = new Color(swordSpirte.color.r, swordSpirte.color.g, swordSpirte.color.b, 1f);
             }
         }
 
@@ -204,7 +204,7 @@ public class PlayerMovementController : MonoBehaviour
         }
         else
         {
-            swordSpirte.color = new Color(normalSpriteRenderer.color.r, normalSpriteRenderer.color.g, normalSpriteRenderer.color.b, 0.5f); // Karakteri yarý saydam yap
+            swordSpirte.color = new Color(swordSpirte.color.r, swordSpirte.color.g, swordSpirte.color.b, 0.5f); // Karakteri yarý saydam yap
         }
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); // Karakterin hýzýný sýfýrla
     }
