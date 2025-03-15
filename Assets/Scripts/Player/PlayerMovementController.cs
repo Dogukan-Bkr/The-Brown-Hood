@@ -4,6 +4,7 @@ using UnityEngine;
 public class PlayerMovementController : MonoBehaviour
 {
     public static PlayerMovementController instance;
+    bool isDead;
 
     // Hareket ayarlarý
     public float speed = 8f;
@@ -40,7 +41,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         instance = this;
         rb = GetComponent<Rigidbody2D>();
-
+        isDead = false;
         // Sprite Renderer bileþeni atanmýþ mý kontrol et, eðer yoksa al
         if (spriteRenderer == null)
         {
@@ -191,5 +192,11 @@ public class PlayerMovementController : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(-dashSpeed, rb.linearVelocity.y); // Sola Dash
         }
+    }
+
+    public void PlayerDead()
+    {
+        isDead = true;
+        animator.SetTrigger("isDead");
     }
 }

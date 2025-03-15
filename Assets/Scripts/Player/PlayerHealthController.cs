@@ -41,6 +41,7 @@ public class PlayerHealthController : MonoBehaviour
 
         if (currentHP <= 0)
         {
+            PlayerMovementController.instance.PlayerDead();
             Die();  // Oyuncu öldüyse, yeniden doðmasýný saðla
         }
     }
