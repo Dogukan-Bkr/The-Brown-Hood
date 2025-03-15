@@ -36,6 +36,11 @@ public class PlayerMovementController : MonoBehaviour
     public float dashDuration = 0.3f; // Dash süresi
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
     private float dashTime = 0f; // Dash zamanlayýcýsý
+    // Sword Attack deðiþkenleri
+    private int comboCounter = 0;
+    private float lastClickTime;
+    private float comboDelay = 0.3f; // Maksimum 1 saniye içinde kombo devam edebilir
+
 
     private void Awake()
     {
@@ -61,7 +66,7 @@ public class PlayerMovementController : MonoBehaviour
             Jump();
             CheckMoveDirection();
             Dash();
-
+            SwordAttack();
             // Geri itilme (back leash) sonrasý saydamlýk sýfýrlanýyor
             if (normalPlayer.activeSelf)
             {
@@ -251,4 +256,41 @@ public class PlayerMovementController : MonoBehaviour
         }
         
     }
+
+    public void SwordAttack()
+    {
+        if (isDashing) return;
+
+        if (Input.GetMouseButtonDown(0) && swordPlayer.activeSelf)
+        {
+            float currentTime = Time.time;
+
+            // Eðer zaman farký belirlenen süreden büyükse, komboyu sýfýrla
+            if (currentTime - lastClickTime > comboDelay)
+            {
+                comboCounter = 0;
+            }
+
+            // Kombo sayacýný arttýr
+            comboCounter++;
+
+            // Saldýrý animasyonlarýný sýrayla tetikle
+            if (comboCounter == 1)
+            {
+                swordAnim.SetTrigger("Attack1");
+            }
+            else if (comboCounter == 2)
+            {
+                swordAnim.SetTrigger("Attack2");
+            }
+            else if (comboCounter >= 3)
+            {
+                swordAnim.SetTrigger("Attack3");
+                comboCounter = 0; // Kombo tamamlandýðýnda sýfýrla
+            }
+
+            lastClickTime = currentTime; // Son týklama zamanýný güncelle
+        }
+    }
+
 }
