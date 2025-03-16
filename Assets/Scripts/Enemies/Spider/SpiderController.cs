@@ -1,10 +1,11 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SpiderController : MonoBehaviour
 {
     public Transform[] positions;
+    public Slider healthSlider;
     public float speed;
     public float waitTime;
     public float attackArea;
@@ -14,6 +15,16 @@ public class SpiderController : MonoBehaviour
     Animator anim;
     Transform targetPlayer;
     BoxCollider2D spiderCollider;
+
+    [Header("Health System")]
+    public int health = 10;  // Örümcek caný
+    public int currentHealth;
+    private bool isDead = false;
+
+    [Header("Effects & Loot")]
+    // public GameObject bloodEffect;
+    public GameObject coinPrefab;
+
     private void Awake()
     {
         spiderCollider = GetComponent<BoxCollider2D>();
@@ -23,8 +34,12 @@ public class SpiderController : MonoBehaviour
             pos.parent = null;
         }
     }
+
     private void Start()
     {
+        currentHealth = health;
+        healthSlider.maxValue = health;
+        healthSlider.value = health;
         isAttackable = true;
         transform.position = positions[targetPosIndex].position;
         targetPlayer = GameObject.FindGameObjectWithTag("Player").transform;
@@ -32,11 +47,19 @@ public class SpiderController : MonoBehaviour
 
     private void Update()
     {
-        if (!isAttackable) { return; }
+        if (isDead) return;
+
+        if (!isAttackable)
+        {
+            anim.SetBool("isMove", false);
+            return;
+        }
+
         if (targetPlayer.position.x > positions[0].position.x && targetPlayer.position.x < positions[1].position.x)
         {
-            waitTimeCounter = 0;  // Bekleme süresini sýfýrla
+            waitTimeCounter = 0;
         }
+
         if (waitTimeCounter > 0)
         {
             waitTimeCounter -= Time.deltaTime;
@@ -49,13 +72,14 @@ public class SpiderController : MonoBehaviour
 
     void MoveToNextPosition()
     {
+        if (isDead) return; // Ölü ise hareket etme
+
         if (targetPlayer.position.x > positions[0].position.x && targetPlayer.position.x < positions[1].position.x)
         {
-            
             Vector3 newPosition = new Vector3(targetPlayer.position.x, transform.position.y, transform.position.z);
             transform.position = Vector3.MoveTowards(transform.position, newPosition, speed * Time.deltaTime);
 
-            FollowDirection(targetPlayer); // Oyuncuya yönel
+            FollowDirection(targetPlayer);
             anim.SetBool("isMove", true);
         }
         else
@@ -63,10 +87,9 @@ public class SpiderController : MonoBehaviour
             Transform targetPosition = positions[targetPosIndex];
             transform.position = Vector3.MoveTowards(transform.position, targetPosition.position, speed * Time.deltaTime);
 
-            FollowDirection(targetPosition); // Hedef noktaya yönel
+            FollowDirection(targetPosition);
             anim.SetBool("isMove", true);
 
-            // Hedefe ulaþýldýðýnda yeni hedef belirlenir
             if (Vector3.Distance(transform.position, targetPosition.position) < 0.1f)
             {
                 waitTimeCounter = waitTime;
@@ -75,15 +98,6 @@ public class SpiderController : MonoBehaviour
         }
     }
 
-
-
-    void FlipDirection(Transform target)
-    {
-        if (target.position.x > transform.position.x)
-            transform.localScale = new Vector3(-1, 1, 1); // Sola bak
-        else
-            transform.localScale = Vector3.one; // Saða bak
-    }
     void FollowDirection(Transform target)
     {
         if (target.position.x > transform.position.x)
@@ -103,21 +117,71 @@ public class SpiderController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (isDead) return; // Ölü ise vurulamaz
+
         if (collision.gameObject.CompareTag("Player") && isAttackable)
         {
             isAttackable = false;
             anim.SetTrigger("attack");
-            //collision.GetComponent<PlayerMovementController>().BackLeash();
+            Debug.Log("Player hit by spider");
             PlayerMovementController.instance.BackLeash();
             PlayerHealthController.instance.TakeDamage(2);
             StartCoroutine(AttackCooldown());
+        }
+
+        // SwordDamageArea tag'ini kaldýrdýk, hasar kontrolünü Layer ve Tag kombinasyonlarýna göre yapýyoruz
+        if (collision.gameObject.CompareTag("Object"))
+        {
+            int damage = SwordController.instance.DetermineDamage(collision); // SwordController'dan hasar deðerini al
+            TakeDamage(damage);
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (isDead) return;
+
+        health -= damage;
+        healthSlider.value = health;
+        Debug.Log("Spider health: " + health);
+        //anim.SetTrigger("hit");  // Hasar animasyonu
+        // Instantiate(bloodEffect, transform.position, Quaternion.identity);
+
+        if (health <= 0)
+        {
+            healthSlider.gameObject.SetActive(false);
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        isDead = true;
+        anim.SetTrigger("die");
+        if (spiderCollider != null)
+        {
+            spiderCollider.enabled = false;
+        }
+        Destroy(gameObject, 0.5f);
+
+        // Coin düþürme
+        int randomCount = Random.Range(0, 4);
+        Vector2 coinSpawnPos = transform.position;
+
+        for (int i = 0; i < randomCount; i++)
+        {
+            GameObject coin = Instantiate(coinPrefab, coinSpawnPos, Quaternion.identity);
+            coinSpawnPos.x += 0.5f;
+            coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
         }
     }
 
     IEnumerator AttackCooldown()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
         isAttackable = true;
     }
-
 }
+
+
+

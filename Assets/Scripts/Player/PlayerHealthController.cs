@@ -36,6 +36,7 @@ public class PlayerHealthController : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        Debug.Log("Player took damage: " + damage);
         currentHP -= damage;
         UIController.instance.SetHealthSlider(currentHP, maxHP);  // UI'yi güncelle
 
