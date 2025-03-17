@@ -10,6 +10,7 @@ TagManager:
   - Objets
   - Object
   - Skeleton
+  - Bat
   layers:
   - Default
   - TransparentFX
