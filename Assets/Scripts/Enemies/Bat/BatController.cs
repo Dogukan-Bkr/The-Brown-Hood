@@ -16,7 +16,7 @@ public class BatController : MonoBehaviour
     public int health = 10;  // Yarasa caný
 
     [Header("Effects & Loot")]
-    public GameObject coinPrefab;
+    public GameObject healthPotionPrefab;
 
     private void Awake()
     {
@@ -142,15 +142,15 @@ public class BatController : MonoBehaviour
         }
         Destroy(gameObject, 0.5f);
 
-        // Coin düþürme
+        // Nesne düþürme
         int randomCount = Random.Range(0, 4);
-        Vector2 coinSpawnPos = transform.position;
-
+        Vector2 healthPointSpawnPos = transform.position;
+        Debug.Log("Health potion count in Bat: " + randomCount);
         for (int i = 0; i < randomCount; i++)
         {
-            GameObject coin = Instantiate(coinPrefab, coinSpawnPos, Quaternion.identity);
-            coinSpawnPos.x += 0.5f;
-            coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
+            GameObject healthPotion = Instantiate(healthPotionPrefab, healthPointSpawnPos, Quaternion.identity);
+            healthPointSpawnPos.x += 0.5f;
+            healthPotion.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
         }
     }
 

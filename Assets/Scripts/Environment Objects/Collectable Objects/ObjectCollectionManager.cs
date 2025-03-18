@@ -3,7 +3,7 @@ using UnityEngine;
 public class ObjectController : MonoBehaviour
 {
     // Toplanabilir nesnelerin türlerini belirten enum
-    public enum CollectableType { Coin, Arrow, Spear }
+    public enum CollectableType { Coin, Arrow, Spear, HealthPotion }
 
     // Bu nesnenin hangi türde olduðunu belirler
     public CollectableType objectType;
@@ -35,6 +35,10 @@ public class ObjectController : MonoBehaviour
                 case CollectableType.Spear:
                     GameManager.instance.spearCount++; // Mýzrak sayýsýný artýr
                     UIController.instance.SetSpearCount(); // UI'yi güncelle
+                    break;
+                case CollectableType.HealthPotion:
+                    PlayerHealthController.instance.currentHP += 20; // Oyuncunun canýný artýr
+                    PlayerHealthController.instance.GetHeal(); // UI'yi güncelle
                     break;
             }
 

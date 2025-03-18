@@ -64,4 +64,13 @@ public class PlayerHealthController : MonoBehaviour
 
         UIController.instance.SetHealthSlider(currentHP, maxHP);  // UI'yi güncelle
     }
+    public void GetHeal()
+    {
+        if(currentHP > maxHP)
+        {
+            currentHP = maxHP;
+        }
+        UIController.instance.SetHealthSlider(currentHP, maxHP); // UI'yi güncelle
+        Debug.Log("Player HP (+20)");  
+    }
 }

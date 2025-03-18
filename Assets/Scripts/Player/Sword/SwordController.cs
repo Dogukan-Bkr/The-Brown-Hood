@@ -7,7 +7,7 @@ public class SwordController : MonoBehaviour
     GameObject attackPoint;
     public float radius = 0.5f;
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
-    private float dashTime = 0f; // Dash zamanlayýcýsý
+    //private float dashTime = 0f; // Dash zamanlayýcýsý
     // Sword Attack deðiþkenleri
     private int comboCounter = 0;
     private float lastClickTime;

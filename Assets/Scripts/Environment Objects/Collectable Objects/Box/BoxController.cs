@@ -8,12 +8,11 @@ public class BoxController : MonoBehaviour
     private bool isDestroyed = false;
     private Animator anim;
     private Vector2 coinSpawnPos = new Vector2(0, 0);
-    private int randomCount;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
-        randomCount = Random.Range(0, 4);
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -53,7 +52,8 @@ public class BoxController : MonoBehaviour
         anim.SetTrigger("break");
         GetComponent<BoxCollider2D>().enabled = false;
         Destroy(gameObject, 0.5f);
-
+        int randomCount = Random.Range(0, 4);
+        Debug.Log("Coin count in Box: " + randomCount);
         // Coin düþürme
         for (int i = 0; i < randomCount; i++)
         {

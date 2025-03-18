@@ -167,7 +167,7 @@ public class SpiderController : MonoBehaviour
         // Coin düþürme
         int randomCount = Random.Range(0, 4);
         Vector2 coinSpawnPos = transform.position;
-
+        Debug.Log("Coin count in Spider: " + randomCount);
         for (int i = 0; i < randomCount; i++)
         {
             GameObject coin = Instantiate(coinPrefab, coinSpawnPos, Quaternion.identity);

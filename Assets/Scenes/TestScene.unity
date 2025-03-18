@@ -316,7 +316,7 @@ MonoBehaviour:
   speed: 5
   attackRadius: 8
   health: 10
-  coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
+  healthPotionPrefab: {fileID: 2815075527031303594, guid: a6a9dd85000607748b01ee46dda8b151, type: 3}
 --- !u!95 &182988301
 Animator:
   serializedVersion: 7
@@ -3995,7 +3995,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackPoint: {fileID: 1101071070}
-  radius: 0.3
+  radius: 0.4
   swordAnim: {fileID: 1166951277}
   swordSpirte: {fileID: 1166951273}
   swordPlayer: {fileID: 1166951272}
@@ -6200,7 +6200,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7519739848184083372, guid: a07b57ac092f1ac40b2f71ca74e33cee, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.02
+      value: -0.39
       objectReference: {fileID: 0}
     - target: {fileID: 7519739848184083372, guid: a07b57ac092f1ac40b2f71ca74e33cee, type: 3}
       propertyPath: m_LocalPosition.z

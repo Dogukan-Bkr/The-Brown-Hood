@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3572303154695491065}
   - component: {fileID: 8158361074091000056}
   - component: {fileID: 2404898486258120121}
-  - component: {fileID: 2315927483742435920}
+  - component: {fileID: 4137529518156945841}
   m_Layer: 0
   m_Name: BoxDamageEffect
   m_TagString: Untagged
@@ -111,7 +111,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2315927483742435920
+--- !u!114 &4137529518156945841
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -120,6 +120,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 6575238250135418477}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd9a09695354a054983fe4993340a8a9, type: 3}
+  m_Script: {fileID: 11500000, guid: a0b5b0ee1d2d3784eb06db4e4f928e3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
