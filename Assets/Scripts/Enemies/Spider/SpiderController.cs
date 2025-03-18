@@ -24,7 +24,8 @@ public class SpiderController : MonoBehaviour
     [Header("Effects & Loot")]
     // public GameObject bloodEffect;
     public GameObject coinPrefab;
-
+    public GameObject hitEffect;
+    public GameObject dieEffect;
     private void Awake()
     {
         spiderCollider = GetComponent<BoxCollider2D>();
@@ -144,6 +145,7 @@ public class SpiderController : MonoBehaviour
         health -= damage;
         healthSlider.value = health;
         Debug.Log("Spider health: " + health);
+        Instantiate(hitEffect, transform.position, Quaternion.identity);
         //anim.SetTrigger("hit");  // Hasar animasyonu
         // Instantiate(bloodEffect, transform.position, Quaternion.identity);
 
@@ -158,6 +160,7 @@ public class SpiderController : MonoBehaviour
     {
         isDead = true;
         anim.SetTrigger("die");
+        Instantiate(dieEffect, transform.position, Quaternion.identity);
         if (spiderCollider != null)
         {
             spiderCollider.enabled = false;

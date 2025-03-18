@@ -17,7 +17,8 @@ public class BatController : MonoBehaviour
 
     [Header("Effects & Loot")]
     public GameObject healthPotionPrefab;
-
+    public GameObject hitEffect;
+    public GameObject dieEffect;
     private void Awake()
     {
         anim = GetComponent<Animator>();
@@ -124,6 +125,7 @@ public class BatController : MonoBehaviour
         if (isDead) return;
 
         health -= damage;
+        Instantiate(hitEffect, transform.position, Quaternion.identity);
         Debug.Log("Bat health: " + health);
 
         if (health <= 0)
@@ -136,6 +138,7 @@ public class BatController : MonoBehaviour
     {
         isDead = true;
         anim.SetTrigger("isDie");
+        Instantiate(dieEffect, transform.position, Quaternion.identity);
         if (batCollider != null)
         {
             batCollider.enabled = false;

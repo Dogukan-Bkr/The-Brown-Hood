@@ -666,6 +666,8 @@ MonoBehaviour:
   health: 10
   currentHealth: 0
   coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
+  hitEffect: {fileID: 6823200998282874702, guid: 8f8fe12323625f5499b2853dd2ad3e58, type: 3}
+  dieEffect: {fileID: 4553287630450876385, guid: 15483e51212e3d74886ea57291f4639a, type: 3}
 --- !u!50 &6811829748267904178
 Rigidbody2D:
   serializedVersion: 5
