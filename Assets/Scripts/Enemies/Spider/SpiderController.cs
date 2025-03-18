@@ -125,7 +125,6 @@ public class SpiderController : MonoBehaviour
             isAttackable = false;
             anim.SetTrigger("attack");
             Debug.Log("Player hit by spider");
-            PlayerMovementController.instance.BackLeash();
             PlayerHealthController.instance.TakeDamage(2);
             StartCoroutine(AttackCooldown());
         }
@@ -181,7 +180,7 @@ public class SpiderController : MonoBehaviour
 
     IEnumerator AttackCooldown()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2);
         isAttackable = true;
     }
 }

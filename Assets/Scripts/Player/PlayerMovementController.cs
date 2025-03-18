@@ -5,7 +5,8 @@ public class PlayerMovementController : MonoBehaviour
 {
     public static PlayerMovementController instance;
     bool isDead;
-    public GameObject normalPlayer, swordPlayer;
+    public GameObject normalPlayer, swordPlayer, spearPlayer;
+    public WeaponType currentWeapon = WeaponType.None;
     // Hareket ayarlarý
     public float speed = 8f;
     public float firstJumpForce = 9f;
@@ -17,8 +18,8 @@ public class PlayerMovementController : MonoBehaviour
     public float backLeashTime, backLeashForce, backLeashCounter;
 
     // Animator ve Sprite Renderer bileþenleri
-    public Animator normalAnim , swordAnim;
-    public SpriteRenderer normalSpriteRenderer , swordSpirte;
+    public Animator normalAnim, swordAnim, spearAnim;
+    public SpriteRenderer normalSpriteRenderer, swordSprite, spearSprite;
 
     // Zýplama deðiþkenleri
     public int maxJumps = 2;
@@ -36,47 +37,53 @@ public class PlayerMovementController : MonoBehaviour
     public float dashDuration = 0.3f; // Dash süresi
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
     private float dashTime = 0f; // Dash zamanlayýcýsý
-    
-
-
+    int swordCounter = 0;
     private void Awake()
     {
         instance = this;
         rb = GetComponent<Rigidbody2D>();
         isDead = false;
         // Sprite Renderer bileþeni atanmýþ mý kontrol et, eðer yoksa al
-        if (normalSpriteRenderer == null)
+        if (normalSpriteRenderer == null && normalPlayer != null)
         {
-            normalSpriteRenderer = GetComponent<SpriteRenderer>();
+            normalSpriteRenderer = normalPlayer.GetComponent<SpriteRenderer>();
         }
-        else if (swordSpirte == null)
+        if (swordSprite == null && swordPlayer != null)
         {
-            swordSpirte = GetComponent<SpriteRenderer>();
+            swordSprite = swordPlayer.GetComponent<SpriteRenderer>();
+        }
+        if (spearSprite == null && spearPlayer != null)
+        {
+            spearSprite = spearPlayer.GetComponent<SpriteRenderer>();
         }
     }
 
     void Update()
     {
-        
         if (backLeashCounter <= 0) // Geri itilme süresi dolduysa normal hareketi çalýþtýr
         {
             Move();
             Jump();
             CheckMoveDirection();
             Dash();
-            if(SwordController.instance != null)
-                SwordController.instance.SwordAttack();
+            HandleWeaponAttack();
+            HandleWeaponSwitch();
             // Geri itilme (back leash) sonrasý saydamlýk sýfýrlanýyor
             if (normalPlayer.activeSelf)
             {
                 normalSpriteRenderer.color = new Color(normalSpriteRenderer.color.r, normalSpriteRenderer.color.g, normalSpriteRenderer.color.b, 1f);
             }
-            else
+            else if (swordPlayer.activeSelf)
             {
-                swordSpirte.color = new Color(swordSpirte.color.r, swordSpirte.color.g, swordSpirte.color.b, 1f);
+                swordSprite.color = new Color(swordSprite.color.r, swordSprite.color.g, swordSprite.color.b, 1f);
+                swordCounter++;
+
+            }
+            else if (spearPlayer.activeSelf)
+            {
+                spearSprite.color = new Color(spearSprite.color.r, spearSprite.color.g, spearSprite.color.b, 1f);
             }
         }
-
         else
         {
             // Geri itilme süresi devam ederken karakterin geriye gitmesini saðla
@@ -87,6 +94,43 @@ public class PlayerMovementController : MonoBehaviour
                 rb.linearVelocity = new Vector2(backLeashForce, rb.linearVelocity.y);
         }
     }
+
+    void HandleWeaponAttack()
+    {
+        if (SwordController.instance != null)
+        {
+            SwordController.instance.SwordAttack();
+        }
+        if (SpearController.instance != null)
+        {
+            SpearController.instance.SpearAttack();
+        }
+    }
+
+    void HandleWeaponSwitch()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SetActiveWeapon(WeaponType.None);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && swordCounter>1)
+        {
+            SetActiveWeapon(WeaponType.Sword);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3) && GameManager.instance.spearCount > 0)
+        {
+            SetActiveWeapon(WeaponType.Spear);
+        }
+    }
+
+    void SetActiveWeapon(WeaponType weaponType)
+    {
+        currentWeapon = weaponType;
+        normalPlayer.SetActive(weaponType == WeaponType.None);
+        swordPlayer.SetActive(weaponType == WeaponType.Sword);
+        spearPlayer.SetActive(weaponType == WeaponType.Spear);
+    }
+
 
     // Oyuncunun yatay hareketini yönetir
     void Move()
@@ -101,9 +145,13 @@ public class PlayerMovementController : MonoBehaviour
             {
                 normalAnim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
             }
-            else
+            else if (swordPlayer.activeSelf)
             {
                 swordAnim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
+            }
+            else if (spearPlayer.activeSelf)
+            {
+                spearAnim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
             }
         }
     }
@@ -153,12 +201,16 @@ public class PlayerMovementController : MonoBehaviour
             normalAnim.SetBool("isGrounded", isGrounded);
             normalAnim.SetFloat("firstJumpForce", rb.linearVelocity.y);
         }
-        else
+        else if (swordPlayer.activeSelf)
         {
             swordAnim.SetBool("isGrounded", isGrounded);
             swordAnim.SetFloat("firstJumpForce", rb.linearVelocity.y);
         }
-        
+        else if (spearPlayer.activeSelf)
+        {
+            spearAnim.SetBool("isGrounded", isGrounded);
+            spearAnim.SetFloat("firstJumpForce", rb.linearVelocity.y);
+        }
     }
 
     // Dash (Atýlma) fonksiyonu
@@ -206,9 +258,13 @@ public class PlayerMovementController : MonoBehaviour
         {
             normalSpriteRenderer.color = new Color(normalSpriteRenderer.color.r, normalSpriteRenderer.color.g, normalSpriteRenderer.color.b, 0.5f); // Karakteri yarý saydam yap
         }
-        else
+        else if (swordPlayer.activeSelf)
         {
-            swordSpirte.color = new Color(swordSpirte.color.r, swordSpirte.color.g, swordSpirte.color.b, 0.5f); // Karakteri yarý saydam yap
+            swordSprite.color = new Color(swordSprite.color.r, swordSprite.color.g, swordSprite.color.b, 0.5f); // Karakteri yarý saydam yap
+        }
+        else if (spearPlayer.activeSelf)
+        {
+            spearSprite.color = new Color(spearSprite.color.r, spearSprite.color.g, spearSprite.color.b, 0.5f); // Karakteri yarý saydam yap
         }
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); // Karakterin hýzýný sýfýrla
     }
@@ -224,11 +280,14 @@ public class PlayerMovementController : MonoBehaviour
         {
             normalAnim.SetTrigger("dash");
         }
-        else
+        else if (swordPlayer.activeSelf)
         {
             swordAnim.SetTrigger("dash");
         }
-        
+        else if (spearPlayer.activeSelf)
+        {
+            spearAnim.SetTrigger("dash");
+        }
 
         // Dash yönünü belirle (karakterin baktýðý yöne göre)
         if (direction)
@@ -249,11 +308,20 @@ public class PlayerMovementController : MonoBehaviour
         {
             normalAnim.SetTrigger("isDead");
         }
-        else
+        else if (swordPlayer.activeSelf)
         {
             swordAnim.SetTrigger("isDead");
         }
-        
+        else if (spearPlayer.activeSelf)
+        {
+            spearAnim.SetTrigger("isDead");
+        }
     }
+}
 
+public enum WeaponType
+{
+    None,
+    Sword,
+    Spear
 }

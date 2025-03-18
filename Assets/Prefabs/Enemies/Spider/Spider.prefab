@@ -483,9 +483,9 @@ GameObject:
   - component: {fileID: 3038351252071318266}
   - component: {fileID: 6067281853328961445}
   - component: {fileID: 6532804477695521394}
-  - component: {fileID: 2803210438754707444}
   - component: {fileID: 6009694953779350852}
   - component: {fileID: 6811829748267904178}
+  - component: {fileID: 2922601604973006407}
   m_Layer: 6
   m_Name: Spider
   m_TagString: EnemySpider
@@ -587,8 +587,58 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!68 &2803210438754707444
-EdgeCollider2D:
+--- !u!114 &6009694953779350852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7679351507310326121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3928bd37b6aa5fe45a87f577881ff95c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  positions:
+  - {fileID: 3618261798439413969}
+  - {fileID: 740968594315218170}
+  healthSlider: {fileID: 9181078783026551690}
+  speed: 5
+  waitTime: 2
+  attackArea: 3
+  health: 10
+  coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
+  hitEffect: {fileID: 6823200998282874702, guid: 8f8fe12323625f5499b2853dd2ad3e58, type: 3}
+  dieEffect: {fileID: 4553287630450876385, guid: 15483e51212e3d74886ea57291f4639a, type: 3}
+--- !u!50 &6811829748267904178
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7679351507310326121}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
+--- !u!61 &2922601604973006407
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -621,77 +671,15 @@ EdgeCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.0042495728, y: -0.10412261}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.84, y: 1.26}
+    newSize: {x: 1.84, y: 1.26}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.3470116, y: 0.91575795}
   m_EdgeRadius: 0
-  m_Points:
-  - {x: -0.3816859, y: 0.32817018}
-  - {x: -0.113491595, y: 0.3309493}
-  - {x: 0.11674577, y: 0.22911394}
-  - {x: 0.18833327, y: 0.16802657}
-  - {x: 0.5241435, y: 0.08758569}
-  - {x: 0.58343416, y: -0.15462184}
-  - {x: 0.68346685, y: -0.25079954}
-  - {x: 0.63019997, y: -0.39643085}
-  - {x: 0.51372486, y: -0.4778844}
-  - {x: 0.34558594, y: -0.425259}
-  - {x: 0.36249572, y: -0.5488814}
-  - {x: -0.73330534, y: -0.55510557}
-  - {x: -0.60972005, y: -0.23580539}
-  - {x: -0.6491397, y: 0.006271839}
-  - {x: -0.56958276, y: 0.1794697}
-  - {x: -0.37252957, y: 0.3396846}
-  m_AdjacentStartPoint: {x: 0, y: 0}
-  m_AdjacentEndPoint: {x: 0, y: 0}
-  m_UseAdjacentStartPoint: 0
-  m_UseAdjacentEndPoint: 0
---- !u!114 &6009694953779350852
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7679351507310326121}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3928bd37b6aa5fe45a87f577881ff95c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  positions:
-  - {fileID: 3618261798439413969}
-  - {fileID: 740968594315218170}
-  healthSlider: {fileID: 9181078783026551690}
-  speed: 5
-  waitTime: 2
-  attackArea: 3
-  health: 10
-  currentHealth: 0
-  coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
-  hitEffect: {fileID: 6823200998282874702, guid: 8f8fe12323625f5499b2853dd2ad3e58, type: 3}
-  dieEffect: {fileID: 4553287630450876385, guid: 15483e51212e3d74886ea57291f4639a, type: 3}
---- !u!50 &6811829748267904178
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7679351507310326121}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 4

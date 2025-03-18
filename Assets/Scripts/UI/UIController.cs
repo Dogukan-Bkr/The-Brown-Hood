@@ -43,4 +43,20 @@ public class UIController : MonoBehaviour
     {
         spearTxt.text = GameManager.instance.spearCount.ToString();
     }
+
+    // Mızrak sayısını döndürür
+    public int GetSpearCount()
+    {
+        return GameManager.instance.spearCount;
+    }
+
+    // Mızrak sayısını azaltır ve UI’ı günceller
+    public void DecreaseSpearCount()
+    {
+        if (GameManager.instance.spearCount > 0)
+        {
+            GameManager.instance.spearCount--;
+            SetSpearCount();
+        }
+    }
 }
