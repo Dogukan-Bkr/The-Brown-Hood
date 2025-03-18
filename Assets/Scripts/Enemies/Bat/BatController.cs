@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BatController : MonoBehaviour
 {
@@ -11,10 +12,10 @@ public class BatController : MonoBehaviour
     private Transform targetPlayer;
     private Animator anim;
     private CircleCollider2D batCollider;
-
+    public Slider healthSlider;
     [Header("Health System")]
     public int health = 10;  // Yarasa caný
-
+    private int currentHealth;
     [Header("Effects & Loot")]
     public GameObject healthPotionPrefab;
     public GameObject hitEffect;
@@ -28,6 +29,9 @@ public class BatController : MonoBehaviour
 
     private void Start()
     {
+        currentHealth = health;
+        healthSlider.maxValue = health;
+        healthSlider.value = health;
         isAttackable = true;
         targetPlayer = GameObject.FindGameObjectWithTag("Player").transform;
     }
@@ -125,11 +129,13 @@ public class BatController : MonoBehaviour
         if (isDead) return;
 
         health -= damage;
+        healthSlider.value = health;
         Instantiate(hitEffect, transform.position, Quaternion.identity);
         Debug.Log("Bat health: " + health);
 
         if (health <= 0)
         {
+            healthSlider.gameObject.SetActive(false);
             Die();
         }
     }

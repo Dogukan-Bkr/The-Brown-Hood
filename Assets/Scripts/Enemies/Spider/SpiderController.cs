@@ -18,7 +18,7 @@ public class SpiderController : MonoBehaviour
 
     [Header("Health System")]
     public int health = 10;  // Örümcek caný
-    public int currentHealth;
+    private int currentHealth;
     private bool isDead = false;
 
     [Header("Effects & Loot")]
