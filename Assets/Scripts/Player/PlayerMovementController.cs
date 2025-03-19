@@ -109,17 +109,20 @@ public class PlayerMovementController : MonoBehaviour
 
     void HandleWeaponSwitch()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if(GameManager.instance != null)
         {
-            SetActiveWeapon(WeaponType.None);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2) && swordCounter>1)
-        {
-            SetActiveWeapon(WeaponType.Sword);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3) && GameManager.instance.spearCount > 0)
-        {
-            SetActiveWeapon(WeaponType.Spear);
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                SetActiveWeapon(WeaponType.None);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2) && swordCounter > 1)
+            {
+                SetActiveWeapon(WeaponType.Sword);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3) && GameManager.instance.spearCount > 0)
+            {
+                SetActiveWeapon(WeaponType.Spear);
+            }
         }
     }
 
@@ -315,6 +318,24 @@ public class PlayerMovementController : MonoBehaviour
         else if (spearPlayer.activeSelf)
         {
             spearAnim.SetTrigger("isDead");
+        }
+    }
+    public void StopPlayer()
+    {
+        if(normalPlayer.activeSelf)
+        {
+            rb.linearVelocity = Vector2.zero;
+            normalAnim.SetFloat("speed", 0);
+        }
+        else if (swordPlayer.activeSelf)
+        {
+            rb.linearVelocity = Vector2.zero;
+            swordAnim.SetFloat("speed", 0);
+        }
+        else if (spearPlayer.activeSelf)
+        {
+            rb.linearVelocity = Vector2.zero;
+            spearAnim.SetFloat("speed", 0);
         }
     }
 }
