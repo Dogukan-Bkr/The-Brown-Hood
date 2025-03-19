@@ -21,6 +21,7 @@ public class SpearController : MonoBehaviour
     public GameObject spearPlayer;
     public int defaultDamage = 1; // Varsayýlan hasar deðeri
     private bool isAiming = false; // Niþan alma durumu
+    private bool canThrow = true; // Mýzrak fýrlatýlabilir mi?
 
     private void Awake()
     {
@@ -48,10 +49,11 @@ public class SpearController : MonoBehaviour
                 spearAnim.SetBool("isAiming", false); // Aiming animasyonunu bitir
             }
 
-            if (isAiming && Input.GetMouseButtonDown(0)) // Sað týk basýlýyken sol týkla mýzraðý fýrlatma
+            if (isAiming && Input.GetMouseButtonDown(0) && canThrow) // Sað týk basýlýyken sol týkla mýzraðý fýrlatma
             {
                 ThrowSpear();
                 UIController.instance.DecreaseSpearCount();
+                StartCoroutine(SpearThrowCooldown());
             }
         }
 
@@ -130,6 +132,12 @@ public class SpearController : MonoBehaviour
         StartCoroutine(EnablePlayerMovementAfterDelay(playerRb, 0.1f)); // 0.1 saniye sonra karakter hareketini tekrar aç
     }
 
+    private IEnumerator SpearThrowCooldown()
+    {
+        canThrow = false;
+        yield return new WaitForSeconds(2f); // 2 saniye bekle
+        canThrow = true;
+    }
 
     public int DetermineDamage(Collider2D enemy)
     {
@@ -158,6 +166,7 @@ public class SpearController : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(attackPoint.transform.position, boxSize);
     }
+
     private IEnumerator EnablePlayerMovementAfterDelay(Rigidbody2D playerRb, float delay)
     {
         // Bir süre sonra hareketi tekrar etkinleþtir
