@@ -14353,7 +14353,7 @@ GameObject:
   - component: {fileID: 230249582110733671}
   - component: {fileID: 8157573984020081478}
   m_Layer: 0
-  m_Name: CFXR2 Broken Heart
+  m_Name: Dead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

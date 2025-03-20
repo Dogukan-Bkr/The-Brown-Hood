@@ -37,6 +37,7 @@ public class SwordController : MonoBehaviour
                 hitEnemies[i].GetComponent<SpiderController>()?.TakeDamage(damage);
                 hitEnemies[i].GetComponent<BatController>()?.TakeDamage(damage);
                 hitEnemies[i].GetComponent<BeeController>()?.TakeDamage(damage);
+                hitEnemies[i].GetComponent<BoarController>()?.TakeDamage(damage);
                 hitEnemies[i].GetComponent<BoxController>()?.TakeDamage(damage);
             }
 
@@ -81,6 +82,9 @@ public class SwordController : MonoBehaviour
         {
             return 5;
         }else if (enemy.CompareTag("Bee"))
+        {
+            return 5;
+        }else if (enemy.CompareTag("Boar"))
         {
             return 5;
         }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8320489655505896745}
   - component: {fileID: 8336075348812132476}
   - component: {fileID: 3681062837824707811}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: HealthBarCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 5834320948474392800}
   - component: {fileID: 7458495883719180005}
   - component: {fileID: 2778329691800260771}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,7 +191,7 @@ GameObject:
   - component: {fileID: 7161216806405072769}
   - component: {fileID: 1029417325235383257}
   - component: {fileID: 90339031198365080}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: bee
   m_TagString: Bee
   m_Icon: {fileID: 0}
@@ -394,7 +394,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9095167285955122325}
   - component: {fileID: 7744760446759284011}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,7 +482,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2673183519836735085}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -520,7 +520,7 @@ GameObject:
   - component: {fileID: 5729632505453428422}
   - component: {fileID: 9000477278767071760}
   - component: {fileID: 6034907866176924426}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}

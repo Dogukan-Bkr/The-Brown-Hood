@@ -15,13 +15,15 @@ public class SpearProjectile : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (hasHit) return; // Zaten çarpmýþsa tekrar çalýþtýrma
-        if (collision.CompareTag("EnemySpider") || collision.CompareTag("Skeleton") || collision.CompareTag("Bat") || collision.CompareTag("Object"))
+        if (collision.CompareTag("EnemySpider") || collision.CompareTag("Skeleton") || collision.CompareTag("Bat") || collision.CompareTag("Object") || collision.CompareTag("Boar")|| collision.CompareTag("Bee"))
         {
             hasHit = true;
 
             // Hasar ver
             collision.GetComponent<SpiderController>()?.TakeDamage(damage);
             collision.GetComponent<BatController>()?.TakeDamage(damage);
+            collision.GetComponent<BeeController>()?.TakeDamage(damage);
+            collision.GetComponent<BoarController>()?.TakeDamage(damage);
             collision.GetComponent<BoxController>()?.TakeDamage(damage);
 
             // Mýzraðý sapla ve yok et

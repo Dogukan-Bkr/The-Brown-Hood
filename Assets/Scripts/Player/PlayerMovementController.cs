@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMovementController : MonoBehaviour
@@ -38,6 +39,10 @@ public class PlayerMovementController : MonoBehaviour
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
     private float dashTime = 0f; // Dash zamanlayýcýsý
     int swordCounter = 0;
+
+    // Ölüm efekti
+    public GameObject deathEffect;
+
     private void Awake()
     {
         instance = this;
@@ -109,7 +114,7 @@ public class PlayerMovementController : MonoBehaviour
 
     void HandleWeaponSwitch()
     {
-        if(GameManager.instance != null)
+        if (GameManager.instance != null)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
@@ -319,10 +324,20 @@ public class PlayerMovementController : MonoBehaviour
         {
             spearAnim.SetTrigger("isDead");
         }
+
+        // Ölüm efektini 1 saniye sonra oluþtur
+        StartCoroutine(CreateDeathEffect());
     }
+
+    IEnumerator CreateDeathEffect()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Instantiate(deathEffect, transform.position, Quaternion.identity);
+    }
+
     public void StopPlayer()
     {
-        if(normalPlayer.activeSelf)
+        if (normalPlayer.activeSelf)
         {
             rb.linearVelocity = Vector2.zero;
             normalAnim.SetFloat("speed", 0);
