@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BatController : MonoBehaviour
+public class BeeController : MonoBehaviour
 {
     public float speed;
     public float attackRadius = 8f;
@@ -11,20 +11,21 @@ public class BatController : MonoBehaviour
     private Vector3 initialPosition;
     private Transform targetPlayer;
     private Animator anim;
-    private CircleCollider2D batCollider;
+    private CircleCollider2D beeCollider;
     public Slider healthSlider;
     [Header("Health System")]
-    public int health = 10;  // Yarasa caný
+    public int health = 10;  // Arý caný
     private int currentHealth;
     [Header("Effects & Loot")]
     public GameObject healthPotionPrefab;
     public GameObject coinPrefab;
     public GameObject hitEffect;
     public GameObject dieEffect;
+
     private void Awake()
     {
         anim = GetComponent<Animator>();
-        batCollider = GetComponent<CircleCollider2D>();
+        beeCollider = GetComponent<CircleCollider2D>();
         initialPosition = transform.position;
     }
 
@@ -35,6 +36,7 @@ public class BatController : MonoBehaviour
         healthSlider.value = health;
         isAttackable = true;
         targetPlayer = GameObject.FindGameObjectWithTag("Player").transform;
+        StartCoroutine(ChangeDirectionRoutine()); // Coroutine'i baþlat
     }
 
     private void Update()
@@ -146,9 +148,9 @@ public class BatController : MonoBehaviour
         isDead = true;
         anim.SetTrigger("isDie");
         Instantiate(dieEffect, transform.position, Quaternion.identity);
-        if (batCollider != null)
+        if (beeCollider != null)
         {
-            batCollider.enabled = false;
+            beeCollider.enabled = false;
         }
         Destroy(gameObject, 0.5f);
 
@@ -156,8 +158,8 @@ public class BatController : MonoBehaviour
         int randomCountHP = Random.Range(0, 1);
         int randomCountCoin = Random.Range(0, 4);
         Vector2 healthPointSpawnPos = transform.position;
-        Debug.Log("Health potion count in Bat: " + randomCountHP);
-        Debug.Log("Coin count in Bat: " + randomCountCoin);
+        Debug.Log("Health potion count in Bee: " + randomCountHP);
+        Debug.Log("Coin count in Bee: " + randomCountCoin);
         for (int i = 0; i < randomCountHP; i++)
         {
             GameObject healthPotion = Instantiate(healthPotionPrefab, healthPointSpawnPos, Quaternion.identity);
@@ -178,9 +180,19 @@ public class BatController : MonoBehaviour
         isAttackable = true;
     }
 
+    private IEnumerator ChangeDirectionRoutine()
+    {
+        while (!isDead)
+        {
+            yield return new WaitForSeconds(2f);
+            transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRadius);
     }
 }
+

@@ -11,7 +11,6 @@ public class SpearController : MonoBehaviour
     public Transform throwPoint; // Mýzraðýn fýrlatýlacaðý nokta
     public float throwForce = 10f; // Fýrlatma kuvveti
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
-    private float dashTime = 0f; // Dash zamanlayýcýsý
     // Spear Attack deðiþkenleri
     private int comboCounter = 0;
     private float lastClickTime;
