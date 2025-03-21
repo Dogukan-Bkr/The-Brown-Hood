@@ -6,7 +6,7 @@ public class PlayerMovementController : MonoBehaviour
 {
     public static PlayerMovementController instance;
     bool isDead;
-    public GameObject normalPlayer, swordPlayer, spearPlayer;
+    public GameObject normalPlayer, swordPlayer, spearPlayer, bowPlayer;
     public WeaponType currentWeapon = WeaponType.None;
     // Hareket ayarlarý
     public float speed = 8f;
@@ -19,8 +19,8 @@ public class PlayerMovementController : MonoBehaviour
     public float backLeashTime, backLeashForce, backLeashCounter;
 
     // Animator ve Sprite Renderer bileþenleri
-    public Animator normalAnim, swordAnim, spearAnim;
-    public SpriteRenderer normalSpriteRenderer, swordSprite, spearSprite;
+    public Animator normalAnim, swordAnim, spearAnim, bowAnim;
+    public SpriteRenderer normalSpriteRenderer, swordSprite, spearSprite, bowSprite;
 
     // Zýplama deðiþkenleri
     public int maxJumps = 2;
@@ -61,6 +61,10 @@ public class PlayerMovementController : MonoBehaviour
         {
             spearSprite = spearPlayer.GetComponent<SpriteRenderer>();
         }
+        if (bowSprite == null && bowPlayer != null)
+        {
+            bowSprite = bowPlayer.GetComponent<SpriteRenderer>();
+        }
     }
 
     void Update()
@@ -82,11 +86,14 @@ public class PlayerMovementController : MonoBehaviour
             {
                 swordSprite.color = new Color(swordSprite.color.r, swordSprite.color.g, swordSprite.color.b, 1f);
                 swordCounter++;
-
             }
             else if (spearPlayer.activeSelf)
             {
                 spearSprite.color = new Color(spearSprite.color.r, spearSprite.color.g, spearSprite.color.b, 1f);
+            }
+            else if (bowPlayer.activeSelf)
+            {
+                bowSprite.color = new Color(bowSprite.color.r, bowSprite.color.g, bowSprite.color.b, 1f);
             }
         }
         else
@@ -102,14 +109,15 @@ public class PlayerMovementController : MonoBehaviour
 
     void HandleWeaponAttack()
     {
-        if (SwordController.instance != null)
+        if (SwordController.instance != null && currentWeapon == WeaponType.Sword)
         {
             SwordController.instance.SwordAttack();
         }
-        if (SpearController.instance != null)
+        if (SpearController.instance != null && currentWeapon == WeaponType.Spear)
         {
             SpearController.instance.SpearAttack();
         }
+        // BowController.instance.ShootArrow() çaðrýsýný kaldýrdýk
     }
 
     void HandleWeaponSwitch()
@@ -128,6 +136,10 @@ public class PlayerMovementController : MonoBehaviour
             {
                 SetActiveWeapon(WeaponType.Spear);
             }
+            else if (Input.GetKeyDown(KeyCode.Alpha4) && GameManager.instance.arrowCount > 0)
+            {
+                SetActiveWeapon(WeaponType.Bow);
+            }
         }
     }
 
@@ -137,8 +149,8 @@ public class PlayerMovementController : MonoBehaviour
         normalPlayer.SetActive(weaponType == WeaponType.None);
         swordPlayer.SetActive(weaponType == WeaponType.Sword);
         spearPlayer.SetActive(weaponType == WeaponType.Spear);
+        bowPlayer.SetActive(weaponType == WeaponType.Bow);
     }
-
 
     // Oyuncunun yatay hareketini yönetir
     void Move()
@@ -160,6 +172,10 @@ public class PlayerMovementController : MonoBehaviour
             else if (spearPlayer.activeSelf)
             {
                 spearAnim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
+            }
+            else if (bowPlayer.activeSelf)
+            {
+                bowAnim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
             }
         }
     }
@@ -219,6 +235,11 @@ public class PlayerMovementController : MonoBehaviour
             spearAnim.SetBool("isGrounded", isGrounded);
             spearAnim.SetFloat("firstJumpForce", rb.linearVelocity.y);
         }
+        else if (bowPlayer.activeSelf)
+        {
+            bowAnim.SetBool("isGrounded", isGrounded);
+            bowAnim.SetFloat("firstJumpForce", rb.linearVelocity.y);
+        }
     }
 
     // Dash (Atýlma) fonksiyonu
@@ -274,6 +295,10 @@ public class PlayerMovementController : MonoBehaviour
         {
             spearSprite.color = new Color(spearSprite.color.r, spearSprite.color.g, spearSprite.color.b, 0.5f); // Karakteri yarý saydam yap
         }
+        else if (bowPlayer.activeSelf)
+        {
+            bowSprite.color = new Color(bowSprite.color.r, bowSprite.color.g, bowSprite.color.b, 0.5f); // Karakteri yarý saydam yap
+        }
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); // Karakterin hýzýný sýfýrla
     }
 
@@ -295,6 +320,10 @@ public class PlayerMovementController : MonoBehaviour
         else if (spearPlayer.activeSelf)
         {
             spearAnim.SetTrigger("dash");
+        }
+        else if (bowPlayer.activeSelf)
+        {
+            bowAnim.SetTrigger("dash");
         }
 
         // Dash yönünü belirle (karakterin baktýðý yöne göre)
@@ -324,6 +353,10 @@ public class PlayerMovementController : MonoBehaviour
         {
             spearAnim.SetTrigger("isDead");
         }
+        else if (bowPlayer.activeSelf)
+        {
+            bowAnim.SetTrigger("isDead");
+        }
 
         // Ölüm efektini 1 saniye sonra oluþtur
         StartCoroutine(CreateDeathEffect());
@@ -337,27 +370,31 @@ public class PlayerMovementController : MonoBehaviour
 
     public void StopPlayer()
     {
+        rb.linearVelocity = Vector2.zero;
         if (normalPlayer.activeSelf)
         {
-            rb.linearVelocity = Vector2.zero;
             normalAnim.SetFloat("speed", 0);
         }
         else if (swordPlayer.activeSelf)
         {
-            rb.linearVelocity = Vector2.zero;
             swordAnim.SetFloat("speed", 0);
         }
         else if (spearPlayer.activeSelf)
         {
-            rb.linearVelocity = Vector2.zero;
             spearAnim.SetFloat("speed", 0);
         }
+        else if (bowPlayer.activeSelf)
+        {
+            bowAnim.SetFloat("speed", 0);
+        }
+    }
+
+    public enum WeaponType
+    {
+        None,
+        Sword,
+        Spear,
+        Bow
     }
 }
 
-public enum WeaponType
-{
-    None,
-    Sword,
-    Spear
-}

@@ -1,4 +1,5 @@
 using UnityEngine;
+using static PlayerMovementController;
 
 public class GetWeapons : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class GetWeapons : MonoBehaviour
             PlayerMovementController.instance.normalPlayer.SetActive(false);
             PlayerMovementController.instance.swordPlayer.SetActive(false);
             PlayerMovementController.instance.spearPlayer.SetActive(false);
+            PlayerMovementController.instance.bowPlayer.SetActive(false);
 
             // Yeni silahý aktif hale getir
             switch (weaponType)
@@ -24,10 +26,12 @@ public class GetWeapons : MonoBehaviour
                     PlayerMovementController.instance.spearPlayer.SetActive(true);
                     PlayerMovementController.instance.currentWeapon = WeaponType.Spear;
                     break;
+                case WeaponType.Bow:
+                    PlayerMovementController.instance.bowPlayer.SetActive(true);
+                    PlayerMovementController.instance.currentWeapon = WeaponType.Bow;
+                    break;
             }
             Destroy(gameObject);
         }
     }
 }
-
-

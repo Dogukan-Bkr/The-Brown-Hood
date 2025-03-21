@@ -72,32 +72,14 @@ public class SwordController : MonoBehaviour
 
     public int DetermineDamage(Collider2D enemy)
     {
-        if (enemy.CompareTag("EnemySpider"))
-        {
-            return 5;
-        }
-        else if (enemy.CompareTag("Skeleton"))
-        {
-            return 3;
-        }
-        else if (enemy.CompareTag("Bat"))
-        {
-            return 5;
-        }
-        else if (enemy.CompareTag("Bee"))
-        {
-            return 5;
-        }
-        else if (enemy.CompareTag("Boar"))
-        {
-            return 5;
-        }
-        else if (enemy.CompareTag("Object"))
-        {
-            return 5;
-        }
+        if (enemy.CompareTag("EnemySpider")) return 5;
+        if (enemy.CompareTag("Skeleton")) return 3;
+        if (enemy.CompareTag("Bat")) return 5;
+        if (enemy.CompareTag("Bee")) return 5;
+        if (enemy.CompareTag("Boar")) return 5;
+        if (enemy.CompareTag("Object")) return 5;
 
-        return defaultDamage; // Varsayılan hasar değeri
+        return defaultDamage;
     }
 
     private void OnDrawGizmos()

@@ -59,4 +59,12 @@ public class UIController : MonoBehaviour
             SetSpearCount();
         }
     }
+    public void DecreaseArrowCount()
+    {
+        if (GameManager.instance.arrowCount > 0)
+        {
+            GameManager.instance.arrowCount--;
+            SetArrowCount();
+        }
+    }
 }

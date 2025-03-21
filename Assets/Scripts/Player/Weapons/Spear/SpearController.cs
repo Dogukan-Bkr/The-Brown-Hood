@@ -117,12 +117,13 @@ public class SpearController : MonoBehaviour
         spear.transform.right = throwDirection;
 
         // Fýrlatma kuvvetini uygula
-        rb.AddForce(throwDirection * throwForce, ForceMode2D.Impulse); // Bu fýrlatma ayarlarý daha iyi
+        rb.AddForce(throwDirection * throwForce, ForceMode2D.Impulse);
 
         // Eðer karakterin yönüne göre mýzraðý yerleþtirmek istersen
         Transform playerTransform = spearPlayer.transform.parent;
         float direction = (playerTransform != null) ? Mathf.Sign(playerTransform.localScale.x) : 1;
-        spear.transform.localScale = new Vector3(direction, 1, 1);  // Yönü karaktere göre ayarla
+        spear.transform.localScale = new Vector3(direction * Mathf.Sign(throwDirection.x), 1, 1);  // Yönü karaktere ve fýrlatma yönüne göre ayarla
+
         Rigidbody2D playerRb = spearPlayer.GetComponent<Rigidbody2D>();
         if (playerRb != null)
         {
@@ -133,6 +134,7 @@ public class SpearController : MonoBehaviour
         // Mýzraðý fýrlatmanýn ardýndan geri itmeyi engellemek için kýsa bir süre sonra normal haline getirebiliriz
         StartCoroutine(EnablePlayerMovementAfterDelay(playerRb, 0.1f)); // 0.1 saniye sonra karakter hareketini tekrar aç
     }
+
 
     private IEnumerator SpearThrowCooldown()
     {
