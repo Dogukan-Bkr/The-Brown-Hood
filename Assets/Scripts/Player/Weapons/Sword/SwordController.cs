@@ -39,6 +39,7 @@ public class SwordController : MonoBehaviour
                 hitEnemies[i].GetComponent<BeeController>()?.TakeDamage(damage);
                 hitEnemies[i].GetComponent<BoarController>()?.TakeDamage(damage);
                 hitEnemies[i].GetComponent<BoxController>()?.TakeDamage(damage);
+                hitEnemies[i].GetComponent<DummyController>()?.TakeDamage(damage);
             }
 
             // Eðer zaman farký belirlenen süreden büyükse, komboyu sýfýrla
@@ -78,13 +79,16 @@ public class SwordController : MonoBehaviour
         else if (enemy.CompareTag("Skeleton"))
         {
             return 3;
-        }else if (enemy.CompareTag("Bat"))
+        }
+        else if (enemy.CompareTag("Bat"))
         {
             return 5;
-        }else if (enemy.CompareTag("Bee"))
+        }
+        else if (enemy.CompareTag("Bee"))
         {
             return 5;
-        }else if (enemy.CompareTag("Boar"))
+        }
+        else if (enemy.CompareTag("Boar"))
         {
             return 5;
         }
@@ -98,8 +102,7 @@ public class SwordController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(attackPoint.transform.position, radius);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(attackPoint.transform.position, new Vector3(radius * 2, radius * 2, 0));
     }
 }
-
-

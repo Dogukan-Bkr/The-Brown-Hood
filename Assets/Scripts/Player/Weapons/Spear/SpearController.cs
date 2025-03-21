@@ -74,6 +74,7 @@ public class SpearController : MonoBehaviour
                 hitEnemies[i].GetComponent<BeeController>()?.TakeDamage(damage);
                 hitEnemies[i].GetComponent<BoarController>()?.TakeDamage(damage);
                 hitEnemies[i].GetComponent<BoxController>()?.TakeDamage(damage);
+                hitEnemies[i].GetComponent<DummyController>()?.TakeDamage(damage);
             }
 
             // Eðer zaman farký belirlenen süreden büyükse, komboyu sýfýrla

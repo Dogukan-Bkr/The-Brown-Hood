@@ -25,6 +25,7 @@ public class SpearProjectile : MonoBehaviour
             collision.GetComponent<BeeController>()?.TakeDamage(damage);
             collision.GetComponent<BoarController>()?.TakeDamage(damage);
             collision.GetComponent<BoxController>()?.TakeDamage(damage);
+            collision.GetComponent<DummyController>()?.TakeDamage(damage);
 
             // Mýzraðý sapla ve yok et
             StartCoroutine(DestroySpear());
