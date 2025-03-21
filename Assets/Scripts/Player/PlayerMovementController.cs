@@ -25,7 +25,11 @@ public class PlayerMovementController : MonoBehaviour
     // Zýplama deðiþkenleri
     public int maxJumps = 2;
     private int jumpCount = 0;
-
+    // Týrmanma deðiþkenleri
+    public float climbspeed = 3f;
+    private bool isOnLadder, isClimbing = false;
+    private float qCooldownTime = 0.35f;
+    private float qTime = 0f;
     // Fizik bileþeni
     private Rigidbody2D rb;
 
@@ -39,7 +43,9 @@ public class PlayerMovementController : MonoBehaviour
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
     private float dashTime = 0f; // Dash zamanlayýcýsý
     int swordCounter = 0;
-
+    // Silah deðiþtirme sonrasý bekleme süresi
+    private float weaponSwitchCooldown = 0.3f;
+    private float weaponSwitchTime = 0f;
     // Ölüm efekti
     public GameObject deathEffect;
 
@@ -75,6 +81,7 @@ public class PlayerMovementController : MonoBehaviour
             Jump();
             CheckMoveDirection();
             Dash();
+            Climb();
             HandleWeaponAttack();
             HandleWeaponSwitch();
             // Geri itilme (back leash) sonrasý saydamlýk sýfýrlanýyor
@@ -105,7 +112,19 @@ public class PlayerMovementController : MonoBehaviour
             else
                 rb.linearVelocity = new Vector2(backLeashForce, rb.linearVelocity.y);
         }
+
+        if (qTime > 0)
+        {
+            qTime -= Time.deltaTime;
+        }
+
+        // Silah deðiþtirme cooldown kontrolü
+        if (weaponSwitchTime > 0)
+        {
+            weaponSwitchTime -= Time.deltaTime;
+        }
     }
+
 
     void HandleWeaponAttack()
     {
@@ -121,27 +140,28 @@ public class PlayerMovementController : MonoBehaviour
     }
 
     void HandleWeaponSwitch()
+{   if (GameManager.instance != null && !isClimbing && !isDashing && weaponSwitchTime <= 0) // Merdiven çýkarken ve dash sonrasý bekleme süresinde silah deðiþtirmeyi engelle
     {
-        if (GameManager.instance != null)
+        if (Input.GetKeyDown(KeyCode.Alpha1) && qTime <= 0 )
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                SetActiveWeapon(WeaponType.None);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2) && swordCounter > 1)
-            {
-                SetActiveWeapon(WeaponType.Sword);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3) && GameManager.instance.spearCount > 0)
-            {
-                SetActiveWeapon(WeaponType.Spear);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4) && GameManager.instance.arrowCount > 0)
-            {
-                SetActiveWeapon(WeaponType.Bow);
-            }
+            SetActiveWeapon(WeaponType.None);
+            qTime = qCooldownTime;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && swordCounter > 1)
+        {
+            SetActiveWeapon(WeaponType.Sword);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3) && GameManager.instance.spearCount > 0)
+        {
+            SetActiveWeapon(WeaponType.Spear);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4) && GameManager.instance.arrowCount > 0)
+        {
+            SetActiveWeapon(WeaponType.Bow);
         }
     }
+}
+
 
     void SetActiveWeapon(WeaponType weaponType)
     {
@@ -256,6 +276,7 @@ public class PlayerMovementController : MonoBehaviour
             if (dashTime <= 0) // Dash süresi dolduðunda
             {
                 isDashing = false; // Dash’i bitir
+                weaponSwitchTime = weaponSwitchCooldown;
             }
         }
     }
@@ -301,6 +322,110 @@ public class PlayerMovementController : MonoBehaviour
         }
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); // Karakterin hýzýný sýfýrla
     }
+
+    // Merdiven çýkma fonksiyonu
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ladder")) isOnLadder = true;
+    }
+
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ladder")) isOnLadder = false;
+    }
+
+    void Climb()
+    {
+        if (normalPlayer.activeSelf)
+        {
+            if (isOnLadder && Input.GetKey(KeyCode.Q) && qTime <= 0)
+            {
+                isClimbing = true;
+                float h = Input.GetAxis("Vertical");
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, h * climbspeed);
+                rb.gravityScale = 0;
+                normalAnim.SetBool("isClimbing", true);
+                normalAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+            }
+            else
+            {
+                isClimbing = false;
+                normalAnim.SetBool("isClimbing", false);
+                rb.gravityScale = 3; // Yerçekimini hemen devreye sok
+                if (Input.GetKeyUp(KeyCode.Q))
+                {
+                    qTime = qCooldownTime; // Q tuþu için bekleme süresi
+                }
+            }
+        }
+        else if (swordPlayer.activeSelf)
+        {
+            if (isOnLadder && Input.GetKey(KeyCode.Q) && qTime <= 0)
+            {
+                isClimbing = true;
+                float h = Input.GetAxis("Vertical");
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, h * climbspeed);
+                rb.gravityScale = 0;
+                swordAnim.SetBool("isClimbing", true);
+                swordAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+            }
+            else
+            {
+                isClimbing = false;
+                swordAnim.SetBool("isClimbing", false);
+                rb.gravityScale = 3; // Yerçekimini hemen devreye sok
+                if (Input.GetKeyUp(KeyCode.Q))
+                {
+                    qTime = qCooldownTime; // Q tuþu için bekleme süresi
+                }
+            }
+        }
+        else if (spearPlayer.activeSelf)
+        {
+            if (isOnLadder && Input.GetKey(KeyCode.Q) && qTime <= 0)
+            {
+                isClimbing = true;
+                float h = Input.GetAxis("Vertical");
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, h * climbspeed);
+                rb.gravityScale = 0;
+                spearAnim.SetBool("isClimbing", true);
+                spearAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+            }
+            else
+            {
+                isClimbing = false;
+                spearAnim.SetBool("isClimbing", false);
+                rb.gravityScale = 3; // Yerçekimini hemen devreye sok
+                if (Input.GetKeyUp(KeyCode.Q))
+                {
+                    qTime = qCooldownTime; // Q tuþu için bekleme süresi
+                }
+            }
+        }
+        else if (bowPlayer.activeSelf)
+        {
+            if (isOnLadder && Input.GetKey(KeyCode.Q) && qTime <= 0)
+            {
+                isClimbing = true;
+                float h = Input.GetAxis("Vertical");
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, h * climbspeed);
+                rb.gravityScale = 0;
+                bowAnim.SetBool("isClimbing", true);
+                bowAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+            }
+            else
+            {
+                isClimbing = false;
+                bowAnim.SetBool("isClimbing", false);
+                rb.gravityScale = 3; // Yerçekimini hemen devreye sok
+                if (Input.GetKeyUp(KeyCode.Q))
+                {
+                    qTime = qCooldownTime; // Q tuþu için bekleme süresi
+                }
+            }
+        }
+    }
+
 
     // Dash kontrolü ve uygulanmasý
     void DashCheck()

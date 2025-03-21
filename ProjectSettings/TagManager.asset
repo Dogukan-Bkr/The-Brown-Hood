@@ -13,6 +13,7 @@ TagManager:
   - Bat
   - Bee
   - Boar
+  - Ladder
   layers:
   - Default
   - TransparentFX
