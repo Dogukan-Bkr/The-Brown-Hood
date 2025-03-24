@@ -7,13 +7,13 @@ TagManager:
   - Ground
   - SwordDamageBox
   - EnemySpider
-  - Objets
   - Object
   - Skeleton
   - Bat
   - Bee
   - Boar
   - Ladder
+  - BlackSmith
   layers:
   - Default
   - TransparentFX

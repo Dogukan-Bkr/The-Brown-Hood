@@ -48,7 +48,9 @@ public class PlayerMovementController : MonoBehaviour
     private float weaponSwitchTime = 0f;
     // Ölüm efekti
     public GameObject deathEffect;
-
+    //NPC
+    private bool isNearBlackSmith = false;
+    public GameObject blacksmithPanel;
     private void Awake()
     {
         instance = this;
@@ -84,6 +86,13 @@ public class PlayerMovementController : MonoBehaviour
             Climb();
             HandleWeaponAttack();
             HandleWeaponSwitch();
+
+            // BlackSmith panelini açma kontrolü
+            if (isNearBlackSmith && Input.GetKeyDown(KeyCode.F))
+            {
+                OpenBlacksmithPanel();
+            }
+
             // Geri itilme (back leash) sonrasý saydamlýk sýfýrlanýyor
             if (normalPlayer.activeSelf)
             {
@@ -124,6 +133,7 @@ public class PlayerMovementController : MonoBehaviour
             weaponSwitchTime -= Time.deltaTime;
         }
     }
+
 
 
     void HandleWeaponAttack()
@@ -327,11 +337,14 @@ public class PlayerMovementController : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Ladder")) isOnLadder = true;
+        if (collision.CompareTag("BlackSmith")){ isNearBlackSmith = true;}
+
     }
 
     void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Ladder")) isOnLadder = false;
+        if (collision.CompareTag("BlackSmith")){isNearBlackSmith = false;}
     }
 
     void Climb()
@@ -495,7 +508,9 @@ public class PlayerMovementController : MonoBehaviour
 
     public void StopPlayer()
     {
+        Debug.Log("StopPlayer called");
         rb.linearVelocity = Vector2.zero;
+        SetActiveWeapon(WeaponType.None);
         if (normalPlayer.activeSelf)
         {
             normalAnim.SetFloat("speed", 0);
@@ -513,6 +528,33 @@ public class PlayerMovementController : MonoBehaviour
             bowAnim.SetFloat("speed", 0);
         }
     }
+    public void ResumeMovement()
+    {
+        Debug.Log("ResumeMovement called");
+        // Hareketi yeniden baþlatmak için gerekli iþlemler burada yapýlabilir
+        if (normalPlayer.activeSelf)
+        {
+            normalAnim.SetFloat("speed", rb.linearVelocity.x);
+        }
+        else if (swordPlayer.activeSelf)
+        {
+            swordAnim.SetFloat("speed", rb.linearVelocity.x);
+        }
+        else if (spearPlayer.activeSelf)
+        {
+            spearAnim.SetFloat("speed", rb.linearVelocity.x);
+        }
+        else if (bowPlayer.activeSelf)
+        {
+            bowAnim.SetFloat("speed", rb.linearVelocity.x);
+        }
+    }
+    void OpenBlacksmithPanel()
+    {
+        blacksmithPanel.SetActive(true);
+        StopPlayer();
+    }
+
 
     public enum WeaponType
     {

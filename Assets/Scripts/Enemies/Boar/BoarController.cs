@@ -101,10 +101,8 @@ public class BoarController : MonoBehaviour
         {
             Vector3 newPosition = new Vector3(targetPlayer.position.x, transform.position.y, transform.position.z);
             transform.position = Vector3.MoveTowards(transform.position, newPosition, runSpeed * Time.deltaTime);
-
             FollowDirection(targetPlayer);
-            anim.SetBool("isMove", false);
-            anim.SetBool("isPlayer", true); // Koþma animasyonu
+            anim.SetBool("isMove", true); // Koþma animasyonu
         }
         else
         {
@@ -112,8 +110,7 @@ public class BoarController : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, targetPosition.position, currentSpeed * Time.deltaTime);
 
             FollowDirection(targetPosition);
-            anim.SetBool("isMove", true);
-            anim.SetBool("isPlayer", false); // Normal yürüme animasyonu
+            anim.SetBool("isMove", true); // Normal yürüme animasyonu
 
             if (Vector3.Distance(transform.position, targetPosition.position) < 0.1f)
             {

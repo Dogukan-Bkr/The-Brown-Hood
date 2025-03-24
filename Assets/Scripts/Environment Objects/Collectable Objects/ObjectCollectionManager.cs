@@ -24,17 +24,17 @@ public class ObjectController : MonoBehaviour
             {
                 case CollectableType.Coin:
                     GameManager.instance.coinCount++;  // Altýn sayýsýný artýr
-                    UIController.instance.SetCoinCount();  // UI'yi güncelle
+                    UIController.instance.UpdateUI();  // UI'yi güncelle
                     break;
 
                 case CollectableType.Arrow:
                     GameManager.instance.arrowCount++; // Ok sayýsýný artýr
-                    UIController.instance.SetArrowCount(); // UI'yi güncelle
+                    UIController.instance.UpdateUI(); // UI'yi güncelle
                     break;
 
                 case CollectableType.Spear:
                     GameManager.instance.spearCount++; // Mýzrak sayýsýný artýr
-                    UIController.instance.SetSpearCount(); // UI'yi güncelle
+                    UIController.instance.UpdateUI(); // UI'yi güncelle
                     break;
                 case CollectableType.HealthPotion:
                     PlayerHealthController.instance.currentHP += 20; // Oyuncunun canýný artýr
