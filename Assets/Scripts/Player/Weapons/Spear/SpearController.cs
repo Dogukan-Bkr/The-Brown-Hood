@@ -11,6 +11,9 @@ public class SpearController : MonoBehaviour
     public Transform throwPoint; // Mýzraðýn fýrlatýlacaðý nokta
     public float throwForce = 10f; // Fýrlatma kuvveti
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
+    public bool isAttacking = false; // Saldýrý durumu
+    public bool isAiming = false; // Niþan alma durumu
+    private bool canThrow = true; // Mýzrak fýrlatýlabilir mi?
     // Spear Attack deðiþkenleri
     private int comboCounter = 0;
     private float lastClickTime;
@@ -19,13 +22,10 @@ public class SpearController : MonoBehaviour
     public SpriteRenderer spearSprite;
     public GameObject spearPlayer;
     public int defaultDamage = 1; // Varsayýlan hasar deðeri
-    private bool isAiming = false; // Niþan alma durumu
-    private bool canThrow = true; // Mýzrak fýrlatýlabilir mi?
 
     private void Awake()
     {
         instance = this;
-        // Sprite Renderer bileþeni atanmýþ mý kontrol et, eðer yoksa al
     }
 
     private void Update()
@@ -37,15 +37,22 @@ public class SpearController : MonoBehaviour
         }
         if (GameManager.instance.spearCount > 0)
         {
+            bool wasAiming = isAiming;
+
             if (Input.GetMouseButton(1)) // Sað týk basýlýyken niþan alma
             {
                 isAiming = true;
                 spearAnim.SetBool("isAiming", true); // Aiming animasyonunu baþlat
+                PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
             }
             else
             {
                 isAiming = false;
                 spearAnim.SetBool("isAiming", false); // Aiming animasyonunu bitir
+                if (wasAiming) // Sadece niþan alma durumundan çýkýldýðýnda hareketi yeniden baþlat
+                {
+                    PlayerMovementController.instance.ResumeMovement(); // Karakterin hareketini yeniden baþlat
+                }
             }
 
             if (isAiming && Input.GetMouseButtonDown(0) && canThrow) // Sað týk basýlýyken sol týkla mýzraðý fýrlatma
@@ -60,10 +67,12 @@ public class SpearController : MonoBehaviour
 
     public void SpearAttack()
     {
-        if (isDashing || isAiming) return;
+        if (isDashing || isAiming || isAttacking) return;
 
         if (Input.GetMouseButtonDown(0) && spearPlayer.activeSelf)
         {
+            isAttacking = true;
+            PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
             float currentTime = Time.time;
             Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(attackPoint.transform.position, boxSize, 0f);
             for (int i = 0; i < hitEnemies.Length; i++)
@@ -97,7 +106,15 @@ public class SpearController : MonoBehaviour
                 comboCounter = 0;
             }
             lastClickTime = currentTime; // Son týklama zamanýný güncelle
+            StartCoroutine(ResetAttackState());
         }
+    }
+
+    private IEnumerator ResetAttackState()
+    {
+        yield return new WaitForSeconds(0.15f); // Saldýrý süresi
+        isAttacking = false;
+        PlayerMovementController.instance.ResumeMovement(); // Karakterin hareketini yeniden baþlat
     }
 
     public void ThrowSpear()
@@ -135,7 +152,6 @@ public class SpearController : MonoBehaviour
         StartCoroutine(EnablePlayerMovementAfterDelay(playerRb, 0.1f)); // 0.1 saniye sonra karakter hareketini tekrar aç
     }
 
-
     private IEnumerator SpearThrowCooldown()
     {
         canThrow = false;
@@ -156,7 +172,8 @@ public class SpearController : MonoBehaviour
         else if (enemy.CompareTag("Bat"))
         {
             return 5;
-        }else if (enemy.CompareTag("Bee"))
+        }
+        else if (enemy.CompareTag("Bee"))
         {
             return 3;
         }
@@ -188,3 +205,4 @@ public class SpearController : MonoBehaviour
         }
     }
 }
+

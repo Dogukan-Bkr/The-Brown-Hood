@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class SwordController : MonoBehaviour
@@ -7,7 +8,7 @@ public class SwordController : MonoBehaviour
     GameObject attackPoint;
     public float radius = 0.5f;
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
-    //private float dashTime = 0f; // Dash zamanlayýcýsý
+    public bool isAttacking = false; // Saldýrý durumu
     // Sword Attack deðiþkenleri
     private int comboCounter = 0;
     private float lastClickTime;
@@ -20,15 +21,16 @@ public class SwordController : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        // Sprite Renderer bileþeni atanmýþ mý kontrol et, eðer yoksa al
     }
 
     public void SwordAttack()
     {
-        if (isDashing) return;
+        if (isDashing || isAttacking) return;
 
         if (Input.GetMouseButtonDown(0) && swordPlayer.activeSelf)
         {
+            isAttacking = true;
+            PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
             float currentTime = Time.time;
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.transform.position, radius);
             for (int i = 0; i < hitEnemies.Length; i++)
@@ -67,7 +69,15 @@ public class SwordController : MonoBehaviour
             }
 
             lastClickTime = currentTime; // Son týklama zamanýný güncelle
+            StartCoroutine(ResetAttackState());
         }
+    }
+
+    private IEnumerator ResetAttackState()
+    {
+        yield return new WaitForSeconds(0.15f); // Saldýrý süresi
+        isAttacking = false;
+        PlayerMovementController.instance.ResumeMovement(); // Karakterin hareketini yeniden baþlat
     }
 
     public int DetermineDamage(Collider2D enemy)

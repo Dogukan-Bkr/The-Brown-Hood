@@ -14,7 +14,7 @@ public class PlayerMovementController : MonoBehaviour
     public float doubleJumpForce = 12f;
     public float fallMultiplier = 3f;
     public float lowJumpMultiplier = 2f;
-
+    private Vector3 originalScale;
     // Geri itilme (Back Leash) deðiþkenleri
     public float backLeashTime, backLeashForce, backLeashCounter;
 
@@ -50,7 +50,8 @@ public class PlayerMovementController : MonoBehaviour
     public GameObject deathEffect;
     //NPC
     private bool isNearBlackSmith = false;
-    public GameObject blacksmithPanel;
+    private bool isNearTent = false;
+    public GameObject blacksmithPanel,Tent;
     private void Awake()
     {
         instance = this;
@@ -91,6 +92,9 @@ public class PlayerMovementController : MonoBehaviour
             if (isNearBlackSmith && Input.GetKeyDown(KeyCode.F))
             {
                 OpenBlacksmithPanel();
+            }else if(isNearTent && Input.GetKeyDown(KeyCode.F))
+            {
+                OpenTentPanel();
             }
 
             // Geri itilme (back leash) sonrasý saydamlýk sýfýrlanýyor
@@ -146,31 +150,42 @@ public class PlayerMovementController : MonoBehaviour
         {
             SpearController.instance.SpearAttack();
         }
-        // BowController.instance.ShootArrow() çaðrýsýný kaldýrdýk
+        
     }
 
     void HandleWeaponSwitch()
-{   if (GameManager.instance != null && !isClimbing && !isDashing && weaponSwitchTime <= 0) // Merdiven çýkarken ve dash sonrasý bekleme süresinde silah deðiþtirmeyi engelle
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1) && qTime <= 0 )
+        if (GameManager.instance != null && !isClimbing && !isDashing && weaponSwitchTime <= 0)
         {
-            SetActiveWeapon(WeaponType.None);
-            qTime = qCooldownTime;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2) && swordCounter > 1)
-        {
-            SetActiveWeapon(WeaponType.Sword);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3) && GameManager.instance.spearCount > 0)
-        {
-            SetActiveWeapon(WeaponType.Spear);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4) && GameManager.instance.arrowCount > 0)
-        {
-            SetActiveWeapon(WeaponType.Bow);
+            // Saldýrý sýrasýnda silah deðiþtirmeyi engelle
+            if ((SwordController.instance != null && SwordController.instance.isAttacking) ||
+                (SpearController.instance != null && (SpearController.instance.isAttacking || SpearController.instance.isAiming)) ||
+                (BowController.instance != null && BowController.instance.isShooting))
+            {
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha1) && qTime <= 0)
+            {
+                SetActiveWeapon(WeaponType.None);
+                qTime = qCooldownTime;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2) && swordCounter > 1)
+            {
+                SetActiveWeapon(WeaponType.Sword);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3) && GameManager.instance.spearCount > 0)
+            {
+                SetActiveWeapon(WeaponType.Spear);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4) && GameManager.instance.arrowCount > 0)
+            {
+                SetActiveWeapon(WeaponType.Bow);
+            }
         }
     }
-}
+
+
 
 
     void SetActiveWeapon(WeaponType weaponType)
@@ -180,7 +195,18 @@ public class PlayerMovementController : MonoBehaviour
         swordPlayer.SetActive(weaponType == WeaponType.Sword);
         spearPlayer.SetActive(weaponType == WeaponType.Spear);
         bowPlayer.SetActive(weaponType == WeaponType.Bow);
+
+        // Silah deðiþtirildiðinde ok ve mýzrak sayýsýný güncelle
+        if (weaponType == WeaponType.Spear && GameManager.instance.spearCount <= 0)
+        {
+            SetActiveWeapon(WeaponType.None);
+        }
+        else if (weaponType == WeaponType.Bow && GameManager.instance.arrowCount <= 0)
+        {
+            SetActiveWeapon(WeaponType.None);
+        }
     }
+
 
     // Oyuncunun yatay hareketini yönetir
     void Move()
@@ -333,18 +359,20 @@ public class PlayerMovementController : MonoBehaviour
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); // Karakterin hýzýný sýfýrla
     }
 
-    // Merdiven çýkma fonksiyonu
+    
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Ladder")) isOnLadder = true;
-        if (collision.CompareTag("BlackSmith")){ isNearBlackSmith = true;}
-
+        if (collision.CompareTag("BlackSmith")) { isNearBlackSmith = true; }
+        if (collision.CompareTag("Tent")) { isNearTent = true; }
     }
 
+    // OnTriggerExit2D metodunda Tent kontrolü
     void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Ladder")) isOnLadder = false;
-        if (collision.CompareTag("BlackSmith")){isNearBlackSmith = false;}
+        if (collision.CompareTag("BlackSmith")) { isNearBlackSmith = false; }
+        if (collision.CompareTag("Tent")) { isNearTent = false; }
     }
 
     void Climb()
@@ -509,8 +537,9 @@ public class PlayerMovementController : MonoBehaviour
     public void StopPlayer()
     {
         Debug.Log("StopPlayer called");
-        rb.linearVelocity = Vector2.zero;
-        SetActiveWeapon(WeaponType.None);
+        rb.linearVelocity = Vector2.zero; // Karakterin hýzýný sýfýrla
+        rb.gravityScale = 0; // Yerçekimini devre dýþý býrak
+        rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation; // Karakterin pozisyonunu ve rotasyonunu dondur
         if (normalPlayer.activeSelf)
         {
             normalAnim.SetFloat("speed", 0);
@@ -528,10 +557,12 @@ public class PlayerMovementController : MonoBehaviour
             bowAnim.SetFloat("speed", 0);
         }
     }
+
     public void ResumeMovement()
     {
         Debug.Log("ResumeMovement called");
-        // Hareketi yeniden baþlatmak için gerekli iþlemler burada yapýlabilir
+        rb.gravityScale = 3; // Yerçekimini yeniden etkinleþtir
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation; // Sadece rotasyonu dondur
         if (normalPlayer.activeSelf)
         {
             normalAnim.SetFloat("speed", rb.linearVelocity.x);
@@ -549,12 +580,17 @@ public class PlayerMovementController : MonoBehaviour
             bowAnim.SetFloat("speed", rb.linearVelocity.x);
         }
     }
+
     void OpenBlacksmithPanel()
     {
         blacksmithPanel.SetActive(true);
         StopPlayer();
     }
-
+    void OpenTentPanel()
+    {
+        Tent.SetActive(true);
+        StopPlayer();
+    }
 
     public enum WeaponType
     {

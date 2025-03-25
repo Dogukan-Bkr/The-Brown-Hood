@@ -10,6 +10,7 @@ public class BowController : MonoBehaviour
     public Animator bowAnim;
     public GameObject bowPlayer;
     private bool canShoot = true; // Ok fýrlatýlabilir mi?
+    public bool isShooting = false; // Saldýrý durumu
 
     private void Awake()
     {
@@ -32,6 +33,8 @@ public class BowController : MonoBehaviour
             if (Input.GetMouseButtonDown(0) && canShoot && PlayerMovementController.instance.bowPlayer.activeSelf) // Sol týk ile oku fýrlatma
             {
                 canShoot = false; // Ok fýrlatýldýktan sonra tekrar fýrlatmayý engelle
+                isShooting = true;
+                PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
                 bowAnim.SetTrigger("attack"); // Attack animasyonunu tetikle
                 StartCoroutine(ShootArrowWithDelay(0.7f)); // 0.7 saniye sonra ok fýrlat animasyon uyuþmasý için
             }
@@ -44,6 +47,8 @@ public class BowController : MonoBehaviour
         ShootArrow();
         UIController.instance.DecreaseArrowCount();
         StartCoroutine(ArrowShootCooldown());
+        isShooting = false;
+        PlayerMovementController.instance.ResumeMovement(); // Karakterin hareketini yeniden baþlat
     }
 
     public void ShootArrow()
@@ -82,7 +87,6 @@ public class BowController : MonoBehaviour
         // Oku fýrlatmanýn ardýndan geri itmeyi engellemek için kýsa bir süre sonra normal haline getirebiliriz
         StartCoroutine(EnablePlayerMovementAfterDelay(playerRb, 0.1f)); // 0.1 saniye sonra karakter hareketini tekrar aç
     }
-
 
     private IEnumerator ArrowShootCooldown()
     {
