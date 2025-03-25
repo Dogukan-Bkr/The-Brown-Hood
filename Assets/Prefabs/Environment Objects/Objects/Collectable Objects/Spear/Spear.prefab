@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6295326037692508532}
   - component: {fileID: 4494338964707729322}
   - component: {fileID: 5734600070398050990}
-  - component: {fileID: 749497587770916430}
+  - component: {fileID: 8733620240456960223}
   m_Layer: 0
   m_Name: Spear
   m_TagString: Untagged
@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectType: 2
+  amount: 1
 --- !u!212 &6295326037692508532
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -178,7 +179,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &749497587770916430
+--- !u!114 &8733620240456960223
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using GoogleMobileAds.Api;
 using System;
+using UnityEngine.EventSystems;
 
 public class UIController : MonoBehaviour
 {
@@ -56,6 +57,7 @@ public class UIController : MonoBehaviour
     {
         if (buySpearButton != null)
         {
+            buySpearButton.onClick.RemoveAllListeners(); // Eski listener'ları temizle
             buySpearButton.onClick.AddListener(BuySpear);
         }
         else
@@ -195,7 +197,8 @@ public class UIController : MonoBehaviour
 
     public void BuySpear()
     {
-        Debug.Log("BuySpear called");
+        
+        Debug.Log("BuySpear called" + Time.time);
         if (GameManager.instance.coinCount >= 10)
         {
             GameManager.instance.coinCount -= 10;

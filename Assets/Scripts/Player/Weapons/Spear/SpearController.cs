@@ -41,18 +41,18 @@ public class SpearController : MonoBehaviour
 
             if (Input.GetMouseButton(1)) // Sað týk basýlýyken niþan alma
             {
-                isAiming = true;
-                spearAnim.SetBool("isAiming", true); // Aiming animasyonunu baþlat
-                PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
+                if (!isAiming) // Eðer zaten niþan alýyorsa tekrar çaðýrma
+                {
+                    isAiming = true;
+                    spearAnim.SetBool("isAiming", true);
+                    PlayerMovementController.instance.StopPlayer();
+                }
             }
-            else
+            else if (isAiming) // Eðer niþan almayý býrakýyorsa sadece bir kez hareketi aç
             {
                 isAiming = false;
-                spearAnim.SetBool("isAiming", false); // Aiming animasyonunu bitir
-                if (wasAiming) // Sadece niþan alma durumundan çýkýldýðýnda hareketi yeniden baþlat
-                {
-                    PlayerMovementController.instance.ResumeMovement(); // Karakterin hareketini yeniden baþlat
-                }
+                spearAnim.SetBool("isAiming", false);
+                PlayerMovementController.instance.ResumeMovement();
             }
 
             if (isAiming && Input.GetMouseButtonDown(0) && canThrow) // Sað týk basýlýyken sol týkla mýzraðý fýrlatma

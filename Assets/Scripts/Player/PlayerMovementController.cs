@@ -539,7 +539,7 @@ public class PlayerMovementController : MonoBehaviour
         Debug.Log("StopPlayer called");
         rb.linearVelocity = Vector2.zero; // Karakterin hýzýný sýfýrla
         rb.gravityScale = 0; // Yerçekimini devre dýþý býrak
-        rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation; // Karakterin pozisyonunu ve rotasyonunu dondur
+        rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation; // Karakterin pozisyonunu ve rotasyonunu dondur
         if (normalPlayer.activeSelf)
         {
             normalAnim.SetFloat("speed", 0);

@@ -8,6 +8,9 @@ public class ObjectController : MonoBehaviour
     // Bu nesnenin hangi türde olduðunu belirler
     public CollectableType objectType;
 
+    // Toplanacak miktar
+    public int amount = 1;
+
     // Nesnenin toplanýp toplanmadýðýný kontrol eden deðiþken
     private bool isCollectable = false;
 
@@ -23,21 +26,22 @@ public class ObjectController : MonoBehaviour
             switch (objectType)
             {
                 case CollectableType.Coin:
-                    GameManager.instance.coinCount++;  // Altýn sayýsýný artýr
+                    GameManager.instance.coinCount += amount;  // Altýn sayýsýný artýr
                     UIController.instance.UpdateUI();  // UI'yi güncelle
                     break;
 
                 case CollectableType.Arrow:
-                    GameManager.instance.arrowCount++; // Ok sayýsýný artýr
+                    GameManager.instance.arrowCount += amount; // Ok sayýsýný artýr
                     UIController.instance.UpdateUI(); // UI'yi güncelle
                     break;
 
                 case CollectableType.Spear:
-                    GameManager.instance.spearCount++; // Mýzrak sayýsýný artýr
+                    GameManager.instance.spearCount += amount; // Mýzrak sayýsýný artýr
                     UIController.instance.UpdateUI(); // UI'yi güncelle
                     break;
+
                 case CollectableType.HealthPotion:
-                    PlayerHealthController.instance.currentHP += 20; // Oyuncunun canýný artýr
+                    PlayerHealthController.instance.currentHP += amount; // Oyuncunun canýný artýr
                     PlayerHealthController.instance.GetHeal(); // UI'yi güncelle
                     break;
             }
