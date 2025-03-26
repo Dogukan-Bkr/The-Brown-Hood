@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class BoarController : MonoBehaviour
 {
@@ -20,7 +21,10 @@ public class BoarController : MonoBehaviour
     [SerializeField] private int minCoin, maxCoin;
     [SerializeField] private GameObject hitEffect;
     [SerializeField] private GameObject dieEffect;
-    
+    [Header("Damage Display")]
+    [SerializeField] private GameObject damageTextPrefab; // Hasar metni prefabý
+    [SerializeField] private Transform damageTextPosition; // Hasar metninin çýkacaðý nokta
+
     private float waitTimeCounter;
     private int targetPosIndex;
     private bool isAttackable;
@@ -160,10 +164,30 @@ public class BoarController : MonoBehaviour
         Debug.Log("Boar health: " + health);
         Instantiate(hitEffect, transform.position, Quaternion.identity);
 
+        // Hasar metnini göster
+        ShowDamageText(damage);
+
         if (health <= 0)
         {
             healthSlider.gameObject.SetActive(false);
             Die();
+        }
+    }
+
+    private void ShowDamageText(int damage)
+    {
+        if (damageTextPrefab != null && damageTextPosition != null)
+        {
+            GameObject damageText = Instantiate(damageTextPrefab, damageTextPosition.position, Quaternion.identity);
+            damageText.transform.SetParent(null);
+
+            TextMeshPro textMesh = damageText.GetComponent<TextMeshPro>();
+            if (textMesh != null)
+            {
+                textMesh.text = damage.ToString();
+            }
+
+            Destroy(damageText, 1f);
         }
     }
 
@@ -202,8 +226,6 @@ public class BoarController : MonoBehaviour
         }
     }
 
-
-
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
@@ -221,5 +243,4 @@ public class BoarController : MonoBehaviour
         isAttackable = true;
     }
 }
-
 

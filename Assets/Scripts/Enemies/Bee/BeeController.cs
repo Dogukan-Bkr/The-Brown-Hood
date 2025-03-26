@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class BeeController : MonoBehaviour
 {
@@ -22,6 +23,9 @@ public class BeeController : MonoBehaviour
     [SerializeField] private float dropChance0 = 0.5f; // %50 þans
     [SerializeField] private float dropChance1 = 0.3f; // %30 þans
     [SerializeField] private float dropChance2 = 0.2f; // %20 þans
+    [Header("Damage Display")]
+    [SerializeField] private GameObject damageTextPrefab; // Hasar metni prefabý
+    [SerializeField] private Transform damageTextPosition; // Hasar metninin çýkacaðý nokta
 
     private bool isAttackable;
     private bool isDead = false;
@@ -145,10 +149,30 @@ public class BeeController : MonoBehaviour
         Instantiate(hitEffect, transform.position, Quaternion.identity);
         Debug.Log("Bee health: " + health);
 
+        // Hasar metnini göster
+        ShowDamageText(damage);
+
         if (health <= 0)
         {
             healthSlider.gameObject.SetActive(false);
             Die();
+        }
+    }
+
+    private void ShowDamageText(int damage)
+    {
+        if (damageTextPrefab != null && damageTextPosition != null)
+        {
+            GameObject damageText = Instantiate(damageTextPrefab, damageTextPosition.position, Quaternion.identity);
+            damageText.transform.SetParent(null);
+
+            TextMeshPro textMesh = damageText.GetComponent<TextMeshPro>();
+            if (textMesh != null)
+            {
+                textMesh.text = damage.ToString();
+            }
+
+            Destroy(damageText, 1f);
         }
     }
 
@@ -209,8 +233,6 @@ public class BeeController : MonoBehaviour
         }
     }
 
-
-
     private int DetermineHealthPotionDrop()
     {
         float randomValue = Random.value; // 0.0 - 1.0 arasýnda rastgele bir sayý üret
@@ -252,5 +274,3 @@ public class BeeController : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackRadius);
     }
 }
-
-

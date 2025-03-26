@@ -212,6 +212,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2831257107020142226}
+  - {fileID: 2788932913382450864}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6181098665001968719
@@ -319,6 +320,8 @@ MonoBehaviour:
   dropChance0: 0.5
   dropChance1: 0.3
   dropChance2: 0.2
+  damageTextPrefab: {fileID: 1993426202363653460, guid: 544374c2e9b1fa046b6526c9ea32dc3b, type: 3}
+  damageTextPosition: {fileID: 2788932913382450864}
 --- !u!61 &1029417325235383257
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -592,3 +595,34 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &8887294635910580285
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2788932913382450864}
+  m_Layer: 6
+  m_Name: 'damagePopupPoint '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2788932913382450864
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8887294635910580285}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.08, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 169489518006374492}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

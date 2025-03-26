@@ -1,9 +1,14 @@
 using UnityEngine;
+using TMPro;
 
 public class PlayerHealthController : MonoBehaviour
 {
     public static PlayerHealthController instance;
     public int maxHP, currentHP;
+
+    [Header("Damage Display")]
+    [SerializeField] private GameObject damageTextPrefab; // Hasar metni prefabý
+    [SerializeField] private Transform damageTextPosition; // Hasar metninin çýkacaðý nokta
 
     private void Awake()
     {
@@ -13,7 +18,7 @@ public class PlayerHealthController : MonoBehaviour
     private void Start()
     {
         // Oyunun baþlangýç noktasý kaydedilmemiþse, oyuncunun konumunu kaydet
-        if(GameManager.instance != null)
+        if (GameManager.instance != null)
         {
             if (GameManager.instance.startPosition == Vector3.zero)
             {
@@ -33,7 +38,7 @@ public class PlayerHealthController : MonoBehaviour
                 currentHP = GameManager.instance.startHP; // Baþlangýçtaki can
             }
         }
-        if(UIController.instance != null)
+        if (UIController.instance != null)
         {
             UIController.instance.SetHealthSlider(currentHP, maxHP);  // UI'yi güncelle
         }
@@ -45,10 +50,30 @@ public class PlayerHealthController : MonoBehaviour
         currentHP -= damage;
         UIController.instance.SetHealthSlider(currentHP, maxHP);  // UI'yi güncelle
 
+        // Hasar metnini göster
+        ShowDamageText(damage);
+
         if (currentHP <= 0)
         {
             PlayerMovementController.instance.PlayerDead();
             Die();  // Oyuncu öldüyse, yeniden doðmasýný saðla
+        }
+    }
+
+    private void ShowDamageText(int damage)
+    {
+        if (damageTextPrefab != null && damageTextPosition != null)
+        {
+            GameObject damageText = Instantiate(damageTextPrefab, damageTextPosition.position, Quaternion.identity);
+            damageText.transform.SetParent(null);
+
+            TextMeshPro textMesh = damageText.GetComponent<TextMeshPro>();
+            if (textMesh != null)
+            {
+                textMesh.text = damage.ToString();
+            }
+
+            Destroy(damageText, 1f);
         }
     }
 
@@ -69,13 +94,15 @@ public class PlayerHealthController : MonoBehaviour
 
         UIController.instance.SetHealthSlider(currentHP, maxHP);  // UI'yi güncelle
     }
+
     public void GetHeal()
     {
-        if(currentHP > maxHP)
+        if (currentHP > maxHP)
         {
             currentHP = maxHP;
         }
         UIController.instance.SetHealthSlider(currentHP, maxHP); // UI'yi güncelle
-        Debug.Log("Player HP (+20)");  
+        Debug.Log("Player HP (+20)");
     }
 }
+

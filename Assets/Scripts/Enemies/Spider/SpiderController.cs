@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,6 +29,10 @@ public class SpiderController : MonoBehaviour
     [SerializeField] private int minCoin, maxCoin;
     [SerializeField] private GameObject hitEffect;
     [SerializeField] private GameObject dieEffect;
+
+    [Header("Damage Display")]
+    [SerializeField] private GameObject damageTextPrefab; // Hasar metni prefabý
+    [SerializeField] private Transform damageTextPosition; // Hasar metninin çýkacaðý nokta
 
     private void Awake()
     {
@@ -76,7 +81,7 @@ public class SpiderController : MonoBehaviour
 
     private void MoveToNextPosition()
     {
-        if (isDead) return; // Ölü ise hareket etme
+        if (isDead) return;
 
         if (targetPlayer.position.x > positions[0].position.x && targetPlayer.position.x < positions[1].position.x)
         {
@@ -121,7 +126,7 @@ public class SpiderController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (isDead) return; // Ölü ise vurulamaz
+        if (isDead) return;
 
         if (collision.gameObject.CompareTag("Player") && isAttackable)
         {
@@ -132,10 +137,9 @@ public class SpiderController : MonoBehaviour
             StartCoroutine(AttackCooldown());
         }
 
-        // SwordDamageArea tag'ini kaldýrdýk, hasar kontrolünü Layer ve Tag kombinasyonlarýna göre yapýyoruz
         if (collision.gameObject.CompareTag("Object"))
         {
-            int damage = SwordController.instance.DetermineDamage(collision); // SwordController'dan hasar deðerini al
+            int damage = SwordController.instance.DetermineDamage(collision);
             TakeDamage(damage);
         }
     }
@@ -147,12 +151,32 @@ public class SpiderController : MonoBehaviour
         health -= damage;
         healthSlider.value = health;
         Debug.Log("Spider health: " + health);
-        Instantiate(hitEffect, transform.position, Quaternion.identity);
+        Instantiate(hitEffect, transform.position, Quaternion.identity, transform);
+
+        // Hasar metnini göster
+        ShowDamageText(damage);
 
         if (health <= 0)
         {
             healthSlider.gameObject.SetActive(false);
             Die();
+        }
+    }
+
+    private void ShowDamageText(int damage)
+    {
+        if (damageTextPrefab != null && damageTextPosition != null)
+        {
+            GameObject damageText = Instantiate(damageTextPrefab, damageTextPosition.position, Quaternion.identity);
+            damageText.transform.SetParent(null);
+
+            TextMeshPro textMesh = damageText.GetComponent<TextMeshPro>();
+            if (textMesh != null)
+            {
+                textMesh.text = damage.ToString();
+            }
+
+            Destroy(damageText, 1f);
         }
     }
 
@@ -167,7 +191,6 @@ public class SpiderController : MonoBehaviour
         }
         Destroy(gameObject, 0.5f);
 
-        // Coin düþürme
         int randomCountCoin = Random.Range(minCoin, maxCoin);
         Vector2 coinSpawnPos = transform.position;
         Debug.Log("Coin count in Spider: " + randomCountCoin);
@@ -176,21 +199,17 @@ public class SpiderController : MonoBehaviour
             GameObject coin = Instantiate(coinPrefab, coinSpawnPos, Quaternion.identity);
             if ((i + 1) % 5 == 0)
             {
-                // Her 5 sýrada bir yukarý dikey olarak sýçrat
                 coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, Random.Range(300, 500)));
-                // coinSpawnPos.x'i sýfýrla ve y'yi artýr
-                coinSpawnPos.x = transform.position.x - 0.5f; // Sola çek
-                coinSpawnPos.y += 0.5f; // Mesafeyi artýr
+                coinSpawnPos.x = transform.position.x - 0.5f;
+                coinSpawnPos.y += 0.5f;
             }
             else
             {
-                // Diðerleri yana doðru gitsin
                 coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
-                coinSpawnPos.x += 0.5f; // Mesafeyi artýr
+                coinSpawnPos.x += 0.5f;
             }
         }
     }
-
 
     private IEnumerator AttackCooldown()
     {
