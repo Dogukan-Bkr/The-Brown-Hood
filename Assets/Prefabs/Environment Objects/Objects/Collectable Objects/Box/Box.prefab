@@ -126,7 +126,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boxHitEffect: {fileID: 6575238250135418477, guid: c1385dc2b8892a448845be23a0465083, type: 3}
   coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
-  health: 15
+  health: 50
+  minCoin: 5
+  maxCoin: 15
 --- !u!61 &8784796473398380677
 BoxCollider2D:
   m_ObjectHideFlags: 0

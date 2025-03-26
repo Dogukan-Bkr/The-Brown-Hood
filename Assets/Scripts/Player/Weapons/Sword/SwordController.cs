@@ -4,19 +4,19 @@ using UnityEngine;
 public class SwordController : MonoBehaviour
 {
     public static SwordController instance;
-    [SerializeField]
-    GameObject attackPoint;
-    public float radius = 0.5f;
+    [SerializeField] private GameObject attackPoint;
+    [SerializeField] private float radius = 0.5f;
+    [SerializeField] private Animator swordAnim;
+    [SerializeField] private SpriteRenderer swordSprite;
+    [SerializeField] private GameObject swordPlayer;
+    [SerializeField] public int damage = 20; // Varsayýlan hasar deðeri
+    private int miss = 0;
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
     public bool isAttacking = false; // Saldýrý durumu
     // Sword Attack deðiþkenleri
     private int comboCounter = 0;
     private float lastClickTime;
     private float comboDelay = 0.3f; // Maksimum 1 saniye içinde kombo devam edebilir
-    public Animator swordAnim;
-    public SpriteRenderer swordSpirte;
-    public GameObject swordPlayer;
-    public int defaultDamage = 1; // Varsayýlan hasar deðeri
 
     private void Awake()
     {
@@ -64,7 +64,7 @@ public class SwordController : MonoBehaviour
             }
             else if (comboCounter >= 3)
             {
-                comboCounter = 0;// Kombo tamamlandýðýnda sýfýrla
+                comboCounter = 0; // Kombo tamamlandýðýnda sýfýrla
             }
 
             lastClickTime = currentTime; // Son týklama zamanýný güncelle
@@ -78,9 +78,8 @@ public class SwordController : MonoBehaviour
 
         if (comboCounter >= 2)
         {
-            cooldownTime = 0.5f; // 2 saldýrý sonrasý 0.75 saniye bekle
+            cooldownTime = 0.25f; // 2 saldýrý sonrasý bekleme süresi
         }
-        
 
         yield return new WaitForSeconds(cooldownTime); // Bekleme süresi
         isAttacking = false;
@@ -89,14 +88,13 @@ public class SwordController : MonoBehaviour
 
     public int DetermineDamage(Collider2D enemy)
     {
-        if (enemy.CompareTag("EnemySpider")) return 5;
-        if (enemy.CompareTag("Skeleton")) return 3;
-        if (enemy.CompareTag("Bat")) return 5;
-        if (enemy.CompareTag("Bee")) return 5;
-        if (enemy.CompareTag("Boar")) return 5;
-        if (enemy.CompareTag("Object")) return 5;
+        if (enemy.CompareTag("EnemySpider")) return damage;
+        if (enemy.CompareTag("Bat")) return damage;
+        if (enemy.CompareTag("Bee")) return damage;
+        if (enemy.CompareTag("Boar")) return damage;
+        if (enemy.CompareTag("Object")) return damage;
 
-        return defaultDamage;
+        return miss;
     }
 
     private void OnDrawGizmos()
@@ -105,3 +103,4 @@ public class SwordController : MonoBehaviour
         Gizmos.DrawWireCube(attackPoint.transform.position, new Vector3(radius * 2, radius * 2, 0));
     }
 }
+

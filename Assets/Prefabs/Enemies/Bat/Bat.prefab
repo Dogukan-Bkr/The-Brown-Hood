@@ -457,7 +457,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1344342459
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: cd08f7ca99012a241be1a9d2331020de, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -503,14 +503,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd07309927ebd504ca780ca2c95791cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  attackRadius: 8
+  speed: 6
+  attackSpeed: 2
+  attackRadius: 10
+  attackDamage: 15
   healthSlider: {fileID: 3949276240333171898}
-  health: 10
+  health: 40
   healthPotionPrefab: {fileID: 2815075527031303594, guid: a6a9dd85000607748b01ee46dda8b151, type: 3}
   coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
+  minCoin: 5
+  maxCoin: 10
   hitEffect: {fileID: 6823200998282874702, guid: 8f8fe12323625f5499b2853dd2ad3e58, type: 3}
   dieEffect: {fileID: 4553287630450876385, guid: 15483e51212e3d74886ea57291f4639a, type: 3}
+  dropChance0: 0.5
+  dropChance1: 0.3
+  dropChance2: 0.2
 --- !u!50 &8635351370943094832
 Rigidbody2D:
   serializedVersion: 5
@@ -572,7 +579,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.027493954, y: -0.06730342}
+  m_Offset: {x: 0.057022095, y: 0.109898925}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -582,5 +589,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.6033602, y: 1.6063409}
+  m_Size: {x: 2.3248901, y: 1.2519362}
   m_EdgeRadius: 0

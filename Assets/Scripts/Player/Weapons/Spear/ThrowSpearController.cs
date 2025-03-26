@@ -3,7 +3,9 @@ using UnityEngine;
 
 public class SpearProjectile : MonoBehaviour
 {
-    public int damage = 5; // Mýzraðýn vereceði hasar
+    [SerializeField] private int damage = 5; // Mýzraðýn vereceði hasar
+    [SerializeField] private float afterHitDestroy = 0.5f;
+    [SerializeField] private float autoDestroy = 2f;
     private bool hasHit = false; // Mýzrak bir þeye çarptý mý?
 
     private void Start()
@@ -15,7 +17,7 @@ public class SpearProjectile : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (hasHit) return; // Zaten çarpmýþsa tekrar çalýþtýrma
-        if (collision.CompareTag("EnemySpider") || collision.CompareTag("Skeleton") || collision.CompareTag("Bat") || collision.CompareTag("Object") || collision.CompareTag("Boar")|| collision.CompareTag("Bee"))
+        if (collision.CompareTag("EnemySpider") || collision.CompareTag("Skeleton") || collision.CompareTag("Bat") || collision.CompareTag("Object") || collision.CompareTag("Boar") || collision.CompareTag("Bee"))
         {
             hasHit = true;
 
@@ -41,7 +43,7 @@ public class SpearProjectile : MonoBehaviour
         GetComponent<Collider2D>().enabled = false;
 
         // Yarým saniye bekle
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(afterHitDestroy);
 
         // Mýzraðý yok et
         Destroy(gameObject);
@@ -49,10 +51,13 @@ public class SpearProjectile : MonoBehaviour
 
     private IEnumerator AutoDestroy()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(autoDestroy);
         if (!hasHit) // Eðer herhangi bir nesneye çarpmadýysa
         {
             Destroy(gameObject);
         }
     }
 }
+
+
+

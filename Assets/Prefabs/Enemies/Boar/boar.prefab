@@ -676,12 +676,16 @@ MonoBehaviour:
   - {fileID: 6565052873122496753}
   - {fileID: 5471735935011642131}
   healthSlider: {fileID: 4158289998228158418}
-  walkSpeed: 2
-  runSpeed: 5
+  walkSpeed: 3.5
+  runSpeed: 9
   waitTime: 2
+  attackSpeed: 2
   attackArea: 3
+  attackDamage: 25
   chaseBoxSize: {x: 7, y: 2}
-  health: 10
+  health: 90
   coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
+  minCoin: 15
+  maxCoin: 25
   hitEffect: {fileID: 6823200998282874702, guid: 8f8fe12323625f5499b2853dd2ad3e58, type: 3}
   dieEffect: {fileID: 4553287630450876385, guid: 15483e51212e3d74886ea57291f4639a, type: 3}

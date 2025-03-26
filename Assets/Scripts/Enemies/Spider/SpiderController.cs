@@ -4,28 +4,31 @@ using UnityEngine.UI;
 
 public class SpiderController : MonoBehaviour
 {
-    public Transform[] positions;
-    public Slider healthSlider;
-    public float speed;
-    public float waitTime;
-    public float attackArea;
+    [SerializeField] private Transform[] positions;
+    [SerializeField] private Slider healthSlider;
+    [SerializeField] private float speed;
+    [SerializeField] private float waitTime;
+    [SerializeField] private float attackArea;
+    [SerializeField] private float attackSpeed;
+    [SerializeField] private int attackDamage;
     private float waitTimeCounter;
-    int targetPosIndex;
-    bool isAttackable;
-    Animator anim;
-    Transform targetPlayer;
-    BoxCollider2D spiderCollider;
+    private int targetPosIndex;
+    private bool isAttackable;
+    private Animator anim;
+    private Transform targetPlayer;
+    private BoxCollider2D spiderCollider;
 
     [Header("Health System")]
-    public int health = 10;  // Örümcek caný
+    [SerializeField] private int health;
     private int currentHealth;
     private bool isDead = false;
 
     [Header("Effects & Loot")]
-    // public GameObject bloodEffect;
-    public GameObject coinPrefab;
-    public GameObject hitEffect;
-    public GameObject dieEffect;
+    [SerializeField] private GameObject coinPrefab;
+    [SerializeField] private int minCoin, maxCoin;
+    [SerializeField] private GameObject hitEffect;
+    [SerializeField] private GameObject dieEffect;
+
     private void Awake()
     {
         spiderCollider = GetComponent<BoxCollider2D>();
@@ -71,7 +74,7 @@ public class SpiderController : MonoBehaviour
         MoveToNextPosition();
     }
 
-    void MoveToNextPosition()
+    private void MoveToNextPosition()
     {
         if (isDead) return; // Ölü ise hareket etme
 
@@ -99,7 +102,7 @@ public class SpiderController : MonoBehaviour
         }
     }
 
-    void FollowDirection(Transform target)
+    private void FollowDirection(Transform target)
     {
         if (target.position.x > transform.position.x)
             transform.localScale = Vector3.one; // Saða bak
@@ -125,7 +128,7 @@ public class SpiderController : MonoBehaviour
             isAttackable = false;
             anim.SetTrigger("attack");
             Debug.Log("Player hit by spider");
-            PlayerHealthController.instance.TakeDamage(2);
+            PlayerHealthController.instance.TakeDamage(attackDamage);
             StartCoroutine(AttackCooldown());
         }
 
@@ -145,8 +148,6 @@ public class SpiderController : MonoBehaviour
         healthSlider.value = health;
         Debug.Log("Spider health: " + health);
         Instantiate(hitEffect, transform.position, Quaternion.identity);
-        //anim.SetTrigger("hit");  // Hasar animasyonu
-        // Instantiate(bloodEffect, transform.position, Quaternion.identity);
 
         if (health <= 0)
         {
@@ -155,7 +156,7 @@ public class SpiderController : MonoBehaviour
         }
     }
 
-    void Die()
+    private void Die()
     {
         isDead = true;
         anim.SetTrigger("die");
@@ -167,23 +168,33 @@ public class SpiderController : MonoBehaviour
         Destroy(gameObject, 0.5f);
 
         // Coin düþürme
-        int randomCountCoin = Random.Range(0, 4);
+        int randomCountCoin = Random.Range(minCoin, maxCoin);
         Vector2 coinSpawnPos = transform.position;
         Debug.Log("Coin count in Spider: " + randomCountCoin);
         for (int i = 0; i < randomCountCoin; i++)
         {
             GameObject coin = Instantiate(coinPrefab, coinSpawnPos, Quaternion.identity);
-            coinSpawnPos.x += 0.5f;
-            coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
+            if ((i + 1) % 5 == 0)
+            {
+                // Her 5 sýrada bir yukarý dikey olarak sýçrat
+                coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, Random.Range(300, 500)));
+                // coinSpawnPos.x'i sýfýrla ve y'yi artýr
+                coinSpawnPos.x = transform.position.x - 0.5f; // Sola çek
+                coinSpawnPos.y += 0.5f; // Mesafeyi artýr
+            }
+            else
+            {
+                // Diðerleri yana doðru gitsin
+                coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
+                coinSpawnPos.x += 0.5f; // Mesafeyi artýr
+            }
         }
     }
 
-    IEnumerator AttackCooldown()
+
+    private IEnumerator AttackCooldown()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(attackSpeed);
         isAttackable = true;
     }
 }
-
-
-

@@ -4,11 +4,13 @@ using UnityEngine;
 public class BowController : MonoBehaviour
 {
     public static BowController instance;
-    public GameObject arrowPrefab; // Ok prefabý
-    public Transform shootPoint; // Okun fýrlatýlacaðý nokta
-    public float shootForce = 10f; // Fýrlatma kuvveti
-    public Animator bowAnim;
-    public GameObject bowPlayer;
+    [SerializeField] private GameObject arrowPrefab; // Ok prefabý
+    [SerializeField] private Transform shootPoint; // Okun fýrlatýlacaðý nokta
+    [SerializeField] public int attackDamage = 8; // Okun vereceði varsayýlan hasar
+    [SerializeField] private float shootCooldown = 0.5f; // Fýrlatma aralýðý
+    [SerializeField] private float shootForce = 10f; // Fýrlatma kuvveti
+    [SerializeField] private Animator bowAnim;
+    [SerializeField] private GameObject bowPlayer;
     private bool canShoot = true; // Ok fýrlatýlabilir mi?
     public bool isShooting = false; // Saldýrý durumu
 
@@ -90,7 +92,7 @@ public class BowController : MonoBehaviour
 
     private IEnumerator ArrowShootCooldown()
     {
-        yield return new WaitForSeconds(0.5f); // 0.5 saniye bekle
+        yield return new WaitForSeconds(shootCooldown); // 0.5 saniye bekle
         canShoot = true; // Ok fýrlatýlabilir hale getir
     }
 
@@ -104,3 +106,5 @@ public class BowController : MonoBehaviour
         }
     }
 }
+
+

@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class ArrowController : MonoBehaviour
 {
-    public int defaultDamage = 5; // Okun vereceði varsayýlan hasar
+    
+    private int miss = 0; 
     private bool hasHit = false; // Ok bir þeye çarptý mý?
 
     private void Start()
@@ -37,30 +38,30 @@ public class ArrowController : MonoBehaviour
     {
         if (enemy.CompareTag("EnemySpider"))
         {
-            return 5;
+            return BowController.instance.attackDamage;
         }
         else if (enemy.CompareTag("Skeleton"))
         {
-            return 3;
+            return BowController.instance.attackDamage;
         }
         else if (enemy.CompareTag("Bat"))
         {
-            return 5;
+            return BowController.instance.attackDamage;
         }
         else if (enemy.CompareTag("Bee"))
         {
-            return 3;
+            return BowController.instance.attackDamage;
         }
         else if (enemy.CompareTag("Boar"))
         {
-            return 3;
+            return BowController.instance.attackDamage;
         }
         else if (enemy.CompareTag("Object"))
         {
-            return 5;
+            return BowController.instance.attackDamage;
         }
 
-        return defaultDamage; // Varsayýlan hasar deðeri
+        return miss; // Varsayýlan hasar deðeri
     }
 
     private IEnumerator DestroyArrow()
@@ -87,3 +88,5 @@ public class ArrowController : MonoBehaviour
         }
     }
 }
+
+

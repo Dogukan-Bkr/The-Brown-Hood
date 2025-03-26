@@ -4,30 +4,32 @@ using UnityEngine.UI;
 
 public class BoarController : MonoBehaviour
 {
-    public Transform[] positions;
-    public Slider healthSlider;
-    public float walkSpeed; // Normal yürüme hýzý
-    public float runSpeed; // Koþma hýzý
-    public float waitTime;
-    public float attackArea;
-    public Vector2 chaseBoxSize; // Kovalama alaný boyutu
-    private float waitTimeCounter;
-    int targetPosIndex;
-    bool isAttackable;
-    Animator anim;
-    Transform targetPlayer;
-    BoxCollider2D boarCollider;
-    private bool isChasingPlayer = false; // Oyuncuyu takip edip etmediðini kontrol eder
-
+    [SerializeField] private Transform[] positions;
+    [SerializeField] private Slider healthSlider;
+    [SerializeField] private float walkSpeed; // Normal yürüme hýzý
+    [SerializeField] private float runSpeed; // Koþma hýzý
+    [SerializeField] private float waitTime;
+    [SerializeField] private float attackSpeed;
+    [SerializeField] private float attackArea;
+    [SerializeField] private int attackDamage;
+    [SerializeField] private Vector2 chaseBoxSize; // Kovalama alaný boyutu
     [Header("Health System")]
-    public int health = 10;
-    private int currentHealth;
-    private bool isDead = false;
-
+    [SerializeField] private int health;
     [Header("Effects & Loot")]
-    public GameObject coinPrefab;
-    public GameObject hitEffect;
-    public GameObject dieEffect;
+    [SerializeField] private GameObject coinPrefab;
+    [SerializeField] private int minCoin, maxCoin;
+    [SerializeField] private GameObject hitEffect;
+    [SerializeField] private GameObject dieEffect;
+    
+    private float waitTimeCounter;
+    private int targetPosIndex;
+    private bool isAttackable;
+    private bool isDead = false;
+    private bool isChasingPlayer = false; // Oyuncuyu takip edip etmediðini kontrol eder
+    private Animator anim;
+    private Transform targetPlayer;
+    private BoxCollider2D boarCollider;
+    private int currentHealth;
 
     private void Awake()
     {
@@ -77,7 +79,7 @@ public class BoarController : MonoBehaviour
         MoveToNextPosition();
     }
 
-    bool IsPlayerInChaseBox()
+    private bool IsPlayerInChaseBox()
     {
         Vector2 boxCenter = (Vector2)transform.position + boarCollider.offset;
         Collider2D[] colliders = Physics2D.OverlapBoxAll(boxCenter, chaseBoxSize, 0);
@@ -91,7 +93,7 @@ public class BoarController : MonoBehaviour
         return false;
     }
 
-    void MoveToNextPosition()
+    private void MoveToNextPosition()
     {
         if (isDead) return;
 
@@ -120,7 +122,7 @@ public class BoarController : MonoBehaviour
         }
     }
 
-    void FollowDirection(Transform target)
+    private void FollowDirection(Transform target)
     {
         if (target.position.x > transform.position.x)
             transform.localScale = Vector3.one; // Saða bak
@@ -138,7 +140,7 @@ public class BoarController : MonoBehaviour
             anim.SetTrigger("isAttack");
             Debug.Log("Player hit by boar");
             PlayerMovementController.instance.BackLeash();
-            PlayerHealthController.instance.TakeDamage(2);
+            PlayerHealthController.instance.TakeDamage(attackDamage);
             StartCoroutine(AttackCooldown());
         }
 
@@ -165,7 +167,7 @@ public class BoarController : MonoBehaviour
         }
     }
 
-    void Die()
+    private void Die()
     {
         isDead = true;
         anim.SetTrigger("isDead");
@@ -177,16 +179,30 @@ public class BoarController : MonoBehaviour
         Destroy(gameObject, 0.5f);
 
         // Coin düþürme
-        int randomCountCoin = Random.Range(0, 4);
+        int randomCountCoin = Random.Range(minCoin, maxCoin);
         Vector2 coinSpawnPos = transform.position;
         Debug.Log("Coin count in Boar: " + randomCountCoin);
         for (int i = 0; i < randomCountCoin; i++)
         {
             GameObject coin = Instantiate(coinPrefab, coinSpawnPos, Quaternion.identity);
-            coinSpawnPos.x += 0.5f;
-            coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
+            if ((i + 1) % 5 == 0)
+            {
+                // Her 5 sýrada bir yukarý dikey olarak sýçrat
+                coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, Random.Range(300, 500)));
+                // coinSpawnPos.x'i sýfýrla ve y'yi artýr
+                coinSpawnPos.x = transform.position.x - 0.5f; // Sola çek
+                coinSpawnPos.y += 0.5f; // Mesafeyi artýr
+            }
+            else
+            {
+                // Diðerleri yana doðru gitsin
+                coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
+                coinSpawnPos.x += 0.5f; // Mesafeyi artýr
+            }
         }
     }
+
+
 
     private void OnDrawGizmosSelected()
     {
@@ -199,9 +215,11 @@ public class BoarController : MonoBehaviour
         Gizmos.DrawWireCube(transform.position, chaseBoxSize);
     }
 
-    IEnumerator AttackCooldown()
+    private IEnumerator AttackCooldown()
     {
-        yield return new WaitForSeconds(0.5f); // Yarým saniye bekle
+        yield return new WaitForSeconds(attackSpeed); // Yarým saniye bekle
         isAttackable = true;
     }
 }
+
+

@@ -199,9 +199,9 @@ public class UIController : MonoBehaviour
     {
         
         Debug.Log("BuySpear called" + Time.time);
-        if (GameManager.instance.coinCount >= 10)
+        if (GameManager.instance.coinCount >= 15)
         {
-            GameManager.instance.coinCount -= 10;
+            GameManager.instance.coinCount -= 15;
             GameManager.instance.spearCount++;
             UpdateUI();
         }
@@ -212,7 +212,7 @@ public class UIController : MonoBehaviour
         Debug.Log("BuyArrow called");
         if (GameManager.instance.coinCount >= 10)
         {
-            GameManager.instance.coinCount -= 10;
+            GameManager.instance.coinCount -= 8;
             GameManager.instance.arrowCount++;
             UpdateUI();
         }
@@ -232,12 +232,12 @@ public class UIController : MonoBehaviour
     public void BuyHealth()
     {
         Debug.Log("BuyHealth called");
-        if (GameManager.instance.coinCount >= 40)
+        if (GameManager.instance.coinCount >= 30)
         {
-            GameManager.instance.coinCount -= 40;
+            GameManager.instance.coinCount -= 15;
             if (PlayerHealthController.instance.currentHP < PlayerHealthController.instance.maxHP)
             {
-                PlayerHealthController.instance.currentHP += 20; // Canı 20 artır
+                PlayerHealthController.instance.currentHP += 10; // Canı 20 artır
                 if (PlayerHealthController.instance.currentHP > PlayerHealthController.instance.maxHP)
                 {
                     PlayerHealthController.instance.currentHP = PlayerHealthController.instance.maxHP;
@@ -271,12 +271,12 @@ public class UIController : MonoBehaviour
 
     public void GetArrowByAd()
     {
-        ShowRewardedAd(rewardedAdArrow, () => GameManager.instance.arrowCount += 3);
+        ShowRewardedAd(rewardedAdArrow, () => GameManager.instance.arrowCount += 5);
     }
 
     public void GetCoinByAd()
     {
-        ShowRewardedAd(rewardedAdCoin, () => GameManager.instance.coinCount += 30);
+        ShowRewardedAd(rewardedAdCoin, () => GameManager.instance.coinCount += 25);
     }
 
     void ShowRewardedAd(RewardedAd ad, Action rewardAction)
@@ -298,6 +298,7 @@ public class UIController : MonoBehaviour
             }
         }
     }
+
 
     public void UpdateUI()
     {

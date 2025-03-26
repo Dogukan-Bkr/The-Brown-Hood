@@ -4,23 +4,32 @@ using UnityEngine.UI;
 
 public class BatController : MonoBehaviour
 {
-    public float speed;
-    public float attackRadius = 8f;
+    [SerializeField] private float speed;
+    [SerializeField] private float attackSpeed;
+    [SerializeField] private float attackRadius = 8f;
+    [SerializeField] private int attackDamage;
+    [SerializeField] private Slider healthSlider;
+    [Header("Health System")]
+    [SerializeField] private int health = 10;  // Yarasa caný
+    [Header("Effects & Loot")]
+    [SerializeField] private GameObject healthPotionPrefab;
+    [SerializeField] private GameObject coinPrefab;
+    [SerializeField] private int minCoin, maxCoin;
+    [SerializeField] private GameObject hitEffect;
+    [SerializeField] private GameObject dieEffect;
+    [Header("Health Potion Drop Chances")]
+    [SerializeField] private float dropChance0 = 0.5f; // %50 þans
+    [SerializeField] private float dropChance1 = 0.3f; // %30 þans
+    [SerializeField] private float dropChance2 = 0.2f; // %20 þans
+
     private bool isAttackable;
     private bool isDead = false;
     private Vector3 initialPosition;
     private Transform targetPlayer;
     private Animator anim;
     private CircleCollider2D batCollider;
-    public Slider healthSlider;
-    [Header("Health System")]
-    public int health = 10;  // Yarasa caný
     private int currentHealth;
-    [Header("Effects & Loot")]
-    public GameObject healthPotionPrefab;
-    public GameObject coinPrefab;
-    public GameObject hitEffect;
-    public GameObject dieEffect;
+
     private void Awake()
     {
         anim = GetComponent<Animator>();
@@ -60,7 +69,7 @@ public class BatController : MonoBehaviour
         }
     }
 
-    void MoveTowardsPlayer()
+    private void MoveTowardsPlayer()
     {
         anim.SetBool("isFly", true);
 
@@ -78,7 +87,7 @@ public class BatController : MonoBehaviour
         }
     }
 
-    void StartAttack()
+    private void StartAttack()
     {
         if (!isAttackable) return;
 
@@ -87,11 +96,11 @@ public class BatController : MonoBehaviour
         anim.SetTrigger("isAttack");
         Debug.Log("Player hit by bat");
         PlayerMovementController.instance.BackLeash();
-        PlayerHealthController.instance.TakeDamage(2);
+        PlayerHealthController.instance.TakeDamage(attackDamage);
         StartCoroutine(AttackCooldown());
     }
 
-    void ReturnToInitialPosition()
+    private void ReturnToInitialPosition()
     {
         anim.SetBool("isFly", true);
 
@@ -120,7 +129,7 @@ public class BatController : MonoBehaviour
 
         if (collision.gameObject.CompareTag("SwordDamageBox"))
         {
-            int damage = SwordController.instance.defaultDamage; // SwordController'dan hasar deðerini al
+            int damage = SwordController.instance.damage; // SwordController'dan hasar deðerini al
             TakeDamage(damage);
         }
     }
@@ -141,7 +150,7 @@ public class BatController : MonoBehaviour
         }
     }
 
-    void Die()
+    private void Die()
     {
         isDead = true;
         anim.SetTrigger("isDie");
@@ -153,28 +162,76 @@ public class BatController : MonoBehaviour
         Destroy(gameObject, 0.5f);
 
         // Nesne düþürme
-        int randomCountHP = Random.Range(0, 1);
-        int randomCountCoin = Random.Range(0, 4);
-        Vector2 healthPointSpawnPos = transform.position;
+        int randomCountHP = DetermineHealthPotionDrop();
+        int randomCountCoin = Random.Range(minCoin, maxCoin);
+        Vector2 dropSpawnPos = transform.position;
         Debug.Log("Health potion count in Bat: " + randomCountHP);
         Debug.Log("Coin count in Bat: " + randomCountCoin);
+
         for (int i = 0; i < randomCountHP; i++)
         {
-            GameObject healthPotion = Instantiate(healthPotionPrefab, healthPointSpawnPos, Quaternion.identity);
-            healthPointSpawnPos.x += 0.5f;
-            healthPotion.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
+            GameObject healthPotion = Instantiate(healthPotionPrefab, dropSpawnPos, Quaternion.identity);
+            if ((i + 1) % 5 == 0)
+            {
+                // Her 5 sýrada bir yukarý dikey olarak sýçrat
+                healthPotion.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, Random.Range(300, 500)));
+                // dropSpawnPos.x'i sýfýrla ve y'yi artýr
+                dropSpawnPos.x = transform.position.x - 0.5f; // Sola çek
+                dropSpawnPos.y += 0.5f; // Mesafeyi artýr
+            }
+            else
+            {
+                // Diðerleri yana doðru gitsin
+                healthPotion.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
+                dropSpawnPos.x += 0.5f; // Mesafeyi artýr
+            }
         }
+
         for (int i = 0; i < randomCountCoin; i++)
         {
-            GameObject coin = Instantiate(coinPrefab, healthPointSpawnPos, Quaternion.identity);
-            healthPointSpawnPos.x += 0.5f;
-            coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
+            GameObject coin = Instantiate(coinPrefab, dropSpawnPos, Quaternion.identity);
+            if ((i + 1) % 5 == 0)
+            {
+                // Her 5 sýrada bir yukarý dikey olarak sýçrat
+                coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, Random.Range(300, 500)));
+                // dropSpawnPos.x'i sýfýrla ve y'yi artýr
+                dropSpawnPos.x = transform.position.x - 0.5f; // Sola çek
+                dropSpawnPos.y += 0.5f; // Mesafeyi artýr
+            }
+            else
+            {
+                // Diðerleri yana doðru gitsin
+                coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
+                dropSpawnPos.x += 0.5f; // Mesafeyi artýr
+            }
         }
     }
 
-    IEnumerator AttackCooldown()
+
+
+    private int DetermineHealthPotionDrop()
     {
-        yield return new WaitForSeconds(2f);
+        float randomValue = Random.value; // 0.0 - 1.0 arasýnda rastgele bir sayý üret
+
+        if (randomValue < dropChance2) // %20 ihtimalle 2 iksir düþer
+        {
+            return 2;
+        }
+        else if (randomValue < dropChance1 + dropChance2) // %30 ihtimalle 1 iksir düþer
+        {
+            return 1;
+        }
+        else if (randomValue < dropChance0 + dropChance1 + dropChance2) // %50 ihtimalle 0 iksir düþer
+        {
+            return 0;
+        }
+
+        return 0; 
+    }
+
+    private IEnumerator AttackCooldown()
+    {
+        yield return new WaitForSeconds(attackSpeed);
         isAttackable = true;
     }
 
@@ -184,3 +241,5 @@ public class BatController : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackRadius);
     }
 }
+
+

@@ -44,9 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 385dea81dc14cbb40a8b0038c35c11dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coinCount: 20
-  arrowCount: 100
-  spearCount: 100
+  coinCount: 0
+  arrowCount: 0
+  spearCount: 0
   lastCheckPointPos: {x: 0, y: 0, z: 0}
   lastCheckPointHP: 0
   startPosition: {x: 0, y: 0, z: 0}

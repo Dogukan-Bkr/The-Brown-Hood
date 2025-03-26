@@ -146,7 +146,14 @@ public class PlayerMovementController : MonoBehaviour
         {
             weaponSwitchTime -= Time.deltaTime;
         }
+
+        // Mýzrak sayýsý sýfýra düþtüðünde silah deðiþtirme iþlemini kontrol et
+        if (currentWeapon == WeaponType.Spear && GameManager.instance.spearCount <= 0)
+        {
+            SetActiveWeapon(WeaponType.None);
+        }
     }
+
 
 
 
@@ -195,9 +202,10 @@ public class PlayerMovementController : MonoBehaviour
         }
     }
 
-
-
-
+    public void DefaultWeapon()
+    {
+        SetActiveWeapon(WeaponType.Sword);
+    }
     void SetActiveWeapon(WeaponType weaponType)
     {
         currentWeapon = weaponType;
@@ -209,13 +217,15 @@ public class PlayerMovementController : MonoBehaviour
         // Silah deðiþtirildiðinde ok ve mýzrak sayýsýný güncelle
         if (weaponType == WeaponType.Spear && GameManager.instance.spearCount <= 0)
         {
-            SetActiveWeapon(WeaponType.None);
+            SetActiveWeapon(WeaponType.Sword);
+            ResumeMovement();
         }
         else if (weaponType == WeaponType.Bow && GameManager.instance.arrowCount <= 0)
         {
             SetActiveWeapon(WeaponType.None);
         }
     }
+
 
 
     // Oyuncunun yatay hareketini yönetir
