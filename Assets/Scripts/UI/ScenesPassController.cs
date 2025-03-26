@@ -9,7 +9,7 @@ public class ScenesPassController : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            if (GameManager.instance.coinCount >= 20)
+            if (GameManager.instance.coinCount >= 40)
             {
                 collision.GetComponent<PlayerMovementController>().StopPlayer(); // Oyuncuyu durdur
                 collision.GetComponent<PlayerMovementController>().enabled = false; // Oyuncu hareketini kapat
