@@ -9,10 +9,18 @@ public class ScenesPassController : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            collision.GetComponent<PlayerMovementController>().StopPlayer(); // Oyuncuyu durdur
-            collision.GetComponent<PlayerMovementController>().enabled = false; // Oyuncu hareketini kapat
-            FadeController.instance.FadeIn(); // Karartmayý aç
-            StartCoroutine(LoadScene()); // Belirtilen süre sonra sahneyi yükle
+            if (GameManager.instance.coinCount >= 20)
+            {
+                collision.GetComponent<PlayerMovementController>().StopPlayer(); // Oyuncuyu durdur
+                collision.GetComponent<PlayerMovementController>().enabled = false; // Oyuncu hareketini kapat
+                FadeController.instance.FadeIn(); // Karartmayý aç
+                StartCoroutine(LoadScene()); // Belirtilen süre sonra sahneyi yükle
+                Debug.Log("Oyuncunun coini yeterli, sahne geçiþi yapýlýyor.");
+            }
+            else
+            {
+                Debug.Log("Oyuncunun coini yetersiz, sahne geçiþi yapýlamýyor.");
+            }
         }
     }
 

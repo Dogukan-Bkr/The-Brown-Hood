@@ -329,6 +329,7 @@ public class PlayerMovementController : MonoBehaviour
 
 
     // Karakter geri itilme durumuna geçtiðinde çalýþýr
+    // Karakter geri itilme durumuna geçtiðinde çalýþýr
     public void BackLeash()
     {
         backLeashCounter = backLeashTime; // Geri itilme zamanýný baþlat
@@ -349,9 +350,33 @@ public class PlayerMovementController : MonoBehaviour
             bowSprite.color = new Color(bowSprite.color.r, bowSprite.color.g, bowSprite.color.b, 0.5f); // Karakteri yarý saydam yap
         }
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); // Karakterin hýzýný sýfýrla
+
+        // Eðer karakter merdivendeyse düþmesini saðla
+        if (isClimbing)
+        {
+            isClimbing = false;
+            rb.gravityScale = 3; // Yerçekimini hemen devreye sok
+            if (normalPlayer.activeSelf)
+            {
+                normalAnim.SetBool("isClimbing", false);
+            }
+            else if (swordPlayer.activeSelf)
+            {
+                swordAnim.SetBool("isClimbing", false);
+            }
+            else if (spearPlayer.activeSelf)
+            {
+                spearAnim.SetBool("isClimbing", false);
+            }
+            else if (bowPlayer.activeSelf)
+            {
+                bowAnim.SetBool("isClimbing", false);
+            }
+        }
     }
 
-    
+
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Ladder")) isOnLadder = true;
