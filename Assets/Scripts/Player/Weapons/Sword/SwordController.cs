@@ -64,8 +64,7 @@ public class SwordController : MonoBehaviour
             }
             else if (comboCounter >= 3)
             {
-                swordAnim.SetTrigger("Attack3");
-                comboCounter = 0; // Kombo tamamlandýðýnda sýfýrla
+                comboCounter = 0;// Kombo tamamlandýðýnda sýfýrla
             }
 
             lastClickTime = currentTime; // Son týklama zamanýný güncelle
@@ -75,7 +74,15 @@ public class SwordController : MonoBehaviour
 
     private IEnumerator ResetAttackState()
     {
-        yield return new WaitForSeconds(0.15f); // Saldýrý süresi
+        float cooldownTime = 0.15f; // Varsayýlan saldýrý bekleme süresi
+
+        if (comboCounter >= 2)
+        {
+            cooldownTime = 0.5f; // 2 saldýrý sonrasý 0.75 saniye bekle
+        }
+        
+
+        yield return new WaitForSeconds(cooldownTime); // Bekleme süresi
         isAttacking = false;
         PlayerMovementController.instance.ResumeMovement(); // Karakterin hareketini yeniden baþlat
     }

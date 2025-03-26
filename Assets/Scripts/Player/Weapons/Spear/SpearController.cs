@@ -103,16 +103,24 @@ public class SpearController : MonoBehaviour
             else if (comboCounter == 2)
             {
                 spearAnim.SetTrigger("attack2");
-                comboCounter = 0;
-            }
-            lastClickTime = currentTime; // Son týklama zamanýný güncelle
+                
+            }else if (comboCounter == 3) { comboCounter = 0; }
+                lastClickTime = currentTime; // Son týklama zamanýný güncelle
             StartCoroutine(ResetAttackState());
         }
     }
 
     private IEnumerator ResetAttackState()
     {
-        yield return new WaitForSeconds(0.15f); // Saldýrý süresi
+        float cooldownTime = 0.15f; // Varsayýlan saldýrý bekleme süresi
+
+        if (comboCounter >= 2)
+        {
+            cooldownTime = 0.5f; // 2 saldýrý sonrasý 0.75 saniye bekle
+        }
+
+
+        yield return new WaitForSeconds(cooldownTime); // Bekleme süresi
         isAttacking = false;
         PlayerMovementController.instance.ResumeMovement(); // Karakterin hareketini yeniden baþlat
     }

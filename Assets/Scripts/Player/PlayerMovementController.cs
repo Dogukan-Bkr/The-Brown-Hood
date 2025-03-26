@@ -25,6 +25,9 @@ public class PlayerMovementController : MonoBehaviour
     // Zýplama deðiþkenleri
     public int maxJumps = 2;
     private int jumpCount = 0;
+    public Transform groundCheck; // Inspector'da karakterin altýna ekle
+    public LayerMask groundLayer; // Sadece zemin olan nesneler için bir Layer Mask
+    public float groundCheckDistance = 0.2f; // Kontrol edilecek alanýn yarýçapý
     // Týrmanma deðiþkenleri
     public float climbspeed = 3f;
     private bool isOnLadder, isClimbing = false;
@@ -80,8 +83,14 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (backLeashCounter <= 0) // Geri itilme süresi dolduysa normal hareketi çalýþtýr
         {
-            Move();
+            isGrounded = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
+
+            if (isGrounded)
+            {
+                jumpCount = 0; // Karakter zemine deðdiðinde zýplama hakký sýfýrlanýr
+            }
             Jump();
+            Move();
             CheckMoveDirection();
             Dash();
             Climb();
@@ -92,7 +101,8 @@ public class PlayerMovementController : MonoBehaviour
             if (isNearBlackSmith && Input.GetKeyDown(KeyCode.F))
             {
                 OpenBlacksmithPanel();
-            }else if(isNearTent && Input.GetKeyDown(KeyCode.F))
+            }
+            else if (isNearTent && Input.GetKeyDown(KeyCode.F))
             {
                 OpenTentPanel();
             }
@@ -317,24 +327,6 @@ public class PlayerMovementController : MonoBehaviour
         }
     }
 
-    // Yere deðdiðinde zýplama hakkýný sýfýrla
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground")) // Eðer yere temas ettiyse
-        {
-            isGrounded = true;
-            jumpCount = 0; // Zýplama hakkýný sýfýrla
-        }
-    }
-
-    // Zeminden ayrýldýðýnda isGrounded deðiþkenini false yap
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = false;
-        }
-    }
 
     // Karakter geri itilme durumuna geçtiðinde çalýþýr
     public void BackLeash()
@@ -591,7 +583,14 @@ public class PlayerMovementController : MonoBehaviour
         Tent.SetActive(true);
         StopPlayer();
     }
-
+    void OnDrawGizmos()
+    {
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(groundCheck.position, groundCheck.position + Vector3.down * groundCheckDistance);
+        }
+    }
     public enum WeaponType
     {
         None,
