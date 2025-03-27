@@ -32,6 +32,8 @@ public class GameManager : MonoBehaviour
     {
         SetStartPosition(scene.name); // Yeni sahnenin baþlangýç pozisyonunu ayarla
         SetStartHP(scene.name); // Yeni sahnenin baþlangýç canýný ayarla
+        SetStartResources(scene.name); // Yeni sahnenin baþlangýç kaynaklarýný ayarla
+        UIController.instance.UpdateUI(); // UI'yi güncelle
     }
 
     private void SetStartPosition(string sceneName)
@@ -60,7 +62,14 @@ public class GameManager : MonoBehaviour
                 startHP = 100; // Level 1 baþlangýç caný
                 break;
             case "Level2":
-                startHP = 100; // Level 2 baþlangýç caný
+                if (PlayerHealthController.instance.currentHP < 50)
+                {
+                    startHP = 50; // Level 2 baþlangýç caný, eðer Level 1'deki can 50'nin altýndaysa
+                }
+                else
+                {
+                    startHP = 100; // Level 2 baþlangýç caný, eðer Level 1'deki can 50'nin üzerindeyse
+                }
                 break;
             default:
                 startHP = 100; // Varsayýlan baþlangýç caný
@@ -68,5 +77,27 @@ public class GameManager : MonoBehaviour
         }
 
         lastCheckPointHP = startHP; // Sahne deðiþtiðinde checkpoint canýný da güncelle
+    }
+
+    private void SetStartResources(string sceneName)
+    {
+        switch (sceneName)
+        {
+            case "Level1":
+                coinCount = 0; // Level 1 baþlangýç altýn sayýsý
+                arrowCount = 0; // Level 1 baþlangýç ok sayýsý
+                spearCount = 0; // Level 1 baþlangýç mýzrak sayýsý
+                break;
+            case "Level2":
+                coinCount = 30; // Level 2 baþlangýç altýn sayýsý
+                arrowCount = 10; // Level 2 baþlangýç ok sayýsý
+                spearCount = 3; // Level 2 baþlangýç mýzrak sayýsý
+                break;
+            default:
+                coinCount = 0; // Varsayýlan baþlangýç altýn sayýsý
+                arrowCount = 0; // Varsayýlan baþlangýç ok sayýsý
+                spearCount = 0; // Varsayýlan baþlangýç mýzrak sayýsý
+                break;
+        }
     }
 }
