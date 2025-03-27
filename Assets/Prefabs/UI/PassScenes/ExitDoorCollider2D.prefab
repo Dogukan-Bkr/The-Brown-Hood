@@ -91,4 +91,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c7ebbad3e34f2043947545e5a9cde21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextSceneName: Training Scene
+  nextSceneName: Level1
