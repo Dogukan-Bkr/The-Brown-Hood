@@ -16,7 +16,7 @@ public class ArrowController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (hasHit) return; // Zaten çarpmýþsa tekrar çalýþtýrma
-        if (collision.CompareTag("EnemySpider") || collision.CompareTag("Skeleton") || collision.CompareTag("Bat") || collision.CompareTag("Object") || collision.CompareTag("Boar") || collision.CompareTag("Bee"))
+        if (collision.CompareTag("EnemySpider") || collision.CompareTag("Bat") || collision.CompareTag("Object") || collision.CompareTag("Boar") || collision.CompareTag("Bee"))
         {
             hasHit = true;
 
@@ -37,10 +37,6 @@ public class ArrowController : MonoBehaviour
     private int DetermineDamage(Collider2D enemy)
     {
         if (enemy.CompareTag("EnemySpider"))
-        {
-            return BowController.instance.attackDamage;
-        }
-        else if (enemy.CompareTag("Skeleton"))
         {
             return BowController.instance.attackDamage;
         }

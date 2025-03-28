@@ -90,8 +90,8 @@ public class GameManager : MonoBehaviour
                 break;
             case "Level2":
                 coinCount = 30; // Level 2 baþlangýç altýn sayýsý
-                arrowCount = 10; // Level 2 baþlangýç ok sayýsý
-                spearCount = 3; // Level 2 baþlangýç mýzrak sayýsý
+                arrowCount = 15; // Level 2 baþlangýç ok sayýsý
+                spearCount = 4; // Level 2 baþlangýç mýzrak sayýsý
                 break;
             default:
                 coinCount = 0; // Varsayýlan baþlangýç altýn sayýsý
