@@ -258,7 +258,7 @@ Transform:
   m_GameObject: {fileID: 5697552689944205071}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.05, y: 0, z: 0}
+  m_LocalPosition: {x: -7.16, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -289,7 +289,7 @@ Transform:
   m_GameObject: {fileID: 6044069754840753783}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.73, y: 0, z: 0}
+  m_LocalPosition: {x: 8.12, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -714,7 +714,7 @@ MonoBehaviour:
   attackSpeed: 2
   attackArea: 3
   attackDamage: 25
-  chaseBoxSize: {x: 7, y: 2}
+  chaseBoxSize: {x: 9, y: 2}
   health: 90
   coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
   minCoin: 15

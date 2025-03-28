@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4271971072776107551}
   - component: {fileID: 3049701665573961334}
-  - component: {fileID: 5544353292636244222}
+  - component: {fileID: 6909533475878380809}
   m_Layer: 0
   m_Name: CheckPoint
   m_TagString: Untagged
@@ -49,8 +49,8 @@ MonoBehaviour:
   checkPointRenderer: {fileID: 2974855046224229132}
   checkPointOn: {fileID: 21300000, guid: 61483eddf117e564ca7847666fac9076, type: 3}
   checkPointOff: {fileID: 21300000, guid: 60769fc37a66e314b878a654754a0102, type: 3}
---- !u!68 &5544353292636244222
-EdgeCollider2D:
+--- !u!61 &6909533475878380809
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -83,37 +83,18 @@ EdgeCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.45065117, y: 14.889654}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.5840111, y: 35.008503}
   m_EdgeRadius: 0
-  m_Points:
-  - {x: -0.7713852, y: 1.5440888}
-  - {x: -0.67295265, y: -1.5584648}
-  - {x: -0.20582008, y: -1.5595369}
-  - {x: -0.16098595, y: 1.0953964}
-  - {x: 0.26780128, y: 1.1103833}
-  - {x: 0.28855324, y: 0.92379355}
-  - {x: 0.39152336, y: 0.8823807}
-  - {x: 0.39713287, y: 0.77861834}
-  - {x: 0.14857483, y: 0.6192479}
-  - {x: 0.23974037, y: 0.5669632}
-  - {x: 0.2721386, y: 0.24861622}
-  - {x: 0.22633362, y: 0.16815698}
-  - {x: 0.70788, y: 0.1584289}
-  - {x: 0.7315922, y: 0.5483036}
-  - {x: 0.8009472, y: 0.63829255}
-  - {x: 0.62640953, y: 0.77126}
-  - {x: 0.61512375, y: 0.8733859}
-  - {x: 0.704649, y: 0.9562168}
-  - {x: 0.6910305, y: 1.1085272}
-  - {x: 0.75871277, y: 1.1652164}
-  - {x: 0.7372265, y: 1.4300916}
-  - {x: -0.17172623, y: 1.4296978}
-  - {x: -0.198946, y: 1.5613284}
-  - {x: -0.7675724, y: 1.5025363}
-  m_AdjacentStartPoint: {x: 0, y: 0}
-  m_AdjacentEndPoint: {x: 0, y: 0}
-  m_UseAdjacentStartPoint: 0
-  m_UseAdjacentEndPoint: 0
 --- !u!1 &8901506892869156882
 GameObject:
   m_ObjectHideFlags: 0
