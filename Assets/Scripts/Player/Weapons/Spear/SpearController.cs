@@ -39,27 +39,28 @@ public class SpearController : MonoBehaviour
         }
         else
         {
-            bool wasAiming = isAiming;
+            //bool wasAiming = isAiming;
 
-            if (Input.GetMouseButton(1) && GameManager.instance.spearCount > 1) // Sað týk basýlýyken niþan alma
-            {
-                if (!isAiming) // Eðer zaten niþan alýyorsa tekrar çaðýrma
-                {
-                    isAiming = true;
-                    spearAnim.SetBool("isAiming", true);
-                    PlayerMovementController.instance.StopPlayer();
-                }
-            }
-            else if (isAiming) // Eðer niþan almayý býrakýyorsa sadece bir kez hareketi aç
-            {
-                isAiming = false;
-                spearAnim.SetBool("isAiming", false);
-                PlayerMovementController.instance.ResumeMovement();
-            }
+            //if (Input.GetMouseButton(1) && GameManager.instance.spearCount > 1) // Sað týk basýlýyken niþan alma
+            //{
+            //    if (!isAiming) // Eðer zaten niþan alýyorsa tekrar çaðýrma
+            //    {
+            //        isAiming = true;
+            //        spearAnim.SetBool("isAiming", true);
+            //        PlayerMovementController.instance.StopPlayer();
+            //    }
+            //}
+            //else if (isAiming) // Eðer niþan almayý býrakýyorsa sadece bir kez hareketi aç
+            //{
+            //    isAiming = false;
+            //    spearAnim.SetBool("isAiming", false);
+            //    PlayerMovementController.instance.ResumeMovement();
+            //}
 
-            if (isAiming && Input.GetMouseButtonDown(0) && canThrow && GameManager.instance.spearCount >= 2) // Sað týk basýlýyken sol týkla mýzraðý fýrlatma
+            if (Input.GetMouseButtonDown(1) && canThrow && spearPlayer.activeSelf && GameManager.instance.spearCount >= 2) // Sað týk basýlýyken sol týkla mýzraðý fýrlatma
             {
                 ThrowSpear();
+                spearAnim.SetTrigger("isThrow");
                 UIController.instance.DecreaseSpearCount();
                 StartCoroutine(SpearThrowCooldown());
             }
