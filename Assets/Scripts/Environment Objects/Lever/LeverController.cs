@@ -24,7 +24,7 @@ public class LeverController : MonoBehaviour
     {
         Debug.Log("Çarpýþan: " + collision.gameObject.name); // Çarpýþan objeyi yazdýr
 
-        if (collision.CompareTag("Player")) // Player ile çarpýþýyorsa
+        if (collision.CompareTag("Player") || collision.CompareTag("Arrow") || collision.CompareTag("Spear")) // Player ile çarpýþýyorsa
         {
             if (!isGateOpen) // Kapý kapalýysa aç
             {

@@ -71,6 +71,16 @@ public class GameManager : MonoBehaviour
                     startHP = 100; // Level 2 baþlangýç caný, eðer Level 1'deki can 50'nin üzerindeyse
                 }
                 break;
+            case "Level3":
+                if (PlayerHealthController.instance.currentHP < 50)
+                {
+                    startHP = 50; // Level 2 baþlangýç caný, eðer Level 1'deki can 50'nin altýndaysa
+                }
+                else
+                {
+                    startHP = 100; // Level 2 baþlangýç caný, eðer Level 1'deki can 50'nin üzerindeyse
+                }
+                break;
             default:
                 startHP = 100; // Varsayýlan baþlangýç caný
                 break;
@@ -92,6 +102,11 @@ public class GameManager : MonoBehaviour
                 coinCount = 30; // Level 2 baþlangýç altýn sayýsý
                 arrowCount = 15; // Level 2 baþlangýç ok sayýsý
                 spearCount = 4; // Level 2 baþlangýç mýzrak sayýsý
+                break;
+            case "Level3":
+                coinCount = 50; // Level 3 baþlangýç altýn sayýsý
+                arrowCount = 20; // Level 3 baþlangýç ok sayýsý
+                spearCount = 6; // Level 3 baþlangýç mýzrak sayýsý
                 break;
             default:
                 coinCount = 0; // Varsayýlan baþlangýç altýn sayýsý

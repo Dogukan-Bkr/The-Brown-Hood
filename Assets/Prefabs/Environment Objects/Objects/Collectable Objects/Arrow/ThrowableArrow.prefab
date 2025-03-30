@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4747487751653715544}
   m_Layer: 0
   m_Name: ThrowableArrow
-  m_TagString: Untagged
+  m_TagString: Arrow
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectType: 1
+  amount: 1
 --- !u!212 &7994154710975111407
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -189,4 +190,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 097f99d865cc0ef41ae58c4dcb3e04ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 5
+  damage: 8
+  afterHitDestroy: 0.5
+  autoDestroy: 2
