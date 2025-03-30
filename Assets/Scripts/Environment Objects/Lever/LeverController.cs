@@ -1,5 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
+using System.Collections;
 
 public class LeverController : MonoBehaviour
 {
@@ -8,8 +9,10 @@ public class LeverController : MonoBehaviour
     [SerializeField] private bool isVertical = true; // Kapý yönünü Unity üzerinden seçebilmek için
     [SerializeField] private float moveDistance = 4.59f; // Kapýnýn hareket mesafesi
     [SerializeField] private float moveDuration = 1f; // Kapýnýn hareket süresi
+    [SerializeField] private float cooldownTime = 3f; // 3 saniye tetikleme süresi
 
     private Animator anim;
+    private bool isCooldown = false; // Tetikleme süresi kontrolü
 
     private void Start()
     {
@@ -22,42 +25,54 @@ public class LeverController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Çarpýþan: " + collision.gameObject.name); // Çarpýþan objeyi yazdýr
+        Debug.Log("Çarpýþan: " + collision.gameObject.name);
 
-        if (collision.CompareTag("Player") || collision.CompareTag("Arrow") || collision.CompareTag("Spear")) // Player ile çarpýþýyorsa
+        // Eðer cooldown aktifse (3 saniye dolmamýþsa) kapý açýlmayacak
+        if (isCooldown)
         {
-            if (!isGateOpen) // Kapý kapalýysa aç
-            {
-                Debug.Log("Kapý Açýlýyor!");
-                isGateOpen = true;
+            Debug.Log("Kapý açýlma süresi dolmadý, bekleyin...");
+            return;
+        }
 
-                if (anim != null)
-                {
-                    anim.SetTrigger("openGate");
-                }
-
-                // Animasyon süresini bekleyerek kapýyý aç
-                StartCoroutine(OpenGateAfterDelay(0.5f)); // 0.5 saniye gecikme ile aç
-            }
-            else // Kapý açýkken tekrar tetiklenirse kapat
-            {
-                Debug.Log("Kapý Kapanýyor!");
-                isGateOpen = false;
-                if (anim != null)
-                {
-                    anim.SetTrigger("closeGate");
-                }
-
-                // Kapýyý geri kapat
-                MoveGate(-moveDistance);
-            }
+        if (collision.CompareTag("Player") || collision.CompareTag("Arrow") || collision.CompareTag("Spear"))
+        {
+            StartCoroutine(ToggleGate());
         }
     }
 
-    private System.Collections.IEnumerator OpenGateAfterDelay(float delay)
+    private IEnumerator ToggleGate()
     {
-        yield return new WaitForSeconds(delay);
-        MoveGate(moveDistance);
+        isCooldown = true; // Tetikleme süresi baþlat
+
+        if (!isGateOpen)
+        {
+            Debug.Log("Kapý Açýlýyor!");
+            isGateOpen = true;
+
+            if (anim != null)
+            {
+                anim.SetTrigger("openGate");
+            }
+
+            yield return new WaitForSeconds(0.5f);
+            MoveGate(moveDistance);
+        }
+        else
+        {
+            Debug.Log("Kapý Kapanýyor!");
+            isGateOpen = false;
+
+            if (anim != null)
+            {
+                anim.SetTrigger("closeGate");
+            }
+
+            MoveGate(-moveDistance);
+        }
+
+        // 3 saniyelik cooldown baþlat
+        yield return new WaitForSeconds(cooldownTime);
+        isCooldown = false;
     }
 
     private void MoveGate(float distance)
