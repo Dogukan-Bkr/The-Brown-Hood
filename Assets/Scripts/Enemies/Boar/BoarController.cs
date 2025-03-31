@@ -147,12 +147,6 @@ public class BoarController : MonoBehaviour
             PlayerHealthController.instance.TakeDamage(attackDamage);
             StartCoroutine(AttackCooldown());
         }
-
-        if (collision.gameObject.CompareTag("Object"))
-        {
-            int damage = SwordController.instance.DetermineDamage(collision);
-            TakeDamage(damage);
-        }
     }
 
     public void TakeDamage(int damage)

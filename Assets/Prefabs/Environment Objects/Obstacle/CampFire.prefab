@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1412557687422366239}
   - component: {fileID: 1903122714951404792}
   - component: {fileID: 6434171717845910604}
+  - component: {fileID: 4743607553964101775}
   m_Layer: 0
   m_Name: CampFire
   m_TagString: Untagged
@@ -102,7 +103,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 5d422b953ae63164d933216ad4b4a041, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -247,3 +248,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b95641264127de3498ff26bd26617b3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 2
+--- !u!205 &4743607553964101775
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8086389546878503979}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
+  m_Size: 1
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.6
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.3
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers: []
+  m_Enabled: 1
