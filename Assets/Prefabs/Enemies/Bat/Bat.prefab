@@ -509,7 +509,8 @@ MonoBehaviour:
   attackRadius: 10
   attackDamage: 15
   healthSlider: {fileID: 3949276240333171898}
-  health: 40
+  maxHealth: 40
+  healCooldown: 10
   healthPotionPrefab: {fileID: 2815075527031303594, guid: a6a9dd85000607748b01ee46dda8b151, type: 3}
   coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
   minCoin: 5

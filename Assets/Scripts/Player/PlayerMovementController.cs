@@ -45,6 +45,8 @@ public class PlayerMovementController : MonoBehaviour
     public float dashDuration = 0.3f; // Dash süresi
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
     private float dashTime = 0f; // Dash zamanlayýcýsý
+    private float dashCooldown = 2f; // Dash atmak için gereken süre
+    private float lastDashTime; // Son dash zamaný
     int swordCounter = 0;
     // Silah deðiþtirme sonrasý bekleme süresi
     private float weaponSwitchCooldown = 0.3f;
@@ -321,17 +323,18 @@ public class PlayerMovementController : MonoBehaviour
     // Dash (Atýlma) fonksiyonu
     void Dash()
     {
-        if (Input.GetKeyDown(KeyCode.E) && !isDashing) // Eðer E tuþuna basýldýysa ve þu an Dash yapýlmýyorsa
+        if (Input.GetKeyDown(KeyCode.E) && !isDashing && Time.time >= lastDashTime + dashCooldown)
         {
-            DashCheck(); // Dash fonksiyonunu çaðýr
+            DashCheck();
+            lastDashTime = Time.time; // Son dash zamaný güncellenir
         }
 
-        if (isDashing) // Eðer þu an Dash yapýlýyorsa
+        if (isDashing)
         {
-            dashTime -= Time.deltaTime; // Dash süresini azalt
-            if (dashTime <= 0) // Dash süresi dolduðunda
+            dashTime -= Time.deltaTime;
+            if (dashTime <= 0)
             {
-                isDashing = false; // Dash’i bitir
+                isDashing = false;
                 weaponSwitchTime = weaponSwitchCooldown;
             }
         }

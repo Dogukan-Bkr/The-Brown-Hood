@@ -16,6 +16,9 @@ public class BoarController : MonoBehaviour
     [SerializeField] private Vector2 chaseBoxSize; // Kovalama alaný boyutu
     [Header("Health System")]
     [SerializeField] private int health;
+    [SerializeField] private float regenDelay = 10f; // Hasar aldýktan sonra iyileþmeye baþlama süresi
+    [SerializeField] private int regenAmount = 5; // Ýyileþen miktar
+    private bool isHealing = false; // Ýyileþme durumu kontrolü
     [Header("Effects & Loot")]
     [SerializeField] private GameObject coinPrefab;
     [SerializeField] private int minCoin, maxCoin;
@@ -161,12 +164,18 @@ public class BoarController : MonoBehaviour
         // Hasar metnini göster
         ShowDamageText(damage);
 
+        // Eðer domuz ölmediyse ve iyileþmiyorsa iyileþme baþlat
         if (health <= 0)
         {
             healthSlider.gameObject.SetActive(false);
             Die();
         }
+        else if (!isHealing) // Hasar aldý ve iyileþme baþlamamýþsa
+        {
+            StartCoroutine(AutoHeal());
+        }
     }
+
 
     private void ShowDamageText(int damage)
     {
@@ -236,5 +245,26 @@ public class BoarController : MonoBehaviour
         yield return new WaitForSeconds(attackSpeed); // Yarým saniye bekle
         isAttackable = true;
     }
+
+    // AutoHeal Coroutine’i hasar alýndýðýnda baþlar ve iyileþme tamamlanýnca durur
+    private IEnumerator AutoHeal()
+    {
+        isHealing = true;
+        yield return new WaitForSeconds(regenDelay); // 10 saniye bekle
+
+        // Yalnýzca saðlýk tam deðilse iyileþtirme yapýlýr
+        while (health < currentHealth)
+        {
+            health += regenAmount;
+            if (health > currentHealth) health = currentHealth; // Saðlýk maksimumu aþmasýn
+            healthSlider.value = health; // Saðlýk çubuðunu güncelle
+            yield return new WaitForSeconds(1f); // 1 saniyede bir iyileþ
+        }
+
+        // Ýyileþme tamamlandýðýnda coroutine’i sonlandýr
+        isHealing = false;
+        Debug.Log("Boar fully healed.");
+    }
+
 }
 

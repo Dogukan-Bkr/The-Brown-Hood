@@ -641,6 +641,7 @@ MonoBehaviour:
   attackSpeed: 1.5
   attackDamage: 10
   health: 30
+  healCooldown: 10
   coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
   minCoin: 3
   maxCoin: 5

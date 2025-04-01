@@ -10,21 +10,30 @@ public class BatController : MonoBehaviour
     [SerializeField] private float attackRadius = 8f;
     [SerializeField] private int attackDamage;
     [SerializeField] private Slider healthSlider;
+
     [Header("Health System")]
-    [SerializeField] private int health = 10;  // Yarasa caný
+    [SerializeField] private int maxHealth = 10; // Yarasanýn maksimum caný
+    [SerializeField] private float healCooldown = 10f; // Son hasardan sonra iyileþme süresi
+
+    private float lastDamageTime;
+    private Coroutine healCoroutine;
+    private int currentHealth;
+
     [Header("Effects & Loot")]
     [SerializeField] private GameObject healthPotionPrefab;
     [SerializeField] private GameObject coinPrefab;
     [SerializeField] private int minCoin, maxCoin;
     [SerializeField] private GameObject hitEffect;
     [SerializeField] private GameObject dieEffect;
+
     [Header("Health Potion Drop Chances")]
-    [SerializeField] private float dropChance0 = 0.5f; // %50 þans
-    [SerializeField] private float dropChance1 = 0.3f; // %30 þans
-    [SerializeField] private float dropChance2 = 0.2f; // %20 þans
+    [SerializeField] private float dropChance0 = 0.5f; 
+    [SerializeField] private float dropChance1 = 0.3f; 
+    [SerializeField] private float dropChance2 = 0.2f; 
+
     [Header("Damage Display")]
-    [SerializeField] private GameObject damageTextPrefab; // Hasar metni prefabý
-    [SerializeField] private Transform damageTextPosition; // Hasar metninin çýkacaðý nokta
+    [SerializeField] private GameObject damageTextPrefab;
+    [SerializeField] private Transform damageTextPosition;
 
     private bool isAttackable;
     private bool isDead = false;
@@ -32,7 +41,6 @@ public class BatController : MonoBehaviour
     private Transform targetPlayer;
     private Animator anim;
     private CircleCollider2D batCollider;
-    private int currentHealth;
 
     private void Awake()
     {
@@ -43,9 +51,9 @@ public class BatController : MonoBehaviour
 
     private void Start()
     {
-        currentHealth = health;
-        healthSlider.maxValue = health;
-        healthSlider.value = health;
+        currentHealth = maxHealth;
+        healthSlider.maxValue = maxHealth;
+        healthSlider.value = maxHealth;
         isAttackable = true;
         targetPlayer = GameObject.FindGameObjectWithTag("Player").transform;
     }
@@ -76,18 +84,16 @@ public class BatController : MonoBehaviour
     private void MoveTowardsPlayer()
     {
         anim.SetBool("isFly", true);
-
         Vector3 direction = (targetPlayer.position - transform.position).normalized;
         transform.position = Vector3.MoveTowards(transform.position, targetPlayer.position, speed * Time.deltaTime);
 
-        // Yönü kontrol et
         if (direction.x > 0)
         {
-            transform.localScale = new Vector3(1, 1, 1); // Saða bak
+            transform.localScale = new Vector3(1, 1, 1);
         }
         else if (direction.x < 0)
         {
-            transform.localScale = new Vector3(-1, 1, 1); // Sola bak
+            transform.localScale = new Vector3(-1, 1, 1);
         }
     }
 
@@ -99,26 +105,26 @@ public class BatController : MonoBehaviour
         anim.SetBool("isFly", false);
         anim.SetTrigger("isAttack");
         Debug.Log("Player hit by bat");
+
         PlayerMovementController.instance.BackLeash();
         PlayerHealthController.instance.TakeDamage(attackDamage);
+
         StartCoroutine(AttackCooldown());
     }
 
     private void ReturnToInitialPosition()
     {
         anim.SetBool("isFly", true);
-
         Vector3 direction = (initialPosition - transform.position).normalized;
         transform.position = Vector3.MoveTowards(transform.position, initialPosition, speed * Time.deltaTime);
 
-        // Yönü kontrol et
         if (direction.x > 0)
         {
-            transform.localScale = new Vector3(1, 1, 1); // Saða bak
+            transform.localScale = new Vector3(1, 1, 1);
         }
         else if (direction.x < 0)
         {
-            transform.localScale = new Vector3(-1, 1, 1); // Sola bak
+            transform.localScale = new Vector3(-1, 1, 1);
         }
 
         if (Vector3.Distance(transform.position, initialPosition) <= 0.1f)
@@ -129,11 +135,11 @@ public class BatController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (isDead) return; // Ölü ise vurulamaz
+        if (isDead) return;
 
         if (collision.gameObject.CompareTag("SwordDamageBox"))
         {
-            int damage = SwordController.instance.damage; // SwordController'dan hasar deðerini al
+            int damage = SwordController.instance.damage;
             TakeDamage(damage);
         }
     }
@@ -142,15 +148,20 @@ public class BatController : MonoBehaviour
     {
         if (isDead) return;
 
-        health -= damage;
-        healthSlider.value = health;
+        currentHealth -= damage;
+        healthSlider.value = currentHealth;
         Instantiate(hitEffect, transform.position, Quaternion.identity);
-        Debug.Log("Bat health: " + health);
+        Debug.Log("Bat health: " + currentHealth);
 
-        // Hasar metnini göster
         ShowDamageText(damage);
+        lastDamageTime = Time.time;
 
-        if (health <= 0)
+        if (healCoroutine == null)
+        {
+            healCoroutine = StartCoroutine(AutoHeal());
+        }
+
+        if (currentHealth <= 0)
         {
             healthSlider.gameObject.SetActive(false);
             Die();
@@ -176,79 +187,67 @@ public class BatController : MonoBehaviour
 
     private void Die()
     {
+        if (isDead) return; // Tekrar tekrar ölmemesi için kontrol
+
         isDead = true;
         anim.SetTrigger("isDie");
+
         Instantiate(dieEffect, transform.position, Quaternion.identity);
+
         if (batCollider != null)
         {
             batCollider.enabled = false;
         }
+
+        DropLoot(); // Ölürken loot düþür!
+
         Destroy(gameObject, 0.5f);
+    }
 
-        // Nesne düþürme
-        int randomCountHP = DetermineHealthPotionDrop();
-        int randomCountCoin = Random.Range(minCoin, maxCoin);
-        Vector2 dropSpawnPos = transform.position;
-        Debug.Log("Health potion count in Bat: " + randomCountHP);
-        Debug.Log("Coin count in Bat: " + randomCountCoin);
 
-        for (int i = 0; i < randomCountHP; i++)
+    private IEnumerator AutoHeal()
+    {
+        while (true)
         {
-            GameObject healthPotion = Instantiate(healthPotionPrefab, dropSpawnPos, Quaternion.identity);
-            if ((i + 1) % 5 == 0)
-            {
-                // Her 5 sýrada bir yukarý dikey olarak sýçrat
-                healthPotion.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, Random.Range(300, 500)));
-                // dropSpawnPos.x'i sýfýrla ve y'yi artýr
-                dropSpawnPos.x = transform.position.x - 0.5f; // Sola çek
-                dropSpawnPos.y += 0.5f; // Mesafeyi artýr
-            }
-            else
-            {
-                // Diðerleri yana doðru gitsin
-                healthPotion.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
-                dropSpawnPos.x += 0.5f; // Mesafeyi artýr
-            }
-        }
+            yield return new WaitForSeconds(1f);
 
-        for (int i = 0; i < randomCountCoin; i++)
-        {
-            GameObject coin = Instantiate(coinPrefab, dropSpawnPos, Quaternion.identity);
-            if ((i + 1) % 5 == 0)
+            if (Time.time - lastDamageTime >= healCooldown)
             {
-                // Her 5 sýrada bir yukarý dikey olarak sýçrat
-                coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, Random.Range(300, 500)));
-                // dropSpawnPos.x'i sýfýrla ve y'yi artýr
-                dropSpawnPos.x = transform.position.x - 0.5f; // Sola çek
-                dropSpawnPos.y += 0.5f; // Mesafeyi artýr
-            }
-            else
-            {
-                // Diðerleri yana doðru gitsin
-                coin.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-100, 100), Random.Range(300, 500)));
-                dropSpawnPos.x += 0.5f; // Mesafeyi artýr
+                currentHealth = maxHealth;
+                healthSlider.value = maxHealth;
+                Debug.Log("Bat healed to full health!");
+                healCoroutine = null;
+                yield break;
             }
         }
     }
-
-    private int DetermineHealthPotionDrop()
+    private void DropLoot()
     {
-        float randomValue = Random.value; // 0.0 - 1.0 arasýnda rastgele bir sayý üret
-
-        if (randomValue < dropChance2) // %20 ihtimalle 2 iksir düþer
+        // Coin düþürme
+        int coinAmount = Random.Range(minCoin, maxCoin);
+        for (int i = 0; i < coinAmount; i++)
         {
-            return 2;
-        }
-        else if (randomValue < dropChance1 + dropChance2) // %30 ihtimalle 1 iksir düþer
-        {
-            return 1;
-        }
-        else if (randomValue < dropChance0 + dropChance1 + dropChance2) // %50 ihtimalle 0 iksir düþer
-        {
-            return 0;
+            Instantiate(coinPrefab, transform.position, Quaternion.identity);
         }
 
-        return 0;
+        // Saðlýk iksiri düþürme
+        float dropChance = Random.value; // 0.0 ile 1.0 arasýnda rastgele sayý üretir
+
+        if (dropChance <= dropChance2)
+        {
+            Instantiate(healthPotionPrefab, transform.position, Quaternion.identity);
+            Debug.Log("Rare Health Potion Dropped!");
+        }
+        else if (dropChance <= dropChance1 + dropChance2)
+        {
+            Instantiate(healthPotionPrefab, transform.position, Quaternion.identity);
+            Debug.Log("Common Health Potion Dropped!");
+        }
+        else if (dropChance <= dropChance0 + dropChance1 + dropChance2)
+        {
+            Instantiate(healthPotionPrefab, transform.position, Quaternion.identity);
+            Debug.Log("Basic Health Potion Dropped!");
+        }
     }
 
     private IEnumerator AttackCooldown()

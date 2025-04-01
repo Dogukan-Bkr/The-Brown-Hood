@@ -311,6 +311,8 @@ MonoBehaviour:
   attackDamage: 20
   healthSlider: {fileID: 7744760446759284011}
   health: 50
+  regenDelay: 20
+  regenAmount: 5
   healthPotionPrefab: {fileID: 2815075527031303594, guid: a6a9dd85000607748b01ee46dda8b151, type: 3}
   coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
   minCoin: 8

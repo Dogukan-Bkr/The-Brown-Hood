@@ -18,9 +18,12 @@ public class SpiderController : MonoBehaviour
     private Animator anim;
     private Transform targetPlayer;
     private BoxCollider2D spiderCollider;
+    private Coroutine regenCoroutine;
 
     [Header("Health System")]
     [SerializeField] private int health;
+    [SerializeField] private float healCooldown = 10f;
+    
     private int currentHealth;
     private bool isDead = false;
 
@@ -31,8 +34,8 @@ public class SpiderController : MonoBehaviour
     [SerializeField] private GameObject dieEffect;
 
     [Header("Damage Display")]
-    [SerializeField] private GameObject damageTextPrefab; // Hasar metni prefabý
-    [SerializeField] private Transform damageTextPosition; // Hasar metninin çýkacaðý nokta
+    [SerializeField] private GameObject damageTextPrefab;
+    [SerializeField] private Transform damageTextPosition;
 
     private void Awake()
     {
@@ -110,18 +113,9 @@ public class SpiderController : MonoBehaviour
     private void FollowDirection(Transform target)
     {
         if (target.position.x > transform.position.x)
-            transform.localScale = Vector3.one; // Saða bak
+            transform.localScale = Vector3.one;
         else
-            transform.localScale = new Vector3(-1, 1, 1); // Sola bak
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        for (int i = 0; i < positions.Length; i++)
-        {
-            Gizmos.DrawWireSphere(positions[i].position, attackArea);
-        }
+            transform.localScale = new Vector3(-1, 1, 1);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -148,15 +142,20 @@ public class SpiderController : MonoBehaviour
     {
         if (isDead) return;
 
-        health -= damage;
-        healthSlider.value = health;
-        Debug.Log("Spider health: " + health);
+        if (regenCoroutine != null)
+        {
+            StopCoroutine(regenCoroutine);
+        }
+        regenCoroutine = StartCoroutine(HealthRegen());
+
+        currentHealth -= damage;
+        healthSlider.value = currentHealth;
+        Debug.Log("Spider health: " + currentHealth);
         Instantiate(hitEffect, transform.position, Quaternion.identity, transform);
 
-        // Hasar metnini göster
         ShowDamageText(damage);
 
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
             healthSlider.gameObject.SetActive(false);
             Die();
@@ -189,7 +188,7 @@ public class SpiderController : MonoBehaviour
         {
             spiderCollider.enabled = false;
         }
-        Destroy(gameObject, 0.5f);
+        Destroy(gameObject, 0.25f);
 
         int randomCountCoin = Random.Range(minCoin, maxCoin);
         Vector2 coinSpawnPos = transform.position;
@@ -215,5 +214,17 @@ public class SpiderController : MonoBehaviour
     {
         yield return new WaitForSeconds(attackSpeed);
         isAttackable = true;
+    }
+
+    private IEnumerator HealthRegen()
+    {
+        yield return new WaitForSeconds(healCooldown);
+
+        if (currentHealth < health)
+        {
+            currentHealth = health;
+            healthSlider.value = currentHealth;
+            Debug.Log("Spider regenerated health!");
+        }
     }
 }

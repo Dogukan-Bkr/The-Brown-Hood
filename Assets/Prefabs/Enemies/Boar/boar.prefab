@@ -716,6 +716,8 @@ MonoBehaviour:
   attackDamage: 25
   chaseBoxSize: {x: 9, y: 2}
   health: 90
+  regenDelay: 15
+  regenAmount: 5
   coinPrefab: {fileID: 1266339842990471446, guid: d8a161677d449c04e8516c489bc92242, type: 3}
   minCoin: 15
   maxCoin: 25

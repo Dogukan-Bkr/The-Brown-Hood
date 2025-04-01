@@ -12,7 +12,10 @@ public class BeeController : MonoBehaviour
     [SerializeField] private int attackDamage;
     [SerializeField] private Slider healthSlider;
     [Header("Health System")]
-    [SerializeField] private int health = 10;  // Arý caný
+    [SerializeField] private int health;
+    [SerializeField] private float regenDelay = 10f; // Hasar aldýktan sonra iyileþmeye baþlama süresi
+    [SerializeField] private int regenAmount = 5; // Ýyileþen miktar
+    private bool isHealing = false; // Ýyileþme durumu kontrolü
     [Header("Effects & Loot")]
     [SerializeField] private GameObject healthPotionPrefab;
     [SerializeField] private GameObject coinPrefab;
@@ -146,16 +149,21 @@ public class BeeController : MonoBehaviour
 
         health -= damage;
         healthSlider.value = health;
+        Debug.Log("Boar health: " + health);
         Instantiate(hitEffect, transform.position, Quaternion.identity);
-        Debug.Log("Bee health: " + health);
 
         // Hasar metnini göster
         ShowDamageText(damage);
 
+        // Eðer domuz ölmediyse ve iyileþmiyorsa iyileþme baþlat
         if (health <= 0)
         {
             healthSlider.gameObject.SetActive(false);
             Die();
+        }
+        else if (!isHealing) // Hasar aldý ve iyileþme baþlamamýþsa
+        {
+            StartCoroutine(AutoHeal());
         }
     }
 
@@ -267,7 +275,25 @@ public class BeeController : MonoBehaviour
             transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
         }
     }
+    // AutoHeal Coroutine’i hasar alýndýðýnda baþlar ve iyileþme tamamlanýnca durur
+    private IEnumerator AutoHeal()
+    {
+        isHealing = true;
+        yield return new WaitForSeconds(regenDelay); // 10 saniye bekle
 
+        // Yalnýzca saðlýk tam deðilse iyileþtirme yapýlýr
+        while (health < currentHealth)
+        {
+            health += regenAmount;
+            if (health > currentHealth) health = currentHealth; // Saðlýk maksimumu aþmasýn
+            healthSlider.value = health; // Saðlýk çubuðunu güncelle
+            yield return new WaitForSeconds(1f); // 1 saniyede bir iyileþ
+        }
+
+        // Ýyileþme tamamlandýðýnda coroutine’i sonlandýr
+        isHealing = false;
+        Debug.Log("Boar fully healed.");
+    }
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
