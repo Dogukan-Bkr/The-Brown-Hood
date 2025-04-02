@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using GoogleMobileAds.Api;
 using System;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class UIController : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class UIController : MonoBehaviour
 #endif
     public static UIController instance;
     public GameObject blacksmithPanel;
+    public GameObject pausePanel;
     public GameObject tentPanel; // Tent paneli
     public Button buySpearButton, buyArrowButton;
     public Button exchangeSpearForCoinButton;
@@ -176,7 +178,21 @@ public class UIController : MonoBehaviour
         blacksmithPanel.SetActive(true);
         PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
     }
-
+    public void OpenPausePanel()
+    {
+        pausePanel.SetActive(true);
+        Time.timeScale = 0; // Oyunu duraklat
+    }
+    public void ClosePausePanel()
+    {
+        pausePanel.SetActive(false);
+        Time.timeScale = 1; // Oyunu devam ettir
+    }
+    public void Replay()
+    {
+        Time.timeScale = 1; // Oyunu devam ettir
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Aktif sahneyi yeniden yükle
+    }
     public void CloseBlacksmithPanel()
     {
         blacksmithPanel.SetActive(false);

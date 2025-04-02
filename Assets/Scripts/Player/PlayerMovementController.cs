@@ -83,6 +83,7 @@ public class PlayerMovementController : MonoBehaviour
 
     void Update()
     {
+        
         if (backLeashCounter <= 0) // Geri itilme süresi dolduysa normal hareketi çalýþtýr
         {
             isGrounded = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
