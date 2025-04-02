@@ -38,6 +38,10 @@ public class UIController : MonoBehaviour
     private RewardedAd rewardedAdCoin;
     private RewardedAd rewardedAdHealth; // Reklam karşılığı can doldurma reklamı
 
+    public Image openSoundIcon;  // Ses açık ikonu
+    public Image muteSoundIcon;  // Ses kapalı ikonu
+
+    private bool isMuted = false;
     private void Awake()
     {
         instance = this;
@@ -53,6 +57,15 @@ public class UIController : MonoBehaviour
 
         // Reklamları yükle
         RequestRewardedAds();
+        if (!PlayerPrefs.HasKey("isMuted"))
+        {
+            PlayerPrefs.SetInt("isMuted", 0);
+            Load();
+        }
+        else
+        {
+            Load();
+        }
     }
 
     private void AssignButtonListeners()
@@ -193,6 +206,46 @@ public class UIController : MonoBehaviour
         Time.timeScale = 1; // Oyunu devam ettir
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Aktif sahneyi yeniden yükle
     }
+    public void OnVoiceButtonPress()
+    {
+        
+        if(isMuted == false)
+        {
+            isMuted = true;
+            AudioListener.pause = true;
+        }
+        else
+        {
+            isMuted = false;
+            AudioListener.pause = false;
+        }
+        Save();
+        UpdateVoiceButtonIcon();
+        AudioListener.pause = isMuted;
+    }
+    private void UpdateVoiceButtonIcon()
+    {
+        if(isMuted == false)
+        {
+            openSoundIcon.enabled = true;
+            muteSoundIcon.enabled = false;
+        }
+        else
+        {
+            openSoundIcon.enabled = false;
+            muteSoundIcon.enabled = true;
+        }
+    }
+    private void Load()
+    {
+        isMuted = PlayerPrefs.GetInt("Muted") == 1;
+    }
+    private void Save()
+    {
+        PlayerPrefs.SetInt("Muted", isMuted ? 1 : 0);
+    }   
+    // Tüm sesleri aç
+
     public void CloseBlacksmithPanel()
     {
         blacksmithPanel.SetActive(false);

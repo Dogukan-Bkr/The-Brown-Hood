@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerMovementController : MonoBehaviour
 {
@@ -8,8 +10,11 @@ public class PlayerMovementController : MonoBehaviour
     bool isDead;
     public GameObject normalPlayer, swordPlayer, spearPlayer, bowPlayer;
     public WeaponType currentWeapon = WeaponType.None;
+    
+    
     // Hareket ayarlarý
     public float speed = 8f;
+    private float moveInput = 0f;
     public float firstJumpForce = 9f;
     public float doubleJumpForce = 12f;
     public float fallMultiplier = 3f;
@@ -28,6 +33,8 @@ public class PlayerMovementController : MonoBehaviour
     public Transform groundCheck; // Inspector'da karakterin altýna ekle
     public LayerMask groundLayer; // Sadece zemin olan nesneler için bir Layer Mask
     public float groundCheckDistance = 0.2f; // Kontrol edilecek alanýn yarýçapý
+    private bool jumpButtonPressed = false; // Butona basýldýðýný kontrol eden deðiþken
+    public Button jumpButton;
     // Týrmanma deðiþkenleri
     public float climbspeed = 3f;
     private bool isOnLadder, isClimbing = false;
@@ -57,11 +64,14 @@ public class PlayerMovementController : MonoBehaviour
     private bool isNearBlackSmith = false;
     private bool isNearTent = false;
     public GameObject blacksmithPanel,Tent;
+
     private void Awake()
     {
         instance = this;
         rb = GetComponent<Rigidbody2D>();
         isDead = false;
+       
+
         // Sprite Renderer bileþeni atanmýþ mý kontrol et, eðer yoksa al
         if (normalSpriteRenderer == null && normalPlayer != null)
         {
@@ -236,29 +246,24 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (!isDashing) // Dash sýrasýnda hareket etme
         {
-            float move = Input.GetAxisRaw("Horizontal"); // Klavyeden sað/sol tuþlarý alýnýr
-            rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y); // Karakter hareket ettirilir
+            rb.linearVelocity = new Vector2(moveInput * speed, rb.linearVelocity.y);
 
             // Animator’a hýz bilgisini göndererek animasyonlarý tetikle
+            float speedValue = Mathf.Abs(rb.linearVelocity.x);
+
             if (normalPlayer.activeSelf)
-            {
-                normalAnim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
-            }
+                normalAnim.SetFloat("speed", speedValue);
             else if (swordPlayer.activeSelf)
-            {
-                swordAnim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
-            }
+                swordAnim.SetFloat("speed", speedValue);
             else if (spearPlayer.activeSelf)
-            {
-                spearAnim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
-            }
+                spearAnim.SetFloat("speed", speedValue);
             else if (bowPlayer.activeSelf)
-            {
-                bowAnim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
-            }
+                bowAnim.SetFloat("speed", speedValue);
         }
     }
-
+    public void MoveLeft() { moveInput = -1f; }
+    public void MoveRight() { moveInput = 1f; }
+    public void StopMoving() { moveInput = 0f; }
     // Karakterin yönünü deðiþtirir
     void CheckMoveDirection()
     {
@@ -275,17 +280,32 @@ public class PlayerMovementController : MonoBehaviour
     }
 
     // Zýplama fonksiyonu
-    void Jump()
+    public void SetJumpButtonState(bool state)
     {
-        if (Input.GetButtonDown("Jump") && jumpCount < maxJumps) // Eðer zýplama tuþuna basýldýysa ve zýplama hakký varsa
+        // Zýplama sýnýrýna ulaþýldýðýnda ve yere düþülene kadar buton devre dýþý býrakýlacak
+        if (jumpCount >= maxJumps-1)
+        {
+            // Yere deðene kadar buton týklanamaz, buton devre dýþý býrakýlýr
+            jumpButtonPressed = false;
+        }
+        else
+        {
+            // Zýplama sýnýrýna ulaþýlmadýysa, buton aktif
+            jumpButtonPressed = state;
+        }
+    }
+
+    public void Jump()
+    {
+        if (jumpButtonPressed && jumpCount < maxJumps) // Zýplama sayýsý maxJumps'dan küçükse zýpla
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0); // Önceki düþüþ hýzýný sýfýrla
 
-            // Ýlk zýplama mý yoksa çift zýplama mý olduðunu kontrol et
-            float jumpPower = (jumpCount == 0) ? firstJumpForce : doubleJumpForce;
+            float jumpPower = (jumpCount == 0) ? firstJumpForce : doubleJumpForce; // Ýlk zýplama ve double jump kuvveti
             rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse); // Zýplama kuvveti uygula
 
             jumpCount++; // Zýplama sayýsýný artýr
+            jumpButtonPressed = false; // Butonu devre dýþý býrak
         }
 
         // Daha gerçekçi bir zýplama eðrisi için ekstra fiziksel kuvvet uygula
@@ -293,9 +313,17 @@ public class PlayerMovementController : MonoBehaviour
         {
             rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
         }
-        else if (rb.linearVelocity.y > 0 && !Input.GetButton("Jump"))
+        else if (rb.linearVelocity.y > 0 && !jumpButtonPressed)
         {
             rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
+        }
+
+        // Yere deðdiðinde zýplama sayýsýný sýfýrla ve butonu tekrar aktif et
+        if (isGrounded)
+        {
+            jumpCount = 0; // Zýplama sayýsýný sýfýrla
+            jumpButtonPressed = false; // Butonu devre dýþý býrak
+            jumpButton.interactable = true; // Zýplama butonunu tekrar aktif et
         }
 
         // Animator’a zemin durumu ve zýplama kuvveti bilgisini gönder
@@ -320,6 +348,7 @@ public class PlayerMovementController : MonoBehaviour
             bowAnim.SetFloat("firstJumpForce", rb.linearVelocity.y);
         }
     }
+
 
     // Dash (Atýlma) fonksiyonu
     void Dash()
