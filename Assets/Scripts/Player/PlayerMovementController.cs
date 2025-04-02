@@ -54,6 +54,8 @@ public class PlayerMovementController : MonoBehaviour
     private float dashTime = 0f; // Dash zamanlayýcýsý
     private float dashCooldown = 2f; // Dash atmak için gereken süre
     private float lastDashTime; // Son dash zamaný
+    private bool dashButtonPressed = false;
+    public Button dashButton;
     int swordCounter = 0;
     // Silah deðiþtirme sonrasý bekleme süresi
     private float weaponSwitchCooldown = 0.3f;
@@ -351,12 +353,32 @@ public class PlayerMovementController : MonoBehaviour
 
 
     // Dash (Atýlma) fonksiyonu
-    void Dash()
+    public void SetDashButtonState(bool state)
     {
-        if (Input.GetKeyDown(KeyCode.E) && !isDashing && Time.time >= lastDashTime + dashCooldown)
+        // Butona týklanýnca çaðrýlacak, cooldown kontrolü yapýlýyor
+        if (Time.time >= lastDashTime + dashCooldown)
+        {
+            dashButtonPressed = state;
+        }
+        
+    }
+
+    public void DashButtonPressed()
+    {
+        if (dashButtonPressed && !isDashing && Time.time >= lastDashTime + dashCooldown)
         {
             DashCheck();
             lastDashTime = Time.time; // Son dash zamaný güncellenir
+            dashButtonPressed = false; // Butonu devre dýþý býrak
+        }
+    }
+    void Dash()
+    {
+        if (dashButtonPressed && !isDashing && Time.time >= lastDashTime + dashCooldown)
+        {
+            DashCheck();
+            lastDashTime = Time.time; // Son dash zamaný güncellenir
+            dashButtonPressed = false; // Butonu devre dýþý býrak
         }
 
         if (isDashing)
@@ -369,9 +391,40 @@ public class PlayerMovementController : MonoBehaviour
             }
         }
     }
+    // Dash kontrolü ve uygulanmasý
+    void DashCheck()
+    {
+        isDashing = true; // Dash aktif hale getirildi
+        dashTime = dashDuration; // Dash süresi baþlatýldý
 
+        // Dash animasyonunu tetikle
+        if (normalPlayer.activeSelf)
+        {
+            normalAnim.SetTrigger("dash");
+        }
+        else if (swordPlayer.activeSelf)
+        {
+            swordAnim.SetTrigger("dash");
+        }
+        else if (spearPlayer.activeSelf)
+        {
+            spearAnim.SetTrigger("dash");
+        }
+        else if (bowPlayer.activeSelf)
+        {
+            bowAnim.SetTrigger("dash");
+        }
 
-    // Karakter geri itilme durumuna geçtiðinde çalýþýr
+        // Dash yönünü belirle (karakterin baktýðý yöne göre)
+        if (direction)
+        {
+            rb.linearVelocity = new Vector2(dashSpeed, rb.linearVelocity.y); // Saða Dash
+        }
+        else
+        {
+            rb.linearVelocity = new Vector2(-dashSpeed, rb.linearVelocity.y); // Sola Dash
+        }
+    }
     // Karakter geri itilme durumuna geçtiðinde çalýþýr
     public void BackLeash()
     {
@@ -528,40 +581,7 @@ public class PlayerMovementController : MonoBehaviour
     }
 
 
-    // Dash kontrolü ve uygulanmasý
-    void DashCheck()
-    {
-        isDashing = true; // Dash aktif hale getirildi
-        dashTime = dashDuration; // Dash süresi baþlatýldý
-
-        // Dash animasyonunu tetikle
-        if (normalPlayer.activeSelf)
-        {
-            normalAnim.SetTrigger("dash");
-        }
-        else if (swordPlayer.activeSelf)
-        {
-            swordAnim.SetTrigger("dash");
-        }
-        else if (spearPlayer.activeSelf)
-        {
-            spearAnim.SetTrigger("dash");
-        }
-        else if (bowPlayer.activeSelf)
-        {
-            bowAnim.SetTrigger("dash");
-        }
-
-        // Dash yönünü belirle (karakterin baktýðý yöne göre)
-        if (direction)
-        {
-            rb.linearVelocity = new Vector2(dashSpeed, rb.linearVelocity.y); // Saða Dash
-        }
-        else
-        {
-            rb.linearVelocity = new Vector2(-dashSpeed, rb.linearVelocity.y); // Sola Dash
-        }
-    }
+    
 
     public void PlayerDead()
     {
