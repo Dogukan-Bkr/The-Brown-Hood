@@ -236,6 +236,11 @@ public class UIController : MonoBehaviour
             muteSoundIcon.enabled = true;
         }
     }
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene(0); // Build index 1 olan sahneyi yükler
+        Time.timeScale = 1; // Oyunu devam ettir
+    }
     private void Load()
     {
         isMuted = PlayerPrefs.GetInt("Muted") == 1;

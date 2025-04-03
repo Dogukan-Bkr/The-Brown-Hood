@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -40,6 +41,9 @@ public class PlayerMovementController : MonoBehaviour
     private bool isOnLadder, isClimbing = false;
     private float qCooldownTime = 0.35f;
     private float qTime = 0f;
+    private float verticalInput = 0f;
+    public float ladderMinX;
+    public float ladderMaxX;
     // Fizik bileþeni
     private Rigidbody2D rb;
 
@@ -60,13 +64,31 @@ public class PlayerMovementController : MonoBehaviour
     // Silah deðiþtirme sonrasý bekleme süresi
     private float weaponSwitchCooldown = 0.3f;
     private float weaponSwitchTime = 0f;
+    public Button swordButton;
+    public Button spearButton;
+    public Button bowButton;
+    public Button noneButton; // None butonu
     // Ölüm efekti
     public GameObject deathEffect;
     //NPC
     private bool isNearBlackSmith = false;
     private bool isNearTent = false;
     public GameObject blacksmithPanel,Tent;
-
+    private void Start()
+    {
+        if (swordButton != null)
+        {
+            swordButton.onClick.AddListener(OnSwordButtonClick);
+        }if (spearButton != null)
+        {
+            spearButton.onClick.AddListener(OnSpearButtonClick);
+        }
+        if (bowButton != null)
+        {
+            bowButton.onClick.AddListener(OnBowButtonClick);
+        }
+        
+    }
     private void Awake()
     {
         instance = this;
@@ -104,13 +126,51 @@ public class PlayerMovementController : MonoBehaviour
             {
                 jumpCount = 0; // Karakter zemine deðdiðinde zýplama hakký sýfýrlanýr
             }
+            if (Input.GetKeyDown(KeyCode.Q) && isOnLadder) //Bilgisayar testleri bittiðinde kaldýrýlabilir.
+            {
+                isClimbing = !isClimbing;  
+            }
+            // Klavyeden giriþ al ve sadece tuþ basýlýyken hareket et
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+            {
+                moveInput = -1f;
+            }
+            else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+            {
+                moveInput = 1f;
+            }
+            else
+            {
+                moveInput = 0f; // Tuþ býrakýldýðýnda hareketi durdur
+            }
+            // Butonlara olaylarý baðlayalým
+            // Kýlýç butonu 
+            if (swordButton != null)
+            {
+                bool hasSword = swordCounter >= 1;
+                swordButton.interactable = hasSword;
+            }
+
+            // Mýzrak butonu 
+            if (spearButton != null)
+            {
+                bool hasSpear = GameManager.instance.spearCount > 0;
+                spearButton.interactable = hasSpear;
+            }
+
+            // Yay butonu 
+            if (bowButton != null)
+            {
+                bool hasBow = GameManager.instance.arrowCount > 0;
+                bowButton.interactable = hasBow;
+            }
             Jump();
             Move();
             CheckMoveDirection();
             Dash();
             Climb();
             HandleWeaponAttack();
-            HandleWeaponSwitch();
+            
 
             // BlackSmith panelini açma kontrolü
             if (isNearBlackSmith && Input.GetKeyDown(KeyCode.F))
@@ -172,6 +232,100 @@ public class PlayerMovementController : MonoBehaviour
 
 
 
+    public void OnSwordButtonClick()
+    {
+        if (GameManager.instance != null && !isClimbing && !isDashing && weaponSwitchTime <= 0 && qTime <= 0)
+        {
+            // Saldýrý sýrasýnda silah deðiþtirmeyi engelle
+            if ((SwordController.instance != null && SwordController.instance.isAttacking) ||
+                (SpearController.instance != null && (SpearController.instance.isAttacking || SpearController.instance.isAiming)) ||
+                (BowController.instance != null && BowController.instance.isShooting))
+            {
+                return;
+            }
+
+            // Kýlýç geçiþi
+            if (swordCounter > 1)
+            {
+                SetActiveWeapon(WeaponType.Sword);
+                qTime = qCooldownTime;
+            }
+        }
+    }
+
+    // Mýzrak butonuna basýldýðýnda
+    public void OnSpearButtonClick()
+    {
+        if (GameManager.instance != null && !isClimbing && !isDashing && weaponSwitchTime <= 0 && qTime <= 0)
+        {
+            // Saldýrý sýrasýnda silah deðiþtirmeyi engelle
+            if ((SwordController.instance != null && SwordController.instance.isAttacking) ||
+                (SpearController.instance != null && (SpearController.instance.isAttacking || SpearController.instance.isAiming)) ||
+                (BowController.instance != null && BowController.instance.isShooting))
+            {
+                return;
+            }
+
+            // Mýzrak geçiþi
+            if (GameManager.instance.spearCount > 0)
+            {
+                SetActiveWeapon(WeaponType.Spear);
+                qTime = qCooldownTime;
+            }
+        }
+    }
+
+    // Yay butonuna basýldýðýnda
+    public void OnBowButtonClick()
+    {
+        if (GameManager.instance != null && !isClimbing && !isDashing && weaponSwitchTime <= 0 && qTime <= 0)
+        {
+            // Saldýrý sýrasýnda silah deðiþtirmeyi engelle
+            if ((SwordController.instance != null && SwordController.instance.isAttacking) ||
+                (SpearController.instance != null && (SpearController.instance.isAttacking || SpearController.instance.isAiming)) ||
+                (BowController.instance != null && BowController.instance.isShooting))
+            {
+                return;
+            }
+
+            // Yay geçiþi
+            if (GameManager.instance.arrowCount > 0)
+            {
+                SetActiveWeapon(WeaponType.Bow);
+                qTime = qCooldownTime;
+            }
+        }
+    }
+
+    
+
+    // Silah deðiþtirme iþlemi
+    void SetActiveWeapon(WeaponType weaponType)
+    {
+        currentWeapon = weaponType;
+        normalPlayer.SetActive(weaponType == WeaponType.None);
+        swordPlayer.SetActive(weaponType == WeaponType.Sword);
+        spearPlayer.SetActive(weaponType == WeaponType.Spear);
+        bowPlayer.SetActive(weaponType == WeaponType.Bow);
+
+        // Eðer None durumundan baþka bir silaha geçiliyorsa, hareketi devam ettir
+        if (weaponType != WeaponType.None)
+        {
+            ResumeMovement();
+        }
+
+        // Silah geçiþi yapýlýrken, ok ve mýzrak sayýsýný kontrol et
+        if (weaponType == WeaponType.Spear && GameManager.instance.spearCount <= 0)
+        {
+            currentWeapon = WeaponType.Sword;  // Tekrar SetActiveWeapon çaðýrmadan direkt deðiþtir
+        }
+        else if (weaponType == WeaponType.Bow && GameManager.instance.arrowCount <= 0)
+        {
+            currentWeapon = WeaponType.None;
+        }
+    }
+
+    // Silah saldýrýsý
     void HandleWeaponAttack()
     {
         if (SwordController.instance != null && currentWeapon == WeaponType.Sword)
@@ -182,65 +336,13 @@ public class PlayerMovementController : MonoBehaviour
         {
             SpearController.instance.SpearAttack();
         }
-        
     }
 
-    void HandleWeaponSwitch()
-    {
-        if (GameManager.instance != null && !isClimbing && !isDashing && weaponSwitchTime <= 0)
-        {
-            // Saldýrý sýrasýnda silah deðiþtirmeyi engelle
-            if ((SwordController.instance != null && SwordController.instance.isAttacking) ||
-                (SpearController.instance != null && (SpearController.instance.isAttacking || SpearController.instance.isAiming)) ||
-                (BowController.instance != null && BowController.instance.isShooting))
-            {
-                return;
-            }
-
-            if (Input.GetKeyDown(KeyCode.Alpha1) && qTime <= 0)
-            {
-                SetActiveWeapon(WeaponType.None);
-                qTime = qCooldownTime;
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2) && swordCounter > 1)
-            {
-                SetActiveWeapon(WeaponType.Sword);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3) && GameManager.instance.spearCount > 0)
-            {
-                SetActiveWeapon(WeaponType.Spear);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4) && GameManager.instance.arrowCount > 0)
-            {
-                SetActiveWeapon(WeaponType.Bow);
-            }
-        }
-    }
-
+    // Varsayýlan silah ayarlarý (Kýlýç)
     public void DefaultWeapon()
     {
         SetActiveWeapon(WeaponType.Sword);
     }
-    void SetActiveWeapon(WeaponType weaponType)
-    {
-        currentWeapon = weaponType;
-        normalPlayer.SetActive(weaponType == WeaponType.None);
-        swordPlayer.SetActive(weaponType == WeaponType.Sword);
-        spearPlayer.SetActive(weaponType == WeaponType.Spear);
-        bowPlayer.SetActive(weaponType == WeaponType.Bow);
-
-        // Silah deðiþtirildiðinde ok ve mýzrak sayýsýný güncelle
-        if (weaponType == WeaponType.Spear && GameManager.instance.spearCount <= 0)
-        {
-            SetActiveWeapon(WeaponType.Sword);
-            ResumeMovement();
-        }
-        else if (weaponType == WeaponType.Bow && GameManager.instance.arrowCount <= 0)
-        {
-            SetActiveWeapon(WeaponType.None);
-        }
-    }
-
 
 
     // Oyuncunun yatay hareketini yönetir
@@ -471,16 +573,21 @@ public class PlayerMovementController : MonoBehaviour
         }
     }
 
-
-
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Ladder")) isOnLadder = true;
+        if (collision.CompareTag("Ladder"))
+        {
+            isOnLadder = true;
+
+            // Merdivenin sýnýrlarýný alýyoruz
+            ladderMinX = collision.bounds.min.x; // Merdivenin sol sýnýrý
+            ladderMaxX = collision.bounds.max.x; // Merdivenin sað sýnýrý
+        }
         if (collision.CompareTag("BlackSmith")) { isNearBlackSmith = true; }
         if (collision.CompareTag("Tent")) { isNearTent = true; }
     }
 
-    // OnTriggerExit2D metodunda Tent kontrolü
+
     void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Ladder")) isOnLadder = false;
@@ -488,100 +595,150 @@ public class PlayerMovementController : MonoBehaviour
         if (collision.CompareTag("Tent")) { isNearTent = false; }
     }
 
+    public void SetClimbButtonState(bool state)
+    {
+        // Butona basýldýðýnda climb iþlemine baþla
+        if (state && isOnLadder && qTime <= 0)
+        {
+            isClimbing = true;
+        }
+        else if (!state) // Buton býrakýldýðýnda climb iþlemini durdur
+        {
+            isClimbing = false;
+            qTime = qCooldownTime; // Q tuþu için bekleme süresi
+        }
+    }
+
+    // Dikey hareket için
+    public void MoveUp() { verticalInput = 1f; }  // Yukarý hareket
+    public void MoveDown() { verticalInput = -1f; }  // Aþaðý hareket
+    public void StopClimbing() { verticalInput = 0f; }  // Dikey hareketi durdur
+
     void Climb()
     {
+        
         if (normalPlayer.activeSelf)
         {
-            if (isOnLadder && Input.GetKey(KeyCode.Q) && qTime <= 0)
+            if ((isOnLadder && qTime <= 0)) // Q tuþuna basýldýðýnda da çalýþacak
             {
-                isClimbing = true;
-                float h = Input.GetAxis("Vertical");
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, h * climbspeed);
-                rb.gravityScale = 0;
-                normalAnim.SetBool("isClimbing", true);
-                normalAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+                if (isClimbing)
+                {
+                    // Yatay hareketi sýnýrlamak için moveInput kullanýyoruz
+                    float horizontalInput = moveInput; // Yatay input
+                    float newX = Mathf.Clamp(rb.position.x + horizontalInput * climbspeed * Time.deltaTime, ladderMinX, ladderMaxX);
+                    rb.position = new Vector2(newX, rb.position.y);  // Yatay hareketi sýnýrlýyoruz, dikey hareketi ayný býrakýyoruz
+
+                    rb.linearVelocity = new Vector2(0, verticalInput * climbspeed); // Yalnýzca dikey hareketi uygula
+                    rb.gravityScale = 0; // Yerçekimi devre dýþý býrakýlýyor
+                    normalAnim.SetBool("isClimbing", true);
+                    normalAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+                }
+                else
+                {
+                    normalAnim.SetBool("isClimbing", false);
+                    rb.gravityScale = 3; // Yerçekimini devreye sok
+                }
             }
             else
             {
-                isClimbing = false;
+                // Merdiven dýþýnda veya týrmanmýyorsa
+                rb.gravityScale = 3; // Yerçekimi devreye girer
                 normalAnim.SetBool("isClimbing", false);
-                rb.gravityScale = 3; // Yerçekimini hemen devreye sok
-                if (Input.GetKeyUp(KeyCode.Q))
-                {
-                    qTime = qCooldownTime; // Q tuþu için bekleme süresi
-                }
             }
         }
         else if (swordPlayer.activeSelf)
         {
-            if (isOnLadder && Input.GetKey(KeyCode.Q) && qTime <= 0)
+            if (isOnLadder && qTime <= 0)
             {
-                isClimbing = true;
-                float h = Input.GetAxis("Vertical");
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, h * climbspeed);
-                rb.gravityScale = 0;
-                swordAnim.SetBool("isClimbing", true);
-                swordAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+                if (isClimbing)
+                {
+                    // Yatay hareketi sýnýrlamak için moveInput kullanýyoruz
+                    float horizontalInput = moveInput; // Yatay input
+                    float newX = Mathf.Clamp(rb.position.x + horizontalInput * climbspeed * Time.deltaTime, ladderMinX, ladderMaxX);
+                    rb.position = new Vector2(newX, rb.position.y);  // Yatay hareketi sýnýrlýyoruz, dikey hareketi ayný býrakýyoruz
+
+                    rb.linearVelocity = new Vector2(0, verticalInput * climbspeed); // Yalnýzca dikey hareketi uygula
+                    rb.gravityScale = 0; // Yerçekimi devre dýþý býrakýlýyor
+                    swordAnim.SetBool("isClimbing", true);
+                    swordAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+                }
+                else
+                {
+                    swordAnim.SetBool("isClimbing", false);
+                    rb.gravityScale = 3; // Yerçekimini devreye sok
+                }
             }
             else
             {
-                isClimbing = false;
+                // Merdiven dýþýnda veya týrmanmýyorsa
+                rb.gravityScale = 3; // Yerçekimi devreye girer
                 swordAnim.SetBool("isClimbing", false);
-                rb.gravityScale = 3; // Yerçekimini hemen devreye sok
-                if (Input.GetKeyUp(KeyCode.Q))
-                {
-                    qTime = qCooldownTime; // Q tuþu için bekleme süresi
-                }
             }
         }
         else if (spearPlayer.activeSelf)
         {
-            if (isOnLadder && Input.GetKey(KeyCode.Q) && qTime <= 0)
+            if (isOnLadder && qTime <= 0)
             {
-                isClimbing = true;
-                float h = Input.GetAxis("Vertical");
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, h * climbspeed);
-                rb.gravityScale = 0;
-                spearAnim.SetBool("isClimbing", true);
-                spearAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+                if (isClimbing)
+                {
+                    // Yatay hareketi sýnýrlamak için moveInput kullanýyoruz
+                    float horizontalInput = moveInput; // Yatay input
+                    float newX = Mathf.Clamp(rb.position.x + horizontalInput * climbspeed * Time.deltaTime, ladderMinX, ladderMaxX);
+                    rb.position = new Vector2(newX, rb.position.y);  // Yatay hareketi sýnýrlýyoruz, dikey hareketi ayný býrakýyoruz
+
+                    rb.linearVelocity = new Vector2(0, verticalInput * climbspeed); // Yalnýzca dikey hareketi uygula
+                    rb.gravityScale = 0; // Yerçekimi devre dýþý býrakýlýyor
+                    spearAnim.SetBool("isClimbing", true);
+                    spearAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+                }
+                else
+                {
+                    spearAnim.SetBool("isClimbing", false);
+                    rb.gravityScale = 3; // Yerçekimini devreye sok
+                }
             }
             else
             {
-                isClimbing = false;
+                // Merdiven dýþýnda veya týrmanmýyorsa
+                rb.gravityScale = 3; // Yerçekimi devreye girer
                 spearAnim.SetBool("isClimbing", false);
-                rb.gravityScale = 3; // Yerçekimini hemen devreye sok
-                if (Input.GetKeyUp(KeyCode.Q))
-                {
-                    qTime = qCooldownTime; // Q tuþu için bekleme süresi
-                }
             }
         }
         else if (bowPlayer.activeSelf)
         {
-            if (isOnLadder && Input.GetKey(KeyCode.Q) && qTime <= 0)
+            if (isOnLadder && qTime <= 0)
             {
-                isClimbing = true;
-                float h = Input.GetAxis("Vertical");
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, h * climbspeed);
-                rb.gravityScale = 0;
-                bowAnim.SetBool("isClimbing", true);
-                bowAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+                if (isClimbing)
+                {
+                    // Yatay hareketi sýnýrlamak için moveInput kullanýyoruz
+                    float horizontalInput = moveInput; // Yatay input
+                    float newX = Mathf.Clamp(rb.position.x + horizontalInput * climbspeed * Time.deltaTime, ladderMinX, ladderMaxX);
+                    rb.position = new Vector2(newX, rb.position.y);  // Yatay hareketi sýnýrlýyoruz, dikey hareketi ayný býrakýyoruz
+
+                    rb.linearVelocity = new Vector2(0, verticalInput * climbspeed); // Yalnýzca dikey hareketi uygula
+                    rb.gravityScale = 0; // Yerçekimi devre dýþý býrakýlýyor
+                    bowAnim.SetBool("isClimbing", true);
+                    bowAnim.SetFloat("climbSpeed", Mathf.Abs(rb.linearVelocity.y));
+                }
+                else
+                {
+                    bowAnim.SetBool("isClimbing", false);
+                    rb.gravityScale = 3; // Yerçekimini devreye sok
+                }
             }
             else
             {
-                isClimbing = false;
+                // Merdiven dýþýnda veya týrmanmýyorsa
+                rb.gravityScale = 3; // Yerçekimi devreye girer
                 bowAnim.SetBool("isClimbing", false);
-                rb.gravityScale = 3; // Yerçekimini hemen devreye sok
-                if (Input.GetKeyUp(KeyCode.Q))
-                {
-                    qTime = qCooldownTime; // Q tuþu için bekleme süresi
-                }
             }
         }
     }
 
 
-    
+
+
+
 
     public void PlayerDead()
     {

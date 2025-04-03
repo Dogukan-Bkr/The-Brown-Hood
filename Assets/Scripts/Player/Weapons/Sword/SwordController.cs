@@ -13,7 +13,7 @@ public class SwordController : MonoBehaviour
     private int miss = 0;
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
     public bool isAttacking = false; // Saldýrý durumu
-    // Sword Attack deðiþkenleri
+    private bool isButtonPressed = false; // Butona basýldýðýný kontrol etmek için
     private int comboCounter = 0;
     private float lastClickTime;
     private float comboDelay = 0.3f; // Maksimum 1 saniye içinde kombo devam edebilir
@@ -25,51 +25,56 @@ public class SwordController : MonoBehaviour
 
     public void SwordAttack()
     {
-        if (isDashing || isAttacking) return;
+        // Sadece butona basýlmýþsa saldýrýyý tetikle
+        if (isDashing || isAttacking || !isButtonPressed) return;
 
-        if (Input.GetMouseButtonDown(0) && swordPlayer.activeSelf)
+        isButtonPressed = false;  // Saldýrý bir kez yapýldýktan sonra buton tekrar kullanýlabilir
+        isAttacking = true;
+        PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
+        float currentTime = Time.time;
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.transform.position, radius);
+        for (int i = 0; i < hitEnemies.Length; i++)
         {
-            isAttacking = true;
-            PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
-            float currentTime = Time.time;
-            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.transform.position, radius);
-            for (int i = 0; i < hitEnemies.Length; i++)
-            {
-                int damage = DetermineDamage(hitEnemies[i]);
-                hitEnemies[i].GetComponent<SpiderController>()?.TakeDamage(damage);
-                hitEnemies[i].GetComponent<BatController>()?.TakeDamage(damage);
-                hitEnemies[i].GetComponent<BeeController>()?.TakeDamage(damage);
-                hitEnemies[i].GetComponent<BoarController>()?.TakeDamage(damage);
-                hitEnemies[i].GetComponent<BoxController>()?.TakeDamage(damage);
-                hitEnemies[i].GetComponent<DummyController>()?.TakeDamage(damage);
-            }
-
-            // Eðer zaman farký belirlenen süreden büyükse, komboyu sýfýrla
-            if (currentTime - lastClickTime > comboDelay)
-            {
-                comboCounter = 0;
-            }
-
-            // Kombo sayacýný arttýr
-            comboCounter++;
-
-            // Saldýrý animasyonlarýný sýrayla tetikle
-            if (comboCounter == 1)
-            {
-                swordAnim.SetTrigger("Attack1");
-            }
-            else if (comboCounter == 2)
-            {
-                swordAnim.SetTrigger("Attack2");
-            }
-            else if (comboCounter >= 3)
-            {
-                comboCounter = 0; // Kombo tamamlandýðýnda sýfýrla
-            }
-
-            lastClickTime = currentTime; // Son týklama zamanýný güncelle
-            StartCoroutine(ResetAttackState());
+            int damage = DetermineDamage(hitEnemies[i]);
+            hitEnemies[i].GetComponent<SpiderController>()?.TakeDamage(damage);
+            hitEnemies[i].GetComponent<BatController>()?.TakeDamage(damage);
+            hitEnemies[i].GetComponent<BeeController>()?.TakeDamage(damage);
+            hitEnemies[i].GetComponent<BoarController>()?.TakeDamage(damage);
+            hitEnemies[i].GetComponent<BoxController>()?.TakeDamage(damage);
+            hitEnemies[i].GetComponent<DummyController>()?.TakeDamage(damage);
         }
+
+        // Eðer zaman farký belirlenen süreden büyükse, komboyu sýfýrla
+        if (currentTime - lastClickTime > comboDelay)
+        {
+            comboCounter = 0;
+        }
+
+        // Kombo sayacýný arttýr
+        comboCounter++;
+
+        // Saldýrý animasyonlarýný sýrayla tetikle
+        if (comboCounter == 1)
+        {
+            swordAnim.SetTrigger("Attack1");
+        }
+        else if (comboCounter == 2)
+        {
+            swordAnim.SetTrigger("Attack2");
+        }
+        else if (comboCounter >= 3)
+        {
+            comboCounter = 0; // Kombo tamamlandýðýnda sýfýrla
+        }
+
+        lastClickTime = currentTime; // Son týklama zamanýný güncelle
+        StartCoroutine(ResetAttackState());
+    }
+
+    public void OnAttackButtonPressed()
+    {
+        // Butona basýldýðýnda saldýrý tetiklensin
+        isButtonPressed = true;
     }
 
     private IEnumerator ResetAttackState()
@@ -103,4 +108,3 @@ public class SwordController : MonoBehaviour
         Gizmos.DrawWireCube(attackPoint.transform.position, new Vector3(radius * 2, radius * 2, 0));
     }
 }
-

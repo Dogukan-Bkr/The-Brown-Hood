@@ -15,7 +15,7 @@ public class SpearController : MonoBehaviour
     [SerializeField] private float throwCooldown = 2f; // Mýzrak fýrlatma bekleme süresi
     [SerializeField] public int damage = 1; // Varsayýlan hasar deðeri
     private int miss = 0;
-
+    private bool isButtonPressed = false; // Butona basýldýðýný kontrol etmek için
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
     public bool isAttacking = false; // Saldýrý durumu
     public bool isAiming = false; // Niþan alma durumu
@@ -57,7 +57,7 @@ public class SpearController : MonoBehaviour
             //    PlayerMovementController.instance.ResumeMovement();
             //}
 
-            if (Input.GetMouseButtonDown(1) && canThrow && spearPlayer.activeSelf && GameManager.instance.spearCount >= 2) // Sað týk basýlýyken sol týkla mýzraðý fýrlatma
+            if (Input.GetMouseButtonDown(0) && canThrow && spearPlayer.activeSelf && GameManager.instance.spearCount >= 2) // Sað týk basýlýyken sol týkla mýzraðý fýrlatma
             {
                 ThrowSpear();
                 spearAnim.SetTrigger("isThrow");
@@ -66,51 +66,55 @@ public class SpearController : MonoBehaviour
             }
         }
     }
-
+    public void OnAttackButtonPressed()
+    {
+        // Butona basýldýðýnda saldýrý tetiklensin
+        isButtonPressed = true;
+    }
     public void SpearAttack()
     {
-        if (isDashing || isAiming || isAttacking) return;
+        if (isDashing || isAiming || isAttacking || !isButtonPressed) return;
 
-        if (Input.GetMouseButtonDown(0) && spearPlayer.activeSelf)
+
+        isAttacking = true;
+        isButtonPressed = false;
+        PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
+        float currentTime = Time.time;
+        Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(attackPoint.transform.position, boxSize, 0f);
+        for (int i = 0; i < hitEnemies.Length; i++)
         {
-            isAttacking = true;
-            PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
-            float currentTime = Time.time;
-            Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(attackPoint.transform.position, boxSize, 0f);
-            for (int i = 0; i < hitEnemies.Length; i++)
-            {
-                int damage = DetermineDamage(hitEnemies[i]);
-                hitEnemies[i].GetComponent<SpiderController>()?.TakeDamage(damage);
-                hitEnemies[i].GetComponent<BatController>()?.TakeDamage(damage);
-                hitEnemies[i].GetComponent<BeeController>()?.TakeDamage(damage);
-                hitEnemies[i].GetComponent<BoarController>()?.TakeDamage(damage);
-                hitEnemies[i].GetComponent<BoxController>()?.TakeDamage(damage);
-                hitEnemies[i].GetComponent<DummyController>()?.TakeDamage(damage);
-            }
-
-            // Eðer zaman farký belirlenen süreden büyükse, komboyu sýfýrla
-            if (currentTime - lastClickTime > comboDelay)
-            {
-                comboCounter = 0;
-            }
-
-            // Kombo sayacýný arttýr
-            comboCounter++;
-
-            // Saldýrý animasyonlarýný sýrayla tetikle
-            if (comboCounter == 1)
-            {
-                spearAnim.SetTrigger("attack1");
-            }
-            else if (comboCounter == 2)
-            {
-                spearAnim.SetTrigger("attack2");
-
-            }
-            else if (comboCounter == 3) { comboCounter = 0; }
-            lastClickTime = currentTime; // Son týklama zamanýný güncelle
-            StartCoroutine(ResetAttackState());
+            int damage = DetermineDamage(hitEnemies[i]);
+            hitEnemies[i].GetComponent<SpiderController>()?.TakeDamage(damage);
+            hitEnemies[i].GetComponent<BatController>()?.TakeDamage(damage);
+            hitEnemies[i].GetComponent<BeeController>()?.TakeDamage(damage);
+            hitEnemies[i].GetComponent<BoarController>()?.TakeDamage(damage);
+            hitEnemies[i].GetComponent<BoxController>()?.TakeDamage(damage);
+            hitEnemies[i].GetComponent<DummyController>()?.TakeDamage(damage);
         }
+
+        // Eðer zaman farký belirlenen süreden büyükse, komboyu sýfýrla
+        if (currentTime - lastClickTime > comboDelay)
+        {
+            comboCounter = 0;
+        }
+
+        // Kombo sayacýný arttýr
+        comboCounter++;
+
+        // Saldýrý animasyonlarýný sýrayla tetikle
+        if (comboCounter == 1)
+        {
+            spearAnim.SetTrigger("attack1");
+        }
+        else if (comboCounter == 2)
+        {
+            spearAnim.SetTrigger("attack2");
+
+        }
+        else if (comboCounter == 3) { comboCounter = 0; }
+        lastClickTime = currentTime; // Son týklama zamanýný güncelle
+        StartCoroutine(ResetAttackState());
+
     }
 
     private IEnumerator ResetAttackState()
