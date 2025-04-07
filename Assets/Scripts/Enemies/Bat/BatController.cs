@@ -155,11 +155,13 @@ public class BatController : MonoBehaviour
 
         ShowDamageText(damage);
         AudioManager.instance?.PlayAudio(1);
+
+        // Hasar alýndýktan sonra zaman kaydýný güncelle
         lastDamageTime = Time.time;
 
         if (healCoroutine == null)
         {
-            healCoroutine = StartCoroutine(AutoHeal());
+            healCoroutine = StartCoroutine(AutoHeal()); // Yalnýzca bir coroutine çalýþacak
         }
 
         if (currentHealth <= 0)
@@ -208,19 +210,18 @@ public class BatController : MonoBehaviour
 
     private IEnumerator AutoHeal()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(1f);
+        // Hasar alýndýðýnda ilk baþta iyileþme süresini baþlatýyoruz
+        yield return new WaitForSeconds(healCooldown); // Son hasardan sonra iyileþme süresi kadar bekle
 
-            if (Time.time - lastDamageTime >= healCooldown)
-            {
-                currentHealth = maxHealth;
-                healthSlider.value = maxHealth;
-                Debug.Log("Bat healed to full health!");
-                healCoroutine = null;
-                yield break;
-            }
+        // Hasar süresi bitiminde iyileþmeyi baþlat
+        if (Time.time - lastDamageTime >= healCooldown)
+        {
+            currentHealth = maxHealth;  // Saðlýk doluyor
+            healthSlider.value = maxHealth;
+            Debug.Log("Bat healed to full health!");
         }
+
+        healCoroutine = null; // Coroutine tamamlandýktan sonra referansý temizle
     }
     private void DropLoot()
     {

@@ -16901,6 +16901,7 @@ MonoBehaviour:
   - {fileID: 814551322}
   - {fileID: 1913949332}
   - {fileID: 678927572}
+  musicSource: {fileID: 339768996}
 --- !u!1 &495733774
 GameObject:
   m_ObjectHideFlags: 0
@@ -29429,17 +29430,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 379dbb0946952e14c826fa2e30216afb, type: 3}
---- !u!114 &947070291334908354 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3826486192999174544, guid: 379dbb0946952e14c826fa2e30216afb, type: 3}
-  m_PrefabInstance: {fileID: 947070291334908353}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03b81c199b8309d439c7a272d40957ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1162553434853092809
 GameObject:
   m_ObjectHideFlags: 0
@@ -29599,7 +29589,7 @@ PrefabInstance:
     - target: {fileID: 4443549684031982801, guid: 577124338e441d543a0c94f408b0849b, type: 3}
       propertyPath: cameraShake
       value: 
-      objectReference: {fileID: 947070291334908354}
+      objectReference: {fileID: 0}
     - target: {fileID: 5221734566471825173, guid: 577124338e441d543a0c94f408b0849b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.63

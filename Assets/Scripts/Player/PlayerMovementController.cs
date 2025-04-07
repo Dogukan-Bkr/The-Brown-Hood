@@ -56,7 +56,7 @@ public class PlayerMovementController : MonoBehaviour
     public float dashDuration = 0.3f; // Dash süresi
     private bool isDashing = false; // Þu an dash yapýlýyor mu?
     private float dashTime = 0f; // Dash zamanlayýcýsý
-    private float dashCooldown = 2f; // Dash atmak için gereken süre
+    private float dashCooldown = 1f; // Dash atmak için gereken süre
     private float lastDashTime; // Son dash zamaný
     private bool dashButtonPressed = false;
     public Button dashButton;
