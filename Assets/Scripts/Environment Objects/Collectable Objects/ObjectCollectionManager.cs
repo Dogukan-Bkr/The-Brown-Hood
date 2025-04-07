@@ -28,6 +28,7 @@ public class ObjectController : MonoBehaviour
                 case CollectableType.Coin:
                     GameManager.instance.coinCount += amount;  // Altýn sayýsýný artýr
                     UIController.instance.UpdateUI();  // UI'yi güncelle
+                    AudioManager.instance?.PlayRandomAudio(2);
                     break;
 
                 case CollectableType.Arrow:

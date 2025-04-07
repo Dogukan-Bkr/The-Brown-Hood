@@ -154,7 +154,7 @@ public class BeeController : MonoBehaviour
 
         // Hasar metnini göster
         ShowDamageText(damage);
-
+        AudioManager.instance?.PlayAudio(1);
         // Eðer domuz ölmediyse ve iyileþmiyorsa iyileþme baþlat
         if (health <= 0)
         {

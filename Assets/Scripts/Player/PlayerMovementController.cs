@@ -67,15 +67,12 @@ public class PlayerMovementController : MonoBehaviour
     public Button swordButton;
     public Button spearButton;
     public Button bowButton;
-    public Button noneButton; // None butonu
     // Ölüm efekti
     public GameObject deathEffect;
     //NPC
     private bool isNearBlackSmith = false;
     private bool isNearTent = false;
     public GameObject blacksmithPanel,Tent;
-    [SerializeField] private GameObject blacksmithObject;
-    [SerializeField] private GameObject tentObject;
     private bool canOpenPanel = true; // Panel açýlýp açýlamayacaðýný kontrol eder
     private float panelCooldownTime = 3f; // 3 saniye bekleme süresi
     private float lastPanelOpenTime = 0f; // Son panel açma zamaný
@@ -424,7 +421,7 @@ public class PlayerMovementController : MonoBehaviour
 
             float jumpPower = (jumpCount == 0) ? firstJumpForce : doubleJumpForce; // Ýlk zýplama ve double jump kuvveti
             rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse); // Zýplama kuvveti uygula
-
+            AudioManager.instance.PlayAudio(0); // Zýplama sesi
             jumpCount++; // Zýplama sayýsýný artýr
             jumpButtonPressed = false; // Butonu devre dýþý býrak
         }
@@ -751,12 +748,6 @@ public class PlayerMovementController : MonoBehaviour
             }
         }
     }
-
-
-
-
-
-
     public void PlayerDead()
     {
         isDead = true;
@@ -834,7 +825,6 @@ public class PlayerMovementController : MonoBehaviour
             bowAnim.SetFloat("speed", rb.linearVelocity.x);
         }
     }
-
     void OpenBlacksmithPanel()
     {
         blacksmithPanel.SetActive(true);
@@ -851,14 +841,6 @@ public class PlayerMovementController : MonoBehaviour
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(groundCheck.position, groundCheck.position + Vector3.down * groundCheckDistance);
-        }
-    }
-    private void SetOutline(GameObject obj, bool state)
-    {
-        var outline = obj.GetComponent<Outline>();
-        if (outline != null)
-        {
-            outline.enabled = state;
         }
     }
     public enum WeaponType

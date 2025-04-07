@@ -58,10 +58,12 @@ public class BowController : MonoBehaviour
     {
         yield return new WaitForSeconds(delay); // Belirtilen süre bekle
         ShootArrow();
+        AudioManager.instance?.PlayAudio(7);
         UIController.instance.DecreaseArrowCount();
         StartCoroutine(ArrowShootCooldown());
         isShooting = false;
         PlayerMovementController.instance.ResumeMovement(); // Karakterin hareketini yeniden baþlat
+
     }
 
     public void ShootArrow()

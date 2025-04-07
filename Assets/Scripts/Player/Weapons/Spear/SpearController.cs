@@ -55,6 +55,7 @@ public class SpearController : MonoBehaviour
         {
             ThrowSpear();
             spearAnim.SetTrigger("isThrow");
+            AudioManager.instance?.PlayAudio(7);
             UIController.instance.DecreaseSpearCount();
             StartCoroutine(SpearThrowCooldown());
         }
@@ -99,11 +100,12 @@ public class SpearController : MonoBehaviour
         if (comboCounter == 1)
         {
             spearAnim.SetTrigger("attack1");
+            AudioManager.instance?.PlayAudio(6); //saldýrý sesi
         }
         else if (comboCounter == 2)
         {
             spearAnim.SetTrigger("attack2");
-
+            AudioManager.instance?.PlayAudio(6); //saldýrý sesi
         }
         else if (comboCounter == 3) { comboCounter = 0; }
         lastClickTime = currentTime; // Son týklama zamanýný güncelle

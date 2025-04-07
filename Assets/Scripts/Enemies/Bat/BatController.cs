@@ -154,6 +154,7 @@ public class BatController : MonoBehaviour
         Debug.Log("Bat health: " + currentHealth);
 
         ShowDamageText(damage);
+        AudioManager.instance?.PlayAudio(1);
         lastDamageTime = Time.time;
 
         if (healCoroutine == null)

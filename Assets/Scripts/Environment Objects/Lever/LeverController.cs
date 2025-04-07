@@ -53,7 +53,7 @@ public class LeverController : MonoBehaviour
             {
                 anim.SetTrigger("openGate");
             }
-
+            AudioManager.instance?.PlayAudio(8);
             yield return new WaitForSeconds(0.5f);
             MoveGate(moveDistance);
         }
@@ -66,7 +66,7 @@ public class LeverController : MonoBehaviour
             {
                 anim.SetTrigger("closeGate");
             }
-
+            AudioManager.instance?.PlayAudio(8);
             MoveGate(-moveDistance);
         }
 

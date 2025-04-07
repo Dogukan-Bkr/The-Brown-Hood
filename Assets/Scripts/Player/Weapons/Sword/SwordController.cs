@@ -57,10 +57,12 @@ public class SwordController : MonoBehaviour
         if (comboCounter == 1)
         {
             swordAnim.SetTrigger("Attack1");
+            AudioManager.instance?.PlayAudio(6); //saldýrý sesi
         }
         else if (comboCounter == 2)
         {
             swordAnim.SetTrigger("Attack2");
+            AudioManager.instance?.PlayAudio(6); 
         }
         else if (comboCounter >= 3)
         {

@@ -154,7 +154,7 @@ public class SpiderController : MonoBehaviour
         Instantiate(hitEffect, transform.position, Quaternion.identity, transform);
 
         ShowDamageText(damage);
-
+        AudioManager.instance?.PlayAudio(1);
         if (currentHealth <= 0)
         {
             healthSlider.gameObject.SetActive(false);

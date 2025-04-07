@@ -50,6 +50,7 @@ public class BoxController : MonoBehaviour
     {
         isDestroyed = true;
         anim.SetTrigger("break");
+        AudioManager.instance?.PlayAudio(5);
         GetComponent<BoxCollider2D>().enabled = false;
         Destroy(gameObject, 0.5f);
         int randomCount = Random.Range(minCoin, maxCoin);

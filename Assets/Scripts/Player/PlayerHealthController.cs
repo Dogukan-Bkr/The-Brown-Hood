@@ -9,7 +9,6 @@ public class PlayerHealthController : MonoBehaviour
     [Header("Damage Display")]
     [SerializeField] private GameObject damageTextPrefab; // Hasar metni prefabý
     [SerializeField] private Transform damageTextPosition; // Hasar metninin çýkacaðý nokta
-
     private void Awake()
     {
         instance = this;
@@ -49,9 +48,11 @@ public class PlayerHealthController : MonoBehaviour
         Debug.Log("Player took damage: " + damage);
         currentHP -= damage;
         UIController.instance.SetHealthSlider(currentHP, maxHP);  // UI'yi güncelle
-
         // Hasar metnini göster
         ShowDamageText(damage);
+
+        // Hasar sesi çal
+        AudioManager.instance?.PlayAudio(3); // Örneðin 3 = damage sesi
 
         if (currentHP <= 0)
         {
@@ -59,6 +60,7 @@ public class PlayerHealthController : MonoBehaviour
             Die();  // Oyuncu öldüyse, yeniden doðmasýný saðla
         }
     }
+
 
     private void ShowDamageText(int damage)
     {
@@ -102,6 +104,6 @@ public class PlayerHealthController : MonoBehaviour
             currentHP = maxHP;
         }
         UIController.instance.SetHealthSlider(currentHP, maxHP); // UI'yi güncelle
-        Debug.Log("Player HP (+20)");
+        AudioManager.instance?.PlayAudio(4);
     }
 }
