@@ -32,6 +32,8 @@ public class SpearController : MonoBehaviour
 
     private void Update()
     {
+        if (!ShotModeController.instance.isShotMode) return; // Shot Mode aktif deðilse hiçbir þey yapma
+
         if (GameManager.instance.spearCount < 1)
         {
             PlayerMovementController.instance.DefaultWeapon(); // Kýlýcý aktif hale getir
@@ -39,33 +41,25 @@ public class SpearController : MonoBehaviour
         }
         else
         {
-            //bool wasAiming = isAiming;
-
-            //if (Input.GetMouseButton(1) && GameManager.instance.spearCount > 1) // Sað týk basýlýyken niþan alma
-            //{
-            //    if (!isAiming) // Eðer zaten niþan alýyorsa tekrar çaðýrma
-            //    {
-            //        isAiming = true;
-            //        spearAnim.SetBool("isAiming", true);
-            //        PlayerMovementController.instance.StopPlayer();
-            //    }
-            //}
-            //else if (isAiming) // Eðer niþan almayý býrakýyorsa sadece bir kez hareketi aç
-            //{
-            //    isAiming = false;
-            //    spearAnim.SetBool("isAiming", false);
-            //    PlayerMovementController.instance.ResumeMovement();
-            //}
-
-            if (Input.GetMouseButtonDown(0) && canThrow && spearPlayer.activeSelf && GameManager.instance.spearCount >= 2) // Sað týk basýlýyken sol týkla mýzraðý fýrlatma
+            // Týklama ile mýzrak fýrlatma iþlemini tetikle
+            if (Input.GetMouseButtonDown(0)) // Sol týk ile mýzrak fýrlat
             {
-                ThrowSpear();
-                spearAnim.SetTrigger("isThrow");
-                UIController.instance.DecreaseSpearCount();
-                StartCoroutine(SpearThrowCooldown());
+                SpearShoot();
             }
         }
     }
+
+    public void SpearShoot()
+    {
+        if (canThrow && spearPlayer.activeSelf && GameManager.instance.spearCount >= 2)
+        {
+            ThrowSpear();
+            spearAnim.SetTrigger("isThrow");
+            UIController.instance.DecreaseSpearCount();
+            StartCoroutine(SpearThrowCooldown());
+        }
+    }
+
     public void OnAttackButtonPressed()
     {
         // Butona basýldýðýnda saldýrý tetiklensin

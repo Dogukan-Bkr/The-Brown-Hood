@@ -21,6 +21,8 @@ public class BowController : MonoBehaviour
 
     private void Update()
     {
+        if (!ShotModeController.instance.isShotMode) return; // Shot Mode aktif deðilse hiçbir þey yapma
+
         if (GameManager.instance.arrowCount < 1)
         {
             if (bowPlayer.activeSelf)
@@ -32,14 +34,23 @@ public class BowController : MonoBehaviour
         else
         {
             bowAnim.SetInteger("arrowCount", GameManager.instance.arrowCount); // Ok sayýsýný animatöre gönder
-            if (Input.GetMouseButtonDown(0) && canShoot && PlayerMovementController.instance.bowPlayer.activeSelf) // Sol týk ile oku fýrlatma
+                                                                               // Ok fýrlatma iþlemini sadece týklama ile tetikle
+            if (Input.GetMouseButtonDown(0)) // Sol týk ile ok fýrlat
             {
-                canShoot = false; // Ok fýrlatýldýktan sonra tekrar fýrlatmayý engelle
-                isShooting = true;
-                PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
-                bowAnim.SetTrigger("attack"); // Attack animasyonunu tetikle
-                StartCoroutine(ShootArrowWithDelay(0.7f)); // 0.7 saniye sonra ok fýrlat animasyon uyuþmasý için
+                BowShoot();
             }
+        }
+    }
+
+    public void BowShoot()
+    {
+        if (canShoot && PlayerMovementController.instance.bowPlayer.activeSelf) // Ok fýrlatýlabilir mi kontrolü
+        {
+            canShoot = false; // Ok fýrlatýldýktan sonra tekrar fýrlatmayý engelle
+            isShooting = true;
+            PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
+            bowAnim.SetTrigger("attack"); // Attack animasyonunu tetikle
+            StartCoroutine(ShootArrowWithDelay(0.7f)); // 0.7 saniye sonra ok fýrlat animasyon uyuþmasý için
         }
     }
 

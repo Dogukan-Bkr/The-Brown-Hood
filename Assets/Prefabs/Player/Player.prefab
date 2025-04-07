@@ -326,7 +326,7 @@ MonoBehaviour:
   bowPlayer: {fileID: 6730354575275740124}
   currentWeapon: 0
   speed: 8
-  firstJumpForce: 12
+  firstJumpForce: 13
   doubleJumpForce: 10
   fallMultiplier: 3
   lowJumpMultiplier: 2
@@ -354,6 +354,10 @@ MonoBehaviour:
   dashSpeed: 15
   dashDuration: 0.3
   dashButton: {fileID: 0}
+  swordButton: {fileID: 0}
+  spearButton: {fileID: 0}
+  bowButton: {fileID: 0}
+  noneButton: {fileID: 0}
   deathEffect: {fileID: 4898870706017387654, guid: 05ab2de5db7b38c45b9dc43c1ba294b8, type: 3}
   blacksmithPanel: {fileID: 0}
   Tent: {fileID: 0}

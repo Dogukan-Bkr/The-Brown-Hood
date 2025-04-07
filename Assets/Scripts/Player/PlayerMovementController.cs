@@ -74,6 +74,11 @@ public class PlayerMovementController : MonoBehaviour
     private bool isNearBlackSmith = false;
     private bool isNearTent = false;
     public GameObject blacksmithPanel,Tent;
+    [SerializeField] private GameObject blacksmithObject;
+    [SerializeField] private GameObject tentObject;
+    private bool canOpenPanel = true; // Panel açýlýp açýlamayacaðýný kontrol eder
+    private float panelCooldownTime = 3f; // 3 saniye bekleme süresi
+    private float lastPanelOpenTime = 0f; // Son panel açma zamaný
     private void Start()
     {
         if (swordButton != null)
@@ -170,16 +175,28 @@ public class PlayerMovementController : MonoBehaviour
             Dash();
             Climb();
             HandleWeaponAttack();
-            
+
 
             // BlackSmith panelini açma kontrolü
-            if (isNearBlackSmith && Input.GetKeyDown(KeyCode.F))
+            // Eðer 3 saniyelik süre geçmiþse, panel açýlabilir
+            if (Time.time - lastPanelOpenTime >= panelCooldownTime)
+            {
+                canOpenPanel = true;
+            }
+
+            // Blacksmith panelini açma
+            if (isNearBlackSmith && Input.GetMouseButtonDown(0) && canOpenPanel)
             {
                 OpenBlacksmithPanel();
+                lastPanelOpenTime = Time.time; // Panel açýldý, zamaný kaydet
+                canOpenPanel = false; // Panel açýlana kadar bekle
             }
-            else if (isNearTent && Input.GetKeyDown(KeyCode.F))
+            // Tent panelini açma
+            else if (isNearTent && Input.GetMouseButtonDown(0) && canOpenPanel)
             {
                 OpenTentPanel();
+                lastPanelOpenTime = Time.time; // Panel açýldý, zamaný kaydet
+                canOpenPanel = false; // Panel açýlana kadar bekle
             }
 
             // Geri itilme (back leash) sonrasý saydamlýk sýfýrlanýyor
@@ -619,7 +636,7 @@ public class PlayerMovementController : MonoBehaviour
         
         if (normalPlayer.activeSelf)
         {
-            if ((isOnLadder && qTime <= 0)) // Q tuþuna basýldýðýnda da çalýþacak
+            if ((isOnLadder && qTime <= 0)) 
             {
                 if (isClimbing)
                 {
@@ -834,6 +851,14 @@ public class PlayerMovementController : MonoBehaviour
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(groundCheck.position, groundCheck.position + Vector3.down * groundCheckDistance);
+        }
+    }
+    private void SetOutline(GameObject obj, bool state)
+    {
+        var outline = obj.GetComponent<Outline>();
+        if (outline != null)
+        {
+            outline.enabled = state;
         }
     }
     public enum WeaponType
