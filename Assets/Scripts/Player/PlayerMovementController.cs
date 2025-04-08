@@ -128,23 +128,6 @@ public class PlayerMovementController : MonoBehaviour
             {
                 jumpCount = 0; // Karakter zemine deðdiðinde zýplama hakký sýfýrlanýr
             }
-            if (Input.GetKeyDown(KeyCode.Q) && isOnLadder) //Bilgisayar testleri bittiðinde kaldýrýlabilir.
-            {
-                isClimbing = !isClimbing;  
-            }
-            // Klavyeden giriþ al ve sadece tuþ basýlýyken hareket et
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-            {
-                moveInput = -1f;
-            }
-            else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-            {
-                moveInput = 1f;
-            }
-            else
-            {
-                moveInput = 0f; // Tuþ býrakýldýðýnda hareketi durdur
-            }
             // Butonlara olaylarý baðlayalým
             // Kýlýç butonu 
             if (swordButton != null)
