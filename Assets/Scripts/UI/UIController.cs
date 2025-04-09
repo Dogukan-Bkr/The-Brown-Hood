@@ -1,42 +1,56 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using GoogleMobileAds.Api;
 using System;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class UIController : MonoBehaviour
 {
-#if UNITY_ANDROID
-    private string _adUnitId = "ca-app-pub-3940256099942544/5224354917";
-#elif UNITY_IPHONE
-    private string _adUnitId = "ca-app-pub-3940256099942544/1712485313";
-#else
-    private string _adUnitId = "unused";
-#endif
+//#if UNITY_ANDROID
+//    private string _adUnitId = "ca-app-pub-3940256099942544/5224354917";
+//#elif UNITY_IPHONE
+//    private string _adUnitId = "ca-app-pub-3940256099942544/1712485313";
+//#else
+//    private string _adUnitId = "unused";
+//#endif
     public static UIController instance;
     public GameObject blacksmithPanel;
+    public GameObject tentPanel;
     public GameObject pausePanel;
-    public GameObject tentPanel; // Tent paneli
-    public Button buySpearButton, buyArrowButton;
-    public Button exchangeSpearForCoinButton;
-    public Button adSpearButton, adArrowButton, adCoinButton;
-    public Button closeButtonBlackSmith, closeButtonTent;
-    public Slider healthSlider;
-
-    public Button buyHealthButton; // 40 coin karşılığı can doldurma butonu
-    public Button adHealthButton; // Reklam karşılığı can doldurma butonu
 
     public TMP_Text coinTxt;
     public TMP_Text arrowTxt;
     public TMP_Text spearTxt;
     public TMP_Text adStatusTxt; // Reklam durumu mesajı için
+    public Slider healthSlider; // Sağlık çubuğu
 
+    // Reklamlarla ilgili değişkenler yorum satırına alındı
+    /*
     private RewardedAd rewardedAdSpear;
     private RewardedAd rewardedAdArrow;
     private RewardedAd rewardedAdCoin;
     private RewardedAd rewardedAdHealth; // Reklam karşılığı can doldurma reklamı
+    */
+
+    // Butonlar ve UI bileşenleri tanımlanmalı
+    public Button buySpearButton;
+    public Button buyArrowButton;
+    public Button exchangeSpearForCoinButton;
+    // Reklam butonları da aynı şekilde tanımlanmalı
+    /*
+    public Button adSpearButton;
+    public Button adArrowButton;
+    public Button adCoinButton;
+    */
+    public Button closeButtonBlackSmith;
+    public Button closeButtonTent;
+    public Button buyHealthButton;
+    // Reklamla can doldurma butonu tanımlanmalı
+    /*
+    public Button adHealthButton;
+    */
+
     private void Awake()
     {
         instance = this;
@@ -45,13 +59,13 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         // Google Ads SDK başlat
-        MobileAds.Initialize(initStatus => { });
+        //MobileAds.Initialize(initStatus => { });
 
         // Butonlara tıklama event'leri bağla
         AssignButtonListeners();
 
         // Reklamları yükle
-        RequestRewardedAds();
+        // RequestRewardedAds(); // Reklam yükleme kodu yorum satırına alındı
     }
 
     private void AssignButtonListeners()
@@ -84,6 +98,8 @@ public class UIController : MonoBehaviour
             Debug.LogError("exchangeSpearForCoinButton is not assigned in the inspector.");
         }
 
+        // Reklam butonları için listener'lar yorum satırına alındı
+        /*
         if (adSpearButton != null)
         {
             adSpearButton.onClick.AddListener(GetSpearByAd);
@@ -110,6 +126,7 @@ public class UIController : MonoBehaviour
         {
             Debug.LogError("adCoinButton is not assigned in the inspector.");
         }
+        */
 
         if (closeButtonBlackSmith != null)
         {
@@ -138,6 +155,8 @@ public class UIController : MonoBehaviour
             Debug.LogError("buyHealthButton is not assigned in the inspector.");
         }
 
+        // Reklamla can doldurma butonu listener'ı yorum satırına alındı
+        /*
         if (adHealthButton != null)
         {
             adHealthButton.onClick.AddListener(GetHealthByAd);
@@ -146,14 +165,17 @@ public class UIController : MonoBehaviour
         {
             Debug.LogError("adHealthButton is not assigned in the inspector.");
         }
+        */
     }
 
+    // Reklam yükleme ve gösterme ile ilgili tüm metotlar yorum satırına alındı
+    /*
     private void RequestRewardedAds()
     {
-        LoadRewardedAd("ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX", ad => rewardedAdSpear = ad);
-        LoadRewardedAd("ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX", ad => rewardedAdArrow = ad);
-        LoadRewardedAd("ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX", ad => rewardedAdCoin = ad);
-        LoadRewardedAd("ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX", ad => rewardedAdHealth = ad); // Reklam karşılığı can doldurma reklamı
+        LoadRewardedAd("ca-app-pub-3940256099942544/5224354917", ad => rewardedAdSpear = ad);
+        LoadRewardedAd("ca-app-pub-3940256099942544/5224354917", ad => rewardedAdArrow = ad);
+        LoadRewardedAd("ca-app-pub-3940256099942544/5224354917", ad => rewardedAdCoin = ad);
+        LoadRewardedAd("ca-app-pub-3940256099942544/5224354917", ad => rewardedAdHealth = ad);
     }
 
     private void LoadRewardedAd(string adUnitId, Action<RewardedAd> callback)
@@ -170,102 +192,6 @@ public class UIController : MonoBehaviour
             ad.OnAdFullScreenContentClosed += () => LoadRewardedAd(adUnitId, callback);
             callback.Invoke(ad);
         });
-    }
-
-    public void OpenBlacksmithPanel()
-    {
-        blacksmithPanel.SetActive(true);
-        PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
-    }
-    public void OpenPausePanel()
-    {
-        pausePanel.SetActive(true);
-        Time.timeScale = 0; // Oyunu duraklat
-    }
-    public void ClosePausePanel()
-    {
-        pausePanel.SetActive(false);
-        Time.timeScale = 1; // Oyunu devam ettir
-    }
-    public void Replay()
-    {
-        Time.timeScale = 1; // Oyunu devam ettir
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Aktif sahneyi yeniden yükle
-    }
-    public void LoadMainMenu()
-    {
-        SceneManager.LoadScene(0); // Build index 1 olan sahneyi yükler
-        Time.timeScale = 1; // Oyunu devam ettir
-    }
-    public void CloseBlacksmithPanel()
-    {
-        blacksmithPanel.SetActive(false);
-        PlayerMovementController.instance.ResumeMovement(); // Karakteri tekrar hareket ettir
-    }
-
-    public void OpenTentPanel()
-    {
-        tentPanel.SetActive(true);
-        PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
-    }
-
-    public void CloseTentPanel()
-    {
-        tentPanel.SetActive(false);
-        PlayerMovementController.instance.ResumeMovement(); // Karakteri tekrar hareket ettir
-    }
-
-    public void BuySpear()
-    {
-        
-        Debug.Log("BuySpear called" + Time.time);
-        if (GameManager.instance.coinCount >= 15)
-        {
-            GameManager.instance.coinCount -= 15;
-            GameManager.instance.spearCount++;
-            UpdateUI();
-        }
-    }
-
-    public void BuyArrow()
-    {
-        Debug.Log("BuyArrow called");
-        if (GameManager.instance.coinCount >= 10)
-        {
-            GameManager.instance.coinCount -= 8;
-            GameManager.instance.arrowCount++;
-            UpdateUI();
-        }
-    }
-
-    public void ExchangeSpearForCoin()
-    {
-        Debug.Log("ExchangeSpearForCoin called");
-        if (GameManager.instance.spearCount > 0)
-        {
-            GameManager.instance.spearCount--;
-            GameManager.instance.coinCount += 10;
-            UpdateUI();
-        }
-    }
-
-    public void BuyHealth()
-    {
-        Debug.Log("BuyHealth called");
-        if (GameManager.instance.coinCount >= 30)
-        {
-            GameManager.instance.coinCount -= 15;
-            if (PlayerHealthController.instance.currentHP < PlayerHealthController.instance.maxHP)
-            {
-                PlayerHealthController.instance.currentHP += 10; // Canı 20 artır
-                if (PlayerHealthController.instance.currentHP > PlayerHealthController.instance.maxHP)
-                {
-                    PlayerHealthController.instance.currentHP = PlayerHealthController.instance.maxHP;
-                }
-                SetHealthSlider(PlayerHealthController.instance.currentHP, PlayerHealthController.instance.maxHP);
-            }
-            UpdateUI();
-        }
     }
 
     public void GetHealthByAd()
@@ -318,7 +244,7 @@ public class UIController : MonoBehaviour
             }
         }
     }
-
+    */
 
     public void UpdateUI()
     {
@@ -343,5 +269,107 @@ public class UIController : MonoBehaviour
     {
         GameManager.instance.spearCount--;
         UpdateUI();
+    }
+
+    public void OpenBlacksmithPanel()
+    {
+        blacksmithPanel.SetActive(true);
+        PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
+    }
+    public void OpenPausePanel()
+    {
+        pausePanel.SetActive(true);
+        Time.timeScale = 0; // Oyunu duraklat
+    }
+    public void ClosePausePanel()
+    {
+        pausePanel.SetActive(false);
+        Time.timeScale = 1; // Oyunu devam ettir
+    }
+    public void Replay()
+    {
+        Time.timeScale = 1; // Oyunu devam ettir
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Aktif sahneyi yeniden yükle
+    }
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene(0); // Build index 1 olan sahneyi yükler
+        Time.timeScale = 1; // Oyunu devam ettir
+    }
+    public void CloseBlacksmithPanel()
+    {
+        Debug.Log("CloseBlacksmithPanel called");
+        if (blacksmithPanel.activeSelf)
+        {
+            blacksmithPanel.SetActive(false);
+            Debug.Log("Blacksmith Panel is now closed.");
+        }
+        PlayerMovementController.instance.ResumeMovement(); // Karakteri tekrar hareket ettir
+    }
+
+
+    public void OpenTentPanel()
+    {
+        tentPanel.SetActive(true);
+        PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
+    }
+
+    public void CloseTentPanel()
+    {
+        tentPanel.SetActive(false);
+        PlayerMovementController.instance.ResumeMovement(); // Karakteri tekrar hareket ettir
+    }
+
+    public void BuySpear()
+    {
+
+        Debug.Log("BuySpear called" + Time.time);
+        if (GameManager.instance.coinCount >= 15)
+        {
+            GameManager.instance.coinCount -= 15;
+            GameManager.instance.spearCount++;
+            UpdateUI();
+        }
+    }
+
+    public void BuyArrow()
+    {
+        Debug.Log("BuyArrow called");
+        if (GameManager.instance.coinCount >= 10)
+        {
+            GameManager.instance.coinCount -= 8;
+            GameManager.instance.arrowCount++;
+            UpdateUI();
+        }
+    }
+
+    public void ExchangeSpearForCoin()
+    {
+        Debug.Log("ExchangeSpearForCoin called");
+        if (GameManager.instance.spearCount > 0)
+        {
+            GameManager.instance.spearCount--;
+            GameManager.instance.coinCount += 10;
+            UpdateUI();
+        }
+    }
+
+    public void BuyHealth()
+    {
+        Debug.Log("BuyHealth called");
+        if (GameManager.instance.coinCount >= 30)
+        {
+            GameManager.instance.coinCount -= 15;
+            if (PlayerHealthController.instance.currentHP < PlayerHealthController.instance.maxHP)
+            {
+                PlayerHealthController.instance.currentHP += 10; // Canı 20 artır
+                if (PlayerHealthController.instance.currentHP > PlayerHealthController.instance.maxHP)
+                {
+                    PlayerHealthController.instance.currentHP = PlayerHealthController.instance.maxHP;
+                }
+                SetHealthSlider(PlayerHealthController.instance.currentHP, PlayerHealthController.instance.maxHP);
+            }
+            UpdateUI();
+        }
     }
 }

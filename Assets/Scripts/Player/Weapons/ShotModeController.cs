@@ -12,7 +12,6 @@ public class ShotModeController : MonoBehaviour
     [Header("Butonlar")]
     public List<Button> uiButtons; // Butonlar
     public List<GameObject> panelsToHide; // Paneller
-    public Button button0; // Button 0'ý özel olarak belirle
 
     [Header("Karakterler")]
     [SerializeField] private GameObject bowPlayer;
@@ -33,13 +32,6 @@ public class ShotModeController : MonoBehaviour
             if (btn != null)
                 btn.gameObject.SetActive(!isShotMode); // Diðer butonlarý gizle
         }
-
-        // Button 0'ý kontrol et
-        if (button0 != null)
-        {
-            button0.gameObject.SetActive(isShotMode); // Button 0 sadece atýþ modunda aktif olacak
-        }
-
         // Panelleri gizle/göster
         foreach (var panel in panelsToHide)
         {
