@@ -1,19 +1,25 @@
-﻿using TMPro;
+﻿using GoogleMobileAds.Api;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class UIController : MonoBehaviour
 {
-//#if UNITY_ANDROID
-//    private string _adUnitId = "ca-app-pub-3940256099942544/5224354917";
-//#elif UNITY_IPHONE
-//    private string _adUnitId = "ca-app-pub-3940256099942544/1712485313";
-//#else
-//    private string _adUnitId = "unused";
-//#endif
+    // Sadece Android için reklam kimlikleri
+    //private string _adSpearId = "ca-app-pub-3941344385400413/1111088453";
+    //private string _adArrowId = "ca-app-pub-3941344385400413/4934310639";
+    //private string _adCoinId = "ca-app-pub-3941344385400413/4168496630";
+    //private string _adHealthId = "ca-app-pub-3941344385400413/8809976465";
+#if UNITY_EDITOR
+     string _adTestId = "ca-app-pub-3940256099942544/5224354917"; // Test ID
+#elif UNITY_ANDROID
+    string _adTestId = "ca-app-pub-3940256099942544/5224354917"; // Test ID
+#else
+  string _adTestId = "unused";
+#endif
     public static UIController instance;
     public GameObject blacksmithPanel;
     public GameObject tentPanel;
@@ -22,34 +28,26 @@ public class UIController : MonoBehaviour
     public TMP_Text coinTxt;
     public TMP_Text arrowTxt;
     public TMP_Text spearTxt;
-    public TMP_Text adStatusTxt; // Reklam durumu mesajı için
-    public Slider healthSlider; // Sağlık çubuğu
+    public TMP_Text adStatusTxt;
+    public Slider healthSlider;
 
-    // Reklamlarla ilgili değişkenler yorum satırına alındı
-    /*
-    private RewardedAd rewardedAdSpear;
-    private RewardedAd rewardedAdArrow;
-    private RewardedAd rewardedAdCoin;
-    private RewardedAd rewardedAdHealth; // Reklam karşılığı can doldurma reklamı
-    */
-
-    // Butonlar ve UI bileşenleri tanımlanmalı
     public Button buySpearButton;
     public Button buyArrowButton;
     public Button exchangeSpearForCoinButton;
-    // Reklam butonları da aynı şekilde tanımlanmalı
-    /*
+
     public Button adSpearButton;
     public Button adArrowButton;
     public Button adCoinButton;
-    */
+
     public Button closeButtonBlackSmith;
     public Button closeButtonTent;
     public Button buyHealthButton;
-    // Reklamla can doldurma butonu tanımlanmalı
-    /*
     public Button adHealthButton;
-    */
+
+    private RewardedAd rewardedAdSpear;
+    private RewardedAd rewardedAdArrow;
+    private RewardedAd rewardedAdCoin;
+    private RewardedAd rewardedAdHealth;
 
     private void Awake()
     {
@@ -58,124 +56,56 @@ public class UIController : MonoBehaviour
 
     private void Start()
     {
-        // Google Ads SDK başlat
-        //MobileAds.Initialize(initStatus => { });
+        MobileAds.Initialize(initStatus =>
+        {
+            Debug.Log("AdMob SDK initialized.");
 
-        // Butonlara tıklama event'leri bağla
+            var adapterStatusMap = initStatus.getAdapterStatusMap();
+            foreach (var adapter in adapterStatusMap)
+            {
+                Debug.Log($"Adapter: {adapter.Key}, Status: {adapter.Value.InitializationState}");
+            }
+
+            if (adapterStatusMap.Values.All(status => status.InitializationState == AdapterState.Ready))
+            {
+                Debug.Log("AdMob SDK initialized successfully.");
+            }
+            else
+            {
+                Debug.LogError("AdMob SDK initialization failed for some adapters.");
+            }
+        });
+
         AssignButtonListeners();
-
-        // Reklamları yükle
-        // RequestRewardedAds(); // Reklam yükleme kodu yorum satırına alındı
+        RequestRewardedAds();
     }
 
     private void AssignButtonListeners()
     {
-        if (buySpearButton != null)
-        {
-            buySpearButton.onClick.RemoveAllListeners(); // Eski listener'ları temizle
-            buySpearButton.onClick.AddListener(BuySpear);
-        }
-        else
-        {
-            Debug.LogError("buySpearButton is not assigned in the inspector.");
-        }
+        buySpearButton?.onClick.AddListener(BuySpear);
+        buyArrowButton?.onClick.AddListener(BuyArrow);
+        exchangeSpearForCoinButton?.onClick.AddListener(ExchangeSpearForCoin);
 
-        if (buyArrowButton != null)
-        {
-            buyArrowButton.onClick.AddListener(BuyArrow);
-        }
-        else
-        {
-            Debug.LogError("buyArrowButton is not assigned in the inspector.");
-        }
+        adSpearButton?.onClick.AddListener(GetSpearByAd);
+        adArrowButton?.onClick.AddListener(GetArrowByAd);
+        adCoinButton?.onClick.AddListener(GetCoinByAd);
 
-        if (exchangeSpearForCoinButton != null)
-        {
-            exchangeSpearForCoinButton.onClick.AddListener(ExchangeSpearForCoin);
-        }
-        else
-        {
-            Debug.LogError("exchangeSpearForCoinButton is not assigned in the inspector.");
-        }
-
-        // Reklam butonları için listener'lar yorum satırına alındı
-        /*
-        if (adSpearButton != null)
-        {
-            adSpearButton.onClick.AddListener(GetSpearByAd);
-        }
-        else
-        {
-            Debug.LogError("adSpearButton is not assigned in the inspector.");
-        }
-
-        if (adArrowButton != null)
-        {
-            adArrowButton.onClick.AddListener(GetArrowByAd);
-        }
-        else
-        {
-            Debug.LogError("adArrowButton is not assigned in the inspector.");
-        }
-
-        if (adCoinButton != null)
-        {
-            adCoinButton.onClick.AddListener(GetCoinByAd);
-        }
-        else
-        {
-            Debug.LogError("adCoinButton is not assigned in the inspector.");
-        }
-        */
-
-        if (closeButtonBlackSmith != null)
-        {
-            closeButtonBlackSmith.onClick.AddListener(CloseBlacksmithPanel);
-        }
-        else
-        {
-            Debug.LogError("closeButtonBlackSmith is not assigned in the inspector.");
-        }
-
-        if (closeButtonTent != null)
-        {
-            closeButtonTent.onClick.AddListener(CloseTentPanel);
-        }
-        else
-        {
-            Debug.LogError("closeButtonTent is not assigned in the inspector.");
-        }
-
-        if (buyHealthButton != null)
-        {
-            buyHealthButton.onClick.AddListener(BuyHealth);
-        }
-        else
-        {
-            Debug.LogError("buyHealthButton is not assigned in the inspector.");
-        }
-
-        // Reklamla can doldurma butonu listener'ı yorum satırına alındı
-        /*
-        if (adHealthButton != null)
-        {
-            adHealthButton.onClick.AddListener(GetHealthByAd);
-        }
-        else
-        {
-            Debug.LogError("adHealthButton is not assigned in the inspector.");
-        }
-        */
+        closeButtonBlackSmith?.onClick.AddListener(CloseBlacksmithPanel);
+        closeButtonTent?.onClick.AddListener(CloseTentPanel);
+        buyHealthButton?.onClick.AddListener(BuyHealth);
+        adHealthButton?.onClick.AddListener(GetHealthByAd);
     }
 
-    // Reklam yükleme ve gösterme ile ilgili tüm metotlar yorum satırına alındı
-    /*
     private void RequestRewardedAds()
     {
-        LoadRewardedAd("ca-app-pub-3940256099942544/5224354917", ad => rewardedAdSpear = ad);
-        LoadRewardedAd("ca-app-pub-3940256099942544/5224354917", ad => rewardedAdArrow = ad);
-        LoadRewardedAd("ca-app-pub-3940256099942544/5224354917", ad => rewardedAdCoin = ad);
-        LoadRewardedAd("ca-app-pub-3940256099942544/5224354917", ad => rewardedAdHealth = ad);
+        LoadRewardedAd(_adTestId, ad => rewardedAdSpear = ad);//Test ID
+        LoadRewardedAd(_adTestId, ad => rewardedAdArrow = ad);//Test ID
+        LoadRewardedAd(_adTestId, ad => rewardedAdCoin = ad);//Test ID
+        LoadRewardedAd(_adTestId, ad => rewardedAdHealth = ad);//Test ID
+        //LoadRewardedAd(_adSpearId, ad => rewardedAdSpear = ad);
+        //LoadRewardedAd(_adArrowId, ad => rewardedAdArrow = ad);
+        //LoadRewardedAd(_adCoinId, ad => rewardedAdCoin = ad);
+        //LoadRewardedAd(_adHealthId, ad => rewardedAdHealth = ad);
     }
 
     private void LoadRewardedAd(string adUnitId, Action<RewardedAd> callback)
@@ -200,7 +130,7 @@ public class UIController : MonoBehaviour
         {
             if (PlayerHealthController.instance.currentHP < PlayerHealthController.instance.maxHP)
             {
-                PlayerHealthController.instance.currentHP += 50; // Canı 50 artır
+                PlayerHealthController.instance.currentHP += 50;
                 if (PlayerHealthController.instance.currentHP > PlayerHealthController.instance.maxHP)
                 {
                     PlayerHealthController.instance.currentHP = PlayerHealthController.instance.maxHP;
@@ -244,7 +174,6 @@ public class UIController : MonoBehaviour
             }
         }
     }
-    */
 
     public void UpdateUI()
     {
@@ -262,90 +191,77 @@ public class UIController : MonoBehaviour
     public void DecreaseArrowCount()
     {
         GameManager.instance.arrowCount--;
-        UpdateUI();
+        UpdateUI(); // UI'yi güncelle
     }
-
     public void DecreaseSpearCount()
     {
         GameManager.instance.spearCount--;
-        UpdateUI();
+        UpdateUI(); // UI'yi güncelle
     }
 
     public void OpenBlacksmithPanel()
     {
         blacksmithPanel.SetActive(true);
-        PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
+        PlayerMovementController.instance.StopPlayer();
     }
     public void OpenPausePanel()
     {
         pausePanel.SetActive(true);
-        Time.timeScale = 0; // Oyunu duraklat
+        Time.timeScale = 0;
     }
     public void ClosePausePanel()
     {
         pausePanel.SetActive(false);
-        Time.timeScale = 1; // Oyunu devam ettir
+        Time.timeScale = 1;
     }
     public void Replay()
     {
-        Time.timeScale = 1; // Oyunu devam ettir
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Aktif sahneyi yeniden yükle
+        Time.timeScale = 1;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void LoadMainMenu()
     {
-        SceneManager.LoadScene(0); // Build index 1 olan sahneyi yükler
-        Time.timeScale = 1; // Oyunu devam ettir
+        SceneManager.LoadScene(0);
+        Time.timeScale = 1;
     }
     public void CloseBlacksmithPanel()
     {
-        Debug.Log("CloseBlacksmithPanel called");
-        if (blacksmithPanel.activeSelf)
-        {
-            blacksmithPanel.SetActive(false);
-            Debug.Log("Blacksmith Panel is now closed.");
-        }
-        PlayerMovementController.instance.ResumeMovement(); // Karakteri tekrar hareket ettir
+        if (blacksmithPanel.activeSelf) blacksmithPanel.SetActive(false);
+        PlayerMovementController.instance.ResumeMovement();
     }
-
-
     public void OpenTentPanel()
     {
         tentPanel.SetActive(true);
-        PlayerMovementController.instance.StopPlayer(); // Karakteri durdur
+        PlayerMovementController.instance.StopPlayer();
     }
-
     public void CloseTentPanel()
     {
         tentPanel.SetActive(false);
-        PlayerMovementController.instance.ResumeMovement(); // Karakteri tekrar hareket ettir
+        PlayerMovementController.instance.ResumeMovement();
     }
 
     public void BuySpear()
     {
-
-        Debug.Log("BuySpear called" + Time.time);
-        if (GameManager.instance.coinCount >= 15)
+        if (GameManager.instance.coinCount >= 30)
         {
-            GameManager.instance.coinCount -= 15;
-            GameManager.instance.spearCount++;
+            GameManager.instance.coinCount -= 30;
+            GameManager.instance.spearCount+=2;
             UpdateUI();
         }
     }
 
     public void BuyArrow()
     {
-        Debug.Log("BuyArrow called");
-        if (GameManager.instance.coinCount >= 10)
+        if (GameManager.instance.coinCount >= 16)
         {
-            GameManager.instance.coinCount -= 8;
-            GameManager.instance.arrowCount++;
+            GameManager.instance.coinCount -= 16;
+            GameManager.instance.arrowCount += 2;
             UpdateUI();
         }
     }
 
     public void ExchangeSpearForCoin()
     {
-        Debug.Log("ExchangeSpearForCoin called");
         if (GameManager.instance.spearCount > 0)
         {
             GameManager.instance.spearCount--;
@@ -356,13 +272,12 @@ public class UIController : MonoBehaviour
 
     public void BuyHealth()
     {
-        Debug.Log("BuyHealth called");
         if (GameManager.instance.coinCount >= 30)
         {
-            GameManager.instance.coinCount -= 15;
+            GameManager.instance.coinCount -= 30;
             if (PlayerHealthController.instance.currentHP < PlayerHealthController.instance.maxHP)
             {
-                PlayerHealthController.instance.currentHP += 10; // Canı 20 artır
+                PlayerHealthController.instance.currentHP += 20;
                 if (PlayerHealthController.instance.currentHP > PlayerHealthController.instance.maxHP)
                 {
                     PlayerHealthController.instance.currentHP = PlayerHealthController.instance.maxHP;
