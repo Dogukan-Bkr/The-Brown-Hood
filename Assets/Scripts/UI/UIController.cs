@@ -272,22 +272,30 @@ public class UIController : MonoBehaviour
 
     public void BuyHealth()
     {
+        // Eğer sağlık zaten maksimumdaysa işlem yapılmaz
         if (PlayerHealthController.instance.currentHP >= PlayerHealthController.instance.maxHP)
         {
             Debug.Log("Sağlık zaten maksimumda, satın alma işlemi yapılamaz.");
             return;
         }
 
+        // Eğer oyuncunun yeterli altını varsa
         if (GameManager.instance.coinCount >= 30)
         {
+            // 30 altın eksilt
             GameManager.instance.coinCount -= 30;
 
-            PlayerHealthController.instance.currentHP += 20;
+            // Maksimum sağlığın %20'sini ekle
+            int healthToAdd = Mathf.CeilToInt(PlayerHealthController.instance.maxHP * 0.2f);
+            PlayerHealthController.instance.currentHP += healthToAdd;
+
+            // Sağlık maksimum değeri aşarsa, maksimum değere ayarla
             if (PlayerHealthController.instance.currentHP > PlayerHealthController.instance.maxHP)
             {
                 PlayerHealthController.instance.currentHP = PlayerHealthController.instance.maxHP;
             }
 
+            // Sağlık çubuğunu ve UI'yi güncelle
             SetHealthSlider(PlayerHealthController.instance.currentHP, PlayerHealthController.instance.maxHP);
             UpdateUI();
         }
@@ -296,5 +304,7 @@ public class UIController : MonoBehaviour
             Debug.Log("Yeterli miktarda coin yok.");
         }
     }
+
+
 
 }

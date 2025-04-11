@@ -19932,7 +19932,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4271971072776107551, guid: 0b86e015e512def41a069c889db6b97b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 152.68
+      value: 150.19
       objectReference: {fileID: 0}
     - target: {fileID: 4271971072776107551, guid: 0b86e015e512def41a069c889db6b97b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -21773,7 +21773,7 @@ Transform:
   m_GameObject: {fileID: 1191523879}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 159.47, y: -2.99, z: 0}
+  m_LocalPosition: {x: 155.68, y: -2.99, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -30640,6 +30640,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 4812613608184616775, guid: 583f8349755bc2e4b9feb3b380f2c8fa, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5091448581170695149, guid: 583f8349755bc2e4b9feb3b380f2c8fa, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -31150,7 +31154,7 @@ Transform:
   m_GameObject: {fileID: 144909259450549558}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 13.75, y: -1.02, z: 0}
+  m_LocalPosition: {x: 12.33, y: -1.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

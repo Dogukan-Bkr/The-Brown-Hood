@@ -9,7 +9,7 @@ public class SceneTransition : MonoBehaviour
     private void Start()
     {
         // 1 dakika sonra hedef sahneye geçiþ yap
-        StartCoroutine(LoadSceneAfterDelay(25f));  
+        StartCoroutine(LoadSceneAfterDelay(23f));  
     }
 
     private IEnumerator LoadSceneAfterDelay(float delay)

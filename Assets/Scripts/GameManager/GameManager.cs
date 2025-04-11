@@ -30,11 +30,20 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        SetStartPosition(scene.name); // Yeni sahnenin baþlangýç pozisyonunu ayarla
-        SetStartHP(scene.name); // Yeni sahnenin baþlangýç canýný ayarla
-        SetStartResources(scene.name); // Yeni sahnenin baþlangýç kaynaklarýný ayarla
-        UIController.instance.UpdateUI(); // UI'yi güncelle
+        SetStartPosition(scene.name);
+        SetStartHP(scene.name);
+        SetStartResources(scene.name);
+
+        if (UIController.instance != null)
+        {
+            UIController.instance.UpdateUI();
+        }
+        else
+        {
+            Debug.LogWarning("UIController instance is null. UI update skipped.");
+        }
     }
+
 
     private void SetStartPosition(string sceneName)
     {
@@ -62,23 +71,39 @@ public class GameManager : MonoBehaviour
                 startHP = 100; // Level 1 baþlangýç caný
                 break;
             case "Level2":
-                if (PlayerHealthController.instance.currentHP < 50)
+                if (PlayerHealthController.instance != null)
                 {
-                    startHP = 50; // Level 2 baþlangýç caný, eðer Level 1'deki can 50'nin altýndaysa
+                    if (PlayerHealthController.instance.currentHP < 50)
+                    {
+                        startHP = 50;
+                    }
+                    else
+                    {
+                        startHP = 100;
+                    }
                 }
                 else
                 {
-                    startHP = 100; // Level 2 baþlangýç caný, eðer Level 1'deki can 50'nin üzerindeyse
+                    Debug.LogWarning("PlayerHealthController instance is null. Defaulting startHP to 100.");
+                    startHP = 100;
                 }
                 break;
             case "Level3":
-                if (PlayerHealthController.instance.currentHP < 50)
+                if (PlayerHealthController.instance != null)
                 {
-                    startHP = 50; // Level 2 baþlangýç caný, eðer Level 1'deki can 50'nin altýndaysa
+                    if (PlayerHealthController.instance.currentHP < 50)
+                    {
+                        startHP = 50;
+                    }
+                    else
+                    {
+                        startHP = 100;
+                    }
                 }
                 else
                 {
-                    startHP = 100; // Level 2 baþlangýç caný, eðer Level 1'deki can 50'nin üzerindeyse
+                    Debug.LogWarning("PlayerHealthController instance is null. Defaulting startHP to 100.");
+                    startHP = 100;
                 }
                 break;
             default:
