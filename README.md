@@ -1,6 +1,6 @@
 # 🎮 The Brown Hood
 
-**A 2D Platformer RPG Game built with Unity**
+**A 2D Platformer Game built with Unity**
 
 ![Image](https://github.com/user-attachments/assets/583e1ae0-647b-4e67-8337-7409bb322c31)
 
