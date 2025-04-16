@@ -9,8 +9,10 @@ public class PlayerMovementController : MonoBehaviour
     bool isDead;
     public GameObject normalPlayer, swordPlayer, spearPlayer, bowPlayer;
     public WeaponType currentWeapon = WeaponType.None;
-    
-    
+    // UI panelleri
+    public GameObject moveButtonPanel; // Butonlar için panel
+    public GameObject moveJoystickPanel; // Joystick için panel
+
     // Hareket ayarlarý
     public float speed = 8f;
     private float moveInput = 0f;
@@ -19,6 +21,8 @@ public class PlayerMovementController : MonoBehaviour
     public float fallMultiplier = 3f;
     public float lowJumpMultiplier = 2f;
     private Vector3 originalScale;
+    //Joystick 
+    public JoystickController joystick;
     // Geri itilme (Back Leash) deðiþkenleri
     public float backLeashTime, backLeashForce, backLeashCounter;
 
@@ -120,6 +124,36 @@ public class PlayerMovementController : MonoBehaviour
         
         if (backLeashCounter <= 0) // Geri itilme süresi dolduysa normal hareketi çalýþtýr
         {
+            // Eðer joystick paneli aktifse joystick giriþlerini kontrol et
+            if (moveJoystickPanel.activeSelf && joystick != null)
+            {
+                if (joystick.Horizontal != 0 || joystick.Vertical != 0)
+                {
+                    moveInput = joystick.Horizontal;
+                    verticalInput = joystick.Vertical;
+                }
+                else
+                {
+                    // Joystick býrakýldýðýnda hareketi durdur
+                    moveInput = 0f;
+                    verticalInput = 0f;
+                }
+            }
+            // Eðer buton paneli aktifse buton giriþlerini kontrol et
+            else if (moveButtonPanel.activeSelf)
+            {
+                // Butonlar MoveLeft(), MoveRight() ve StopMoving() gibi metodlarla moveInput'u kontrol eder
+                // Bu metodlar UI butonlarýna atanmýþ olmalýdýr
+                // Örneðin: MoveLeft() çaðrýldýðýnda moveInput = -1f; yapýlýr
+            }
+            else
+            {
+                // Hiçbir panel aktif deðilse hareketi durdur
+                moveInput = 0f;
+                verticalInput = 0f;
+            }
+
+
             isGrounded = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
 
             if (isGrounded)

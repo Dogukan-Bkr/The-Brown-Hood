@@ -325,11 +325,14 @@ MonoBehaviour:
   spearPlayer: {fileID: 6019812482040987590}
   bowPlayer: {fileID: 6730354575275740124}
   currentWeapon: 0
+  moveButtonPanel: {fileID: 0}
+  moveJoystickPanel: {fileID: 0}
   speed: 8
   firstJumpForce: 13
   doubleJumpForce: 10
   fallMultiplier: 3
   lowJumpMultiplier: 2
+  joystick: {fileID: 0}
   backLeashTime: 0.8
   backLeashForce: 5
   backLeashCounter: 0
