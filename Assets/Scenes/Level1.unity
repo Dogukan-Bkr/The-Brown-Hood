@@ -19202,8 +19202,8 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: aed610bdd75c71f489d3f6683a4638c4, type: 3}
   m_Resource: {fileID: 8300000, guid: aed610bdd75c71f489d3f6683a4638c4, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.01
-  m_Pitch: 1
+  m_Volume: 0.184
+  m_Pitch: 2
   Loop: 0
   Mute: 0
   Spatialize: 0
@@ -30355,6 +30355,10 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 4056130867950116044}
+    - target: {fileID: 4418508034833871726, guid: 583f8349755bc2e4b9feb3b380f2c8fa, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4807781304185518603, guid: 583f8349755bc2e4b9feb3b380f2c8fa, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 

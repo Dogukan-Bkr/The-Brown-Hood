@@ -31,7 +31,7 @@ public class BoxController : MonoBehaviour
         health -= damage;
         Debug.Log("Box health: " + health);
         anim.SetTrigger("hit");
-
+        AudioManager.instance?.PlayAudio(1);
         // Rastgele bir pozisyon belirle
         Vector2 randomPosition = new Vector2(
             transform.position.x + Random.Range(-0.5f, 0.5f),

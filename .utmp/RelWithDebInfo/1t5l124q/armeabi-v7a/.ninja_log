@@ -1,23 +1,23 @@
 # ninja log v5
-32	2442	7665166761542095	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	42dd23539ea52371
-14	2130	7665166758375108	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	5b19b71957dad37a
-19	2180	7665166759140510	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	91e4918aecb11592
-2606	2779	7665166765339899	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/armeabi-v7a/libswappywrapper.so	30b803fa37c90023
-27	2364	7665166760841333	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	818b280925938d5d
-23	2356	7665166760509694	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	2a4d870bf0e68ad8
-2356	2606	7665166763455085	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	2c567e4873daf3e3
-8	2932	7665166766811754	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	c59141bc0209d267
-2131	4034	7665166777893356	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	4e3042763b6abe64
-2180	3890	7665166776459285	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	1f336afc5a870ad9
-4034	4159	7665166779146162	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/armeabi-v7a/libgame.so	5d78dc863251a25f
 28	2139	7665195960639136	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	42dd23539ea52371
-14	2204	7665195961650632	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	91e4918aecb11592
 23	2243	7665195962184015	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	5b19b71957dad37a
+14	2204	7665195961650632	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	91e4918aecb11592
 19	2430	7665195963428571	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	2a4d870bf0e68ad8
-2243	2543	7665195964865372	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	2c567e4873daf3e3
-32	2608	7665195965867228	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	4e3042763b6abe64
 2543	2746	7665195967359628	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/armeabi-v7a/libswappywrapper.so	30b803fa37c90023
-8	2945	7665195969278786	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	c59141bc0209d267
 2139	3776	7665195977639267	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	818b280925938d5d
+2243	2543	7665195964865372	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	2c567e4873daf3e3
+8	2945	7665195969278786	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	c59141bc0209d267
+32	2608	7665195965867228	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	4e3042763b6abe64
 2205	3932	7665195979203805	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	1f336afc5a870ad9
 3932	4048	7665195980390522	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/armeabi-v7a/libgame.so	5d78dc863251a25f
+15	3136	7666738091522793	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	5b19b71957dad37a
+29	3193	7666738092076822	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	42dd23539ea52371
+24	3208	7666738092273873	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	91e4918aecb11592
+19	3402	7666738093954788	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	2a4d870bf0e68ad8
+3208	3474	7666738094967264	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	2c567e4873daf3e3
+49	3779	7666738098124431	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	4e3042763b6abe64
+9	4014	7666738100306717	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	c59141bc0209d267
+3474	4099	7666738101366233	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/armeabi-v7a/libswappywrapper.so	30b803fa37c90023
+3137	4950	7666738109936223	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	818b280925938d5d
+3193	4988	7666738110280027	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	1f336afc5a870ad9
+4988	5117	7666738111632484	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/armeabi-v7a/libgame.so	5d78dc863251a25f

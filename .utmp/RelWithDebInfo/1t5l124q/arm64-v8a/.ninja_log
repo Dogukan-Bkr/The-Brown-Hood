@@ -1,23 +1,23 @@
 # ninja log v5
-2997	3256	7665166711335647	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/arm64-v8a/libswappywrapper.so	2ddbfdc4ccfd697f
-23	2639	7665166704876603	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	a7dc8ddedaed9484
-2640	4250	7665166721439530	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	91b53163b3a22cd8
-39	2716	7665166705752791	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	9e12262092d52846
-49	2668	7665166705163854	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	f071d568d35693e5
-29	2697	7665166705641777	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	5e263e2e1303b958
-4454	4578	7665166724750046	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/arm64-v8a/libgame.so	de8c1fa9f850a80a
-44	3061	7665166709391939	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	8a4bb8330eab7bd2
-2697	2996	7665166708706991	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	bc6811440ab7fc53
-17	3331	7665166712191468	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	519cc75d99648428
-2669	4454	7665166723479080	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	443f07697734d610
-35	2379	7665195904862320	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	91b53163b3a22cd8
 24	2394	7665195905431440	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	a7dc8ddedaed9484
-29	2431	7665195905910170	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	f071d568d35693e5
+2699	3062	7665195912343954	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/arm64-v8a/libswappywrapper.so	2ddbfdc4ccfd697f
+35	2379	7665195904862320	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	91b53163b3a22cd8
 15	2440	7665195905657778	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	9e12262092d52846
 20	2494	7665195906573467	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	5e263e2e1303b958
-2431	2699	7665195908797682	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	bc6811440ab7fc53
-2699	3062	7665195912343954	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/arm64-v8a/libswappywrapper.so	2ddbfdc4ccfd697f
-9	3322	7665195914943367	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	519cc75d99648428
-2395	4114	7665195922989406	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	443f07697734d610
-2380	4414	7665195925988182	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	8a4bb8330eab7bd2
+29	2431	7665195905910170	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	f071d568d35693e5
 4415	4532	7665195927185245	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/arm64-v8a/libgame.so	de8c1fa9f850a80a
+2380	4414	7665195925988182	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	8a4bb8330eab7bd2
+9	3322	7665195914943367	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	519cc75d99648428
+2431	2699	7665195908797682	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	bc6811440ab7fc53
+2395	4114	7665195922989406	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	443f07697734d610
+33	3818	7666738005095604	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	a7dc8ddedaed9484
+40	3907	7666738005599010	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	9e12262092d52846
+45	3945	7666738006288259	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	f071d568d35693e5
+19	4123	7666738007976025	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	5e263e2e1303b958
+52	4963	7666738016525302	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	8a4bb8330eab7bd2
+3945	5020	7666738017114219	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	bc6811440ab7fc53
+13	5230	7666738019246302	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	519cc75d99648428
+5021	5694	7666738023245234	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/arm64-v8a/libswappywrapper.so	2ddbfdc4ccfd697f
+3819	6578	7666738032826016	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	91b53163b3a22cd8
+3908	7193	7666738039035158	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	443f07697734d610
+7193	7363	7666738040825216	C:/Users/doguk/The Brown Hood/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1t5l124q/obj/arm64-v8a/libgame.so	de8c1fa9f850a80a
