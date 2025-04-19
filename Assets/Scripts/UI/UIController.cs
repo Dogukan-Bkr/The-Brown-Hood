@@ -8,19 +8,8 @@ using System.Linq;
 
 public class UIController : MonoBehaviour
 {
-    // Sadece Android için reklam kimlikleri
-    //private string _adSpearId = "ca-app-pub-3941344385400413/1111088453";
-    //private string _adArrowId = "ca-app-pub-3941344385400413/4934310639";
-    //private string _adCoinId = "ca-app-pub-3941344385400413/4168496630";
-    //private string _adHealthId = "ca-app-pub-3941344385400413/8809976465";
-#if UNITY_EDITOR
-     string _adTestId = "ca-app-pub-3940256099942544/5224354917"; // Test ID
-#elif UNITY_ANDROID
-    string _adTestId = "ca-app-pub-3940256099942544/5224354917"; // Test ID
-#else
-  string _adTestId = "unused";
-#endif
     public static UIController instance;
+
     public GameObject blacksmithPanel;
     public GameObject tentPanel;
     public GameObject pausePanel;
@@ -49,6 +38,9 @@ public class UIController : MonoBehaviour
     private RewardedAd rewardedAdCoin;
     private RewardedAd rewardedAdHealth;
 
+    private AdmobRewardedIDs adIds;
+    private string testId;
+
     private void Awake()
     {
         instance = this;
@@ -56,10 +48,20 @@ public class UIController : MonoBehaviour
 
     private void Start()
     {
+        ConfigData config = ConfigLoader.LoadConfig();
+
+        if (config == null || config.admob == null)
+        {
+            Debug.LogError("AdMob konfigürasyonu yüklenemedi!");
+            return;
+        }
+
+        adIds = config.admob.rewarded;
+        testId = config.admob.testId;
+
         MobileAds.Initialize(initStatus =>
         {
             Debug.Log("AdMob SDK initialized.");
-
             var adapterStatusMap = initStatus.getAdapterStatusMap();
             foreach (var adapter in adapterStatusMap)
             {
@@ -98,14 +100,17 @@ public class UIController : MonoBehaviour
 
     private void RequestRewardedAds()
     {
-        LoadRewardedAd(_adTestId, ad => rewardedAdSpear = ad);//Test ID
-        LoadRewardedAd(_adTestId, ad => rewardedAdArrow = ad);//Test ID
-        LoadRewardedAd(_adTestId, ad => rewardedAdCoin = ad);//Test ID
-        LoadRewardedAd(_adTestId, ad => rewardedAdHealth = ad);//Test ID
-        //LoadRewardedAd(_adSpearId, ad => rewardedAdSpear = ad);
-        //LoadRewardedAd(_adArrowId, ad => rewardedAdArrow = ad);
-        //LoadRewardedAd(_adCoinId, ad => rewardedAdCoin = ad);
-        //LoadRewardedAd(_adHealthId, ad => rewardedAdHealth = ad);
+        // Gerçek ID'leri yayınlandığında aktif hale getir:
+        // LoadRewardedAd(adIds?.spear, ad => rewardedAdSpear = ad);
+        // LoadRewardedAd(adIds?.arrow, ad => rewardedAdArrow = ad);
+        // LoadRewardedAd(adIds?.coin, ad => rewardedAdCoin = ad);
+        // LoadRewardedAd(adIds?.health, ad => rewardedAdHealth = ad);
+
+        // Test ID'ler aktif:
+        LoadRewardedAd(testId, ad => rewardedAdSpear = ad);
+        LoadRewardedAd(testId, ad => rewardedAdArrow = ad);
+        LoadRewardedAd(testId, ad => rewardedAdCoin = ad);
+        LoadRewardedAd(testId, ad => rewardedAdHealth = ad);
     }
 
     private void LoadRewardedAd(string adUnitId, Action<RewardedAd> callback)
@@ -191,12 +196,13 @@ public class UIController : MonoBehaviour
     public void DecreaseArrowCount()
     {
         GameManager.instance.arrowCount--;
-        UpdateUI(); // UI'yi güncelle
+        UpdateUI();
     }
+
     public void DecreaseSpearCount()
     {
         GameManager.instance.spearCount--;
-        UpdateUI(); // UI'yi güncelle
+        UpdateUI();
     }
 
     public void OpenBlacksmithPanel()
@@ -204,36 +210,43 @@ public class UIController : MonoBehaviour
         blacksmithPanel.SetActive(true);
         PlayerMovementController.instance.StopPlayer();
     }
+
     public void OpenPausePanel()
     {
         pausePanel.SetActive(true);
         Time.timeScale = 0;
     }
+
     public void ClosePausePanel()
     {
         pausePanel.SetActive(false);
         Time.timeScale = 1;
     }
+
     public void Replay()
     {
         Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
     public void LoadMainMenu()
     {
         SceneManager.LoadScene(0);
         Time.timeScale = 1;
     }
+
     public void CloseBlacksmithPanel()
     {
         if (blacksmithPanel.activeSelf) blacksmithPanel.SetActive(false);
         PlayerMovementController.instance.ResumeMovement();
     }
+
     public void OpenTentPanel()
     {
         tentPanel.SetActive(true);
         PlayerMovementController.instance.StopPlayer();
     }
+
     public void CloseTentPanel()
     {
         tentPanel.SetActive(false);
@@ -245,7 +258,7 @@ public class UIController : MonoBehaviour
         if (GameManager.instance.coinCount >= 30)
         {
             GameManager.instance.coinCount -= 30;
-            GameManager.instance.spearCount+=2;
+            GameManager.instance.spearCount += 2;
             UpdateUI();
         }
     }
@@ -272,30 +285,24 @@ public class UIController : MonoBehaviour
 
     public void BuyHealth()
     {
-        // Eğer sağlık zaten maksimumdaysa işlem yapılmaz
         if (PlayerHealthController.instance.currentHP >= PlayerHealthController.instance.maxHP)
         {
             Debug.Log("Sağlık zaten maksimumda, satın alma işlemi yapılamaz.");
             return;
         }
 
-        // Eğer oyuncunun yeterli altını varsa
         if (GameManager.instance.coinCount >= 30)
         {
-            // 30 altın eksilt
             GameManager.instance.coinCount -= 30;
 
-            // Maksimum sağlığın %20'sini ekle
             int healthToAdd = Mathf.CeilToInt(PlayerHealthController.instance.maxHP * 0.2f);
             PlayerHealthController.instance.currentHP += healthToAdd;
 
-            // Sağlık maksimum değeri aşarsa, maksimum değere ayarla
             if (PlayerHealthController.instance.currentHP > PlayerHealthController.instance.maxHP)
             {
                 PlayerHealthController.instance.currentHP = PlayerHealthController.instance.maxHP;
             }
 
-            // Sağlık çubuğunu ve UI'yi güncelle
             SetHealthSlider(PlayerHealthController.instance.currentHP, PlayerHealthController.instance.maxHP);
             UpdateUI();
         }
@@ -304,7 +311,4 @@ public class UIController : MonoBehaviour
             Debug.Log("Yeterli miktarda coin yok.");
         }
     }
-
-
-
 }

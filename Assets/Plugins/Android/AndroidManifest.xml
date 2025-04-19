@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
     <application>
 		<meta-data
-                android:name="com.google.android.gms.ads.APPLICATION_ID"
-                android:value="ca-app-pub-3941344385400413~8093132498"/>
-        <!--Used when Application Entry is set to Activity, otherwise remove this activity block-->
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admob_app_id}"/>
+
+		<!--Used when Application Entry is set to Activity, otherwise remove this activity block-->
         <activity android:name="com.unity3d.player.UnityPlayerActivity"
                   android:theme="@style/UnityThemeSelector">
             <intent-filter>

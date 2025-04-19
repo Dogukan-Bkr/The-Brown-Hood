@@ -37,17 +37,19 @@ android {
     }
 
     defaultConfig {
-        minSdk **MINSDK**
-        targetSdk **TARGETSDK**
-        ndk {
-            abiFilters **ABIFILTERS**
-            debugSymbolLevel **DEBUGSYMBOLLEVEL**
-        }
-        versionCode **VERSIONCODE**
-        versionName '**VERSIONNAME**'
-        consumerProguardFiles 'proguard-unity.txt'**USER_PROGUARD**
-**DEFAULT_CONFIG_SETUP**
+    minSdk **MINSDK**
+    targetSdk **TARGETSDK**
+    ndk {
+        abiFilters **ABIFILTERS**
+        debugSymbolLevel **DEBUGSYMBOLLEVEL**
     }
+    versionCode **VERSIONCODE**
+    versionName '**VERSIONNAME**'
+    consumerProguardFiles 'proguard-unity.txt'**USER_PROGUARD**
+    manifestPlaceholders = [admob_app_id: "ca-app-pub-3941344385400413~8093132498"]
+**DEFAULT_CONFIG_SETUP**
+}
+
 
     lint {
         abortOnError false
