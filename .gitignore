@@ -74,3 +74,4 @@ crashlytics-build.properties
 
 #AdMob yapılandırma dosyası - gizli tutulmalı
 /Assets/Resources/config.json
+/Assets/Resources/config.json.meta
