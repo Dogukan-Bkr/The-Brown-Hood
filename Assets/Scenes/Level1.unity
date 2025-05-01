@@ -29447,6 +29447,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Main Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 8081554044128492416, guid: 379dbb0946952e14c826fa2e30216afb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8733039495371438592, guid: 379dbb0946952e14c826fa2e30216afb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -29586,6 +29590,10 @@ PrefabInstance:
     - target: {fileID: 7895954853828419041, guid: b7c1951c1d788d14b859174ec94a956f, type: 3}
       propertyPath: m_Name
       value: Background
+      objectReference: {fileID: 0}
+    - target: {fileID: 7895954853828419041, guid: b7c1951c1d788d14b859174ec94a956f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -30366,6 +30374,10 @@ PrefabInstance:
     - target: {fileID: 4812613608184616775, guid: 583f8349755bc2e4b9feb3b380f2c8fa, type: 3}
       propertyPath: m_Name
       value: Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 4812613608184616775, guid: 583f8349755bc2e4b9feb3b380f2c8fa, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5260523130465447337, guid: 583f8349755bc2e4b9feb3b380f2c8fa, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
